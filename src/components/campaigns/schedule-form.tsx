@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Calendar, Clock, Users, FileText, Send, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Calendar, Clock, Users, FileText, Send, Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,14 +24,140 @@ import type { Template } from "@/lib/mock-data";
 interface ScheduleCampaignFormProps {
   channel: "email" | "sms";
   templates: Template[];
+  dataSource?: "brevo" | "demo";
 }
 
-export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFormProps) {
+export function ScheduleCampaignForm({
+  channel,
+  templates,
+  dataSource = "demo",
+}: ScheduleCampaignFormProps) {
+  const router = useRouter();
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]?.id ?? "");
   const [sendMode, setSendMode] = useState<"now" | "schedule">("schedule");
+  const [name, setName] = useState("");
+  const [subject, setSubject] = useState(templates[0]?.subject ?? "");
+  const [date, setDate] = useState("2026-08-25");
+  const [time, setTime] = useState("09:00");
+  const [listIds, setListIds] = useState("");
+  const [testEmail, setTestEmail] = useState("");
+  const [submitting, setSubmitting] = useState<"idle" | "send" | "draft" | "test">("idle");
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(
+    null
+  );
 
   const template = templates.find((t) => t.id === selectedTemplate);
   const isEmail = channel === "email";
+
+  const scheduledLabel = useMemo(() => {
+    if (sendMode === "now") return "Immediately";
+    return `${date} at ${time}`;
+  }, [sendMode, date, time]);
+
+  const onTemplateChange = (id: string) => {
+    setSelectedTemplate(id);
+    const next = templates.find((t) => t.id === id);
+    if (next?.subject) setSubject(next.subject);
+  };
+
+  const buildScheduledAt = () => {
+    if (sendMode !== "schedule") return undefined;
+    const iso = new Date(`${date}T${time}:00`);
+    if (Number.isNaN(iso.getTime())) return undefined;
+    return iso.toISOString();
+  };
+
+  const parseListIds = () =>
+    listIds
+      .split(",")
+      .map((v) => Number(v.trim()))
+      .filter((n) => Number.isInteger(n) && n > 0);
+
+  const submitEmailCampaign = async (mode: "send" | "draft") => {
+    if (!isEmail) return;
+    setSubmitting(mode === "send" ? "send" : "draft");
+    setFeedback(null);
+
+    try {
+      const numericTemplateId = Number(selectedTemplate);
+      const payload: Record<string, unknown> = {
+        name: name || template?.name || "Untitled campaign",
+        subject: subject || template?.subject || "No subject",
+        sendNow: mode === "send" && sendMode === "now",
+        scheduledAt:
+          mode === "send" && sendMode === "schedule" ? buildScheduledAt() : undefined,
+        listIds: parseListIds(),
+      };
+
+      if (!Number.isNaN(numericTemplateId) && dataSource === "brevo") {
+        payload.templateId = numericTemplateId;
+      } else if (template?.body) {
+        payload.htmlContent = template.body;
+      }
+
+      const res = await fetch("/api/brevo/campaigns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Campaign failed");
+
+      setFeedback({ type: "success", text: data.message });
+      if (data.source === "brevo") {
+        setTimeout(() => router.push("/email/campaigns"), 1200);
+      }
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        text: error instanceof Error ? error.message : "Campaign failed",
+      });
+    } finally {
+      setSubmitting("idle");
+    }
+  };
+
+  const sendTestEmail = async () => {
+    if (!isEmail || !testEmail) return;
+    setSubmitting("test");
+    setFeedback(null);
+    try {
+      const numericTemplateId = Number(selectedTemplate);
+      const payload: Record<string, unknown> = {
+        to: [{ email: testEmail }],
+        subject: subject || template?.subject,
+        scheduledAt: sendMode === "schedule" ? buildScheduledAt() : undefined,
+      };
+
+      if (!Number.isNaN(numericTemplateId) && dataSource === "brevo") {
+        payload.templateId = numericTemplateId;
+      } else {
+        payload.htmlContent = template?.body;
+      }
+
+      const res = await fetch("/api/brevo/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Test send failed");
+      setFeedback({
+        type: "success",
+        text:
+          data.source === "demo"
+            ? data.message
+            : `Test email sent. Message ID: ${data.messageId}`,
+      });
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        text: error instanceof Error ? error.message : "Test send failed",
+      });
+    } finally {
+      setSubmitting("idle");
+    }
+  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
@@ -43,6 +170,7 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
             </CardTitle>
             <CardDescription>
               Give your campaign a name and choose a template
+              {isEmail && dataSource === "brevo" ? " from Brevo" : ""}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -50,6 +178,8 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
               <Label htmlFor="name">Campaign Name</Label>
               <Input
                 id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder={
                   isEmail
                     ? "e.g., August Newsletter"
@@ -60,7 +190,7 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
 
             <div className="space-y-2">
               <Label>Template</Label>
-              <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+              <Select value={selectedTemplate} onValueChange={onTemplateChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a template" />
                 </SelectTrigger>
@@ -77,10 +207,14 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
               )}
             </div>
 
-            {isEmail && template?.subject && (
+            {isEmail && (
               <div className="space-y-2">
                 <Label htmlFor="subject">Subject Line</Label>
-                <Input id="subject" defaultValue={template.subject} />
+                <Input
+                  id="subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                />
               </div>
             )}
 
@@ -108,33 +242,66 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
               <Users className="h-5 w-5" />
               Audience
             </CardTitle>
-            <CardDescription>Who should receive this campaign?</CardDescription>
+            <CardDescription>
+              {isEmail
+                ? "Use a Brevo list ID for marketing campaigns, or send a test to one inbox"
+                : "Who should receive this campaign?"}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Recipient List</Label>
-              <Select defaultValue={audienceOptions[0]}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {audienceOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="rounded-lg bg-muted/50 p-4 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium">Estimated recipients</p>
-                <p className="text-xs text-muted-foreground">
-                  Based on current contact list and filters
-                </p>
-              </div>
-              <span className="text-2xl font-bold text-primary">8,420</span>
-            </div>
+            {isEmail ? (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="list-ids">Brevo List IDs (optional)</Label>
+                  <Input
+                    id="list-ids"
+                    placeholder="e.g., 2, 5"
+                    value={listIds}
+                    onChange={(e) => setListIds(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Required to send/schedule a marketing campaign to a list. Find IDs in Brevo → Contacts → Lists.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="test-recipient">Test recipient email</Label>
+                  <Input
+                    id="test-recipient"
+                    type="email"
+                    placeholder="you@company.com"
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <Label>Recipient List</Label>
+                  <Select defaultValue={audienceOptions[0]}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {audienceOptions.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="rounded-lg bg-muted/50 p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Estimated recipients</p>
+                    <p className="text-xs text-muted-foreground">
+                      Based on current contact list and filters
+                    </p>
+                  </div>
+                  <span className="text-2xl font-bold text-primary">8,420</span>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -170,15 +337,25 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="date">Date</Label>
-                    <Input id="date" type="date" defaultValue="2026-08-25" />
+                    <Input
+                      id="date"
+                      type="date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="time">Time</Label>
-                    <Input id="time" type="time" defaultValue="09:00" />
+                    <Input
+                      id="time"
+                      type="time"
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                    />
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Timezone: America/New_York (EST)
+                  Stored as UTC for Brevo scheduling.
                 </p>
               </TabsContent>
             </Tabs>
@@ -213,30 +390,83 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Channel</span>
                 <Badge variant="outline">
-                  {isEmail ? "Email · Brevo" : "SMS · Twilio"}
+                  {isEmail
+                    ? `Email · ${dataSource === "brevo" ? "Brevo live" : "Demo"}`
+                    : "SMS · Twilio"}
                 </Badge>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Recipients</span>
-                <span className="font-medium">8,420</span>
-              </div>
-              <div className="flex justify-between">
                 <span className="text-muted-foreground">Delivery</span>
-                <span className="font-medium">
-                  {sendMode === "now" ? "Immediately" : "Aug 25, 9:00 AM"}
-                </span>
+                <span className="font-medium">{scheduledLabel}</span>
               </div>
             </div>
 
+            {feedback && (
+              <p
+                className={
+                  feedback.type === "error"
+                    ? "text-sm text-red-600"
+                    : "text-sm text-emerald-700"
+                }
+              >
+                {feedback.text}
+              </p>
+            )}
+
             <div className="flex flex-col gap-2 pt-2">
-              <Button className="w-full gap-2">
-                <Send className="h-4 w-4" />
-                {sendMode === "now" ? "Send Campaign" : "Schedule Campaign"}
-              </Button>
-              <Button variant="outline" className="w-full gap-2">
-                <Save className="h-4 w-4" />
-                Save as Draft
-              </Button>
+              {isEmail ? (
+                <>
+                  <Button
+                    className="w-full gap-2"
+                    disabled={submitting !== "idle"}
+                    onClick={() => submitEmailCampaign("send")}
+                  >
+                    {submitting === "send" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                    {sendMode === "now" ? "Send Campaign" : "Schedule Campaign"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full gap-2"
+                    disabled={submitting !== "idle" || !testEmail}
+                    onClick={sendTestEmail}
+                  >
+                    {submitting === "test" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                    Send test email
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full gap-2"
+                    disabled={submitting !== "idle"}
+                    onClick={() => submitEmailCampaign("draft")}
+                  >
+                    {submitting === "draft" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    Save as Draft
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button className="w-full gap-2">
+                    <Send className="h-4 w-4" />
+                    {sendMode === "now" ? "Send Campaign" : "Schedule Campaign"}
+                  </Button>
+                  <Button variant="outline" className="w-full gap-2">
+                    <Save className="h-4 w-4" />
+                    Save as Draft
+                  </Button>
+                </>
+              )}
               <Button variant="ghost" className="w-full" asChild>
                 <Link href={`/${channel}/campaigns`}>Cancel</Link>
               </Button>
@@ -261,7 +491,7 @@ export function ScheduleCampaignForm({ channel, templates }: ScheduleCampaignFor
               ))}
             </div>
             <p className="text-xs text-muted-foreground mt-3">
-              Click to insert into your message. Values come from your CRM or contact list.
+              Brevo templates use contact attributes and {"{{params.*}}"} for transactional sends.
             </p>
           </CardContent>
         </Card>

@@ -350,7 +350,7 @@ export const integrations: Integration[] = [
     name: "Brevo",
     description: "Send transactional and marketing emails, manage templates and contact lists.",
     category: "email",
-    connected: true,
+    connected: false,
     logo: "B",
   },
   {

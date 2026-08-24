@@ -16,10 +16,31 @@ A user-friendly email and SMS scheduling platform for teams. Built for **Brevo**
 
 ```bash
 npm install
+cp .env.example .env.local
+# Add your Brevo API key to .env.local
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Brevo setup
+
+1. Create an API key in [Brevo → SMTP & API → API keys](https://app.brevo.com/settings/keys/api)
+2. Set `BREVO_API_KEY` in `.env.local` (or Cloud Agent secrets)
+3. Optionally set `BREVO_SENDER_EMAIL` / `BREVO_SENDER_NAME` (verified sender)
+4. Open **Integrations** to confirm connection and send a test email
+
+Without a key, email pages run in **demo mode** with sample data.
+
+### Brevo API routes
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/brevo/status` | GET | Connection + account info |
+| `/api/brevo/templates` | GET | List transactional templates |
+| `/api/brevo/templates/[id]` | GET | Template detail |
+| `/api/brevo/campaigns` | GET/POST | List / create+schedule campaigns |
+| `/api/brevo/send` | POST | Send transactional email |
 
 ## Tech Stack
 
@@ -28,10 +49,11 @@ Open [http://localhost:3000](http://localhost:3000).
 - Tailwind CSS 4
 - Radix UI + shadcn-style components
 - Recharts
+- `@getbrevo/brevo` SDK
 
 ## Roadmap
 
-- [ ] Brevo API integration (templates, send, scheduling)
+- [x] Brevo API integration (templates, send, scheduling)
 - [ ] Twilio API integration (SMS send, delivery tracking)
 - [ ] ManyChat webhook sync
 - [ ] Supabase/Vercel CRM connection
