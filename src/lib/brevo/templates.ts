@@ -1,6 +1,6 @@
 import type { Template } from "@/lib/mock-data";
 import { emailTemplates as mockTemplates } from "@/lib/mock-data";
-import { getBrevoClient, isBrevoConfigured } from "./client";
+import { getBrevoClient, getBrevoConfig, isBrevoConfigured } from "./client";
 
 function stripHtml(html: string): string {
   return html
@@ -69,4 +69,96 @@ export async function getEmailTemplate(
   });
 
   return { template: mapBrevoTemplate(response), source: "brevo" };
+}
+
+export interface UpsertEmailTemplateInput {
+  name: string;
+  subject: string;
+  htmlContent: string;
+  tag?: string;
+  isActive?: boolean;
+  replyTo?: string;
+}
+
+export async function createEmailTemplate(input: UpsertEmailTemplateInput) {
+  if (!isBrevoConfigured()) {
+    return {
+      source: "demo" as const,
+      templateId: `demo-${Date.now()}`,
+      message:
+        "Demo mode: template not saved to Brevo. Add BREVO_API_KEY to sync.",
+    };
+  }
+
+  if (input.htmlContent.trim().length < 10) {
+    throw new Error("HTML content must be at least 10 characters");
+  }
+
+  const brevo = getBrevoClient();
+  const { senderEmail, senderName } = getBrevoConfig();
+
+  const created = await brevo.transactionalEmails.createSmtpTemplate({
+    templateName: input.name,
+    subject: input.subject,
+    htmlContent: input.htmlContent,
+    isActive: input.isActive ?? true,
+    tag: input.tag,
+    replyTo: input.replyTo,
+    sender: {
+      email: senderEmail,
+      name: senderName,
+    },
+  });
+
+  return {
+    source: "brevo" as const,
+    templateId: String(created.id),
+    message: "Template created in Brevo.",
+  };
+}
+
+export async function updateEmailTemplate(
+  id: string,
+  input: UpsertEmailTemplateInput
+) {
+  if (!isBrevoConfigured()) {
+    return {
+      source: "demo" as const,
+      templateId: id,
+      message:
+        "Demo mode: template not updated in Brevo. Add BREVO_API_KEY to sync.",
+    };
+  }
+
+  const numericId = Number(id);
+  if (Number.isNaN(numericId)) {
+    throw new Error("Invalid template ID");
+  }
+
+  if (input.htmlContent.trim().length < 10) {
+    throw new Error("HTML content must be at least 10 characters");
+  }
+
+  const brevo = getBrevoClient();
+  const { senderEmail, senderName } = getBrevoConfig();
+
+  await brevo.transactionalEmails.updateSmtpTemplate({
+    templateId: numericId,
+    templateName: input.name,
+    subject: input.subject,
+    htmlContent: input.htmlContent,
+    isActive: input.isActive ?? true,
+    tag: input.tag,
+    replyTo: input.replyTo,
+    sender: {
+      email: senderEmail,
+      name: senderName,
+    },
+  });
+
+  return {
+    source: "brevo" as const,
+    templateId: id,
+    message: "Template updated in Brevo.",
+  };
 }

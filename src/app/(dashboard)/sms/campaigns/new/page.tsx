@@ -6,12 +6,7 @@ import { listSmsTemplates, isTwilioConfigured } from "@/lib/twilio";
 export const dynamic = "force-dynamic";
 
 export default async function NewSmsCampaignPage() {
-  const { templates, source } = await listSmsTemplates();
-  const dataSource = isTwilioConfigured()
-    ? source === "twilio"
-      ? "twilio"
-      : "twilio"
-    : "demo";
+  const { templates } = await listSmsTemplates();
 
   return (
     <>
@@ -24,7 +19,7 @@ export default async function NewSmsCampaignPage() {
         <ScheduleCampaignForm
           channel="sms"
           templates={templates}
-          dataSource={dataSource}
+          dataSource={isTwilioConfigured() ? "twilio" : "demo"}
         />
       </div>
     </>

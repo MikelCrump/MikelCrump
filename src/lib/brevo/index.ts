@@ -1,5 +1,11 @@
 export { isBrevoConfigured, getBrevoClient, getBrevoConfig } from "./client";
-export { listEmailTemplates, getEmailTemplate } from "./templates";
+export {
+  listEmailTemplates,
+  getEmailTemplate,
+  createEmailTemplate,
+  updateEmailTemplate,
+  type UpsertEmailTemplateInput,
+} from "./templates";
 export {
   listEmailCampaigns,
   createAndDispatchCampaign,

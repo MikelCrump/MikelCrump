@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Send, Copy, Pencil } from "lucide-react";
+import { ArrowLeft, Send, Pencil } from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { TemplatePreview } from "@/components/templates/template-preview";
 import { Button } from "@/components/ui/button";
@@ -38,27 +38,12 @@ export default async function EmailTemplateDetailPage({ params }: PageProps) {
             </Badge>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Copy className="h-4 w-4" />
-              Duplicate
-            </Button>
-            {source === "brevo" ? (
-              <Button variant="outline" size="sm" className="gap-2" asChild>
-                <a
-                  href={`https://my.brevo.com/camp/template/${id}/message-setup`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Pencil className="h-4 w-4" />
-                  Edit in Brevo
-                </a>
-              </Button>
-            ) : (
-              <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" asChild>
+              <Link href={`/email/templates/${id}/edit`}>
                 <Pencil className="h-4 w-4" />
-                Edit in Brevo
-              </Button>
-            )}
+                Edit template
+              </Link>
+            </Button>
             <Button size="sm" className="gap-2" asChild>
               <Link href="/email/campaigns/new">
                 <Send className="h-4 w-4" />
