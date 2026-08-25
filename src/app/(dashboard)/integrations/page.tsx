@@ -4,16 +4,19 @@ import { BrevoStatusBanner } from "@/components/brevo/status-banner";
 import { BrevoTestSend } from "@/components/brevo/test-send";
 import { TwilioStatusBanner } from "@/components/twilio/status-banner";
 import { TwilioTestSend } from "@/components/twilio/test-send";
+import { SupabaseStatusBanner } from "@/components/supabase/status-banner";
 import { integrations } from "@/lib/mock-data";
 import { getBrevoConnectionStatus } from "@/lib/brevo";
 import { getTwilioConnectionStatus } from "@/lib/twilio";
+import { getSupabaseConnectionStatus } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 export default async function IntegrationsPage() {
-  const [brevoStatus, twilioStatus] = await Promise.all([
+  const [brevoStatus, twilioStatus, supabaseStatus] = await Promise.all([
     getBrevoConnectionStatus(),
     getTwilioConnectionStatus(),
+    getSupabaseConnectionStatus(),
   ]);
 
   const withLiveStatus = integrations.map((integration) => {
@@ -39,6 +42,18 @@ export default async function IntegrationsPage() {
           : integration.description,
       };
     }
+    if (integration.id === "supabase") {
+      return {
+        ...integration,
+        name: "Command Center CRM",
+        connected: supabaseStatus.connected,
+        description: supabaseStatus.connected
+          ? `Connected to Reawaken Command Center · ${supabaseStatus.contactCount.toLocaleString()} CRM contacts`
+          : supabaseStatus.source === "needs_service_role"
+            ? supabaseStatus.message
+            : "Sync contacts from Reawaken Command Center (Supabase CRM).",
+      };
+    }
     return integration;
   });
 
@@ -55,6 +70,7 @@ export default async function IntegrationsPage() {
         <div className="space-y-3">
           <BrevoStatusBanner />
           <TwilioStatusBanner />
+          <SupabaseStatusBanner />
         </div>
 
         <section>

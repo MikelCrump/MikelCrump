@@ -10,6 +10,11 @@ import {
   getTwilioClient,
   isTwilioConfigured,
 } from "@/lib/twilio/client";
+import {
+  getSupabaseContactCount,
+  hasSupabaseServiceRole,
+  isSupabaseConfigured,
+} from "@/lib/supabase";
 
 export interface DashboardStats {
   emailsSent: number;
@@ -114,6 +119,7 @@ export async function getDashboardData() {
     emailStats,
     smsStats,
     contactCount,
+    crmContactCount,
     templates,
     campaigns,
   ] = await Promise.all([
@@ -128,6 +134,9 @@ export async function getDashboardData() {
       total: 0,
     })),
     getBrevoContactCount().catch(() => 0),
+    isSupabaseConfigured() && hasSupabaseServiceRole()
+      ? getSupabaseContactCount().catch(() => 0)
+      : Promise.resolve(0),
     listEmailTemplates().catch(() => ({ templates: [], source: "demo" as const })),
     listEmailCampaigns().catch(() => ({ campaigns: [], source: "demo" as const })),
   ]);
@@ -139,6 +148,9 @@ export async function getDashboardData() {
         ) / 10
       : null;
 
+  const useCrmContacts = crmContactCount > 0;
+  const totalContacts = useCrmContacts ? crmContactCount : contactCount;
+
   const stats: DashboardStats = {
     emailsSent: emailStats.totalRequests,
     emailsSentLabel: "last 7 days · Brevo",
@@ -147,8 +159,12 @@ export async function getDashboardData() {
     openRate,
     openRateLabel:
       openRate === null ? "no deliveries yet" : "last 7 days · Brevo",
-    totalContacts: contactCount,
-    contactsLabel: isBrevoConfigured() ? "from Brevo" : "not connected",
+    totalContacts,
+    contactsLabel: useCrmContacts
+      ? "from Command Center"
+      : isBrevoConfigured()
+        ? "from Brevo"
+        : "not connected",
     emailTemplates: templates.templates.length,
     smsConnected: isTwilioConfigured(),
     brevoConnected: isBrevoConfigured(),

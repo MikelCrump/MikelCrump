@@ -35,7 +35,7 @@ const quickActions = [
   },
   {
     title: "Import Contacts",
-    description: "View contacts from Brevo",
+    description: "View Command Center & Brevo contacts",
     href: "/contacts",
     icon: Users,
     color: "bg-amber-100 text-amber-700",

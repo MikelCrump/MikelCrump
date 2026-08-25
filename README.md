@@ -54,8 +54,8 @@ Without a key, email pages run in **demo mode** with sample data.
 ## Roadmap
 
 - [x] Brevo API integration (templates, send, scheduling)
-- [ ] Twilio API integration (SMS send, delivery tracking)
+- [x] Twilio API integration (SMS send, delivery tracking)
+- [x] Supabase / Command Center CRM connection (needs service role key for live reads)
 - [ ] ManyChat webhook sync
-- [ ] Supabase/Vercel CRM connection
 - [ ] Authentication and multi-tenant support
 - [ ] Product packaging for resale

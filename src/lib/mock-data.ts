@@ -371,8 +371,9 @@ export const integrations: Integration[] = [
   },
   {
     id: "supabase",
-    name: "Supabase CRM",
-    description: "Connect your in-house CRM hosted on Supabase for contact and event sync.",
+    name: "Command Center CRM",
+    description:
+      "Reawaken Command Center Supabase CRM — donors, campus contacts, staff, outreach contacts, and more.",
     category: "crm",
     connected: false,
     logo: "S",
