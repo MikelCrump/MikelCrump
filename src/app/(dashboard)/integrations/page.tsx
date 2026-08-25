@@ -2,13 +2,19 @@ import { Header } from "@/components/layout/header";
 import { IntegrationCard } from "@/components/integrations/integration-card";
 import { BrevoStatusBanner } from "@/components/brevo/status-banner";
 import { BrevoTestSend } from "@/components/brevo/test-send";
+import { TwilioStatusBanner } from "@/components/twilio/status-banner";
+import { TwilioTestSend } from "@/components/twilio/test-send";
 import { integrations } from "@/lib/mock-data";
 import { getBrevoConnectionStatus } from "@/lib/brevo";
+import { getTwilioConnectionStatus } from "@/lib/twilio";
 
 export const dynamic = "force-dynamic";
 
 export default async function IntegrationsPage() {
-  const brevoStatus = await getBrevoConnectionStatus();
+  const [brevoStatus, twilioStatus] = await Promise.all([
+    getBrevoConnectionStatus(),
+    getTwilioConnectionStatus(),
+  ]);
 
   const withLiveStatus = integrations.map((integration) => {
     if (integration.id === "brevo") {
@@ -17,6 +23,19 @@ export default async function IntegrationsPage() {
         connected: brevoStatus.connected,
         description: brevoStatus.connected
           ? `Connected as ${brevoStatus.account?.email ?? "Brevo account"}. Templates, campaigns, and sends use the live API.`
+          : integration.description,
+      };
+    }
+    if (integration.id === "twilio") {
+      return {
+        ...integration,
+        connected: twilioStatus.connected,
+        description: twilioStatus.connected
+          ? `Connected as ${twilioStatus.account?.friendlyName ?? "Twilio"}${
+              twilioStatus.phoneNumber
+                ? ` · From ${twilioStatus.phoneNumber}`
+                : ""
+            }.`
           : integration.description,
       };
     }
@@ -33,7 +52,10 @@ export default async function IntegrationsPage() {
         description="Connect Brevo, Twilio, ManyChat, and your CRM"
       />
       <div className="p-8 space-y-8 animate-fade-in">
-        <BrevoStatusBanner />
+        <div className="space-y-3">
+          <BrevoStatusBanner />
+          <TwilioStatusBanner />
+        </div>
 
         <section>
           <h2 className="text-lg font-semibold mb-4">
@@ -45,13 +67,16 @@ export default async function IntegrationsPage() {
             ))}
             {connected.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                No integrations connected yet. Add your Brevo API key to get started.
+                No integrations connected yet.
               </p>
             )}
           </div>
         </section>
 
-        <BrevoTestSend />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <BrevoTestSend />
+          <TwilioTestSend />
+        </div>
 
         <section>
           <h2 className="text-lg font-semibold mb-4">

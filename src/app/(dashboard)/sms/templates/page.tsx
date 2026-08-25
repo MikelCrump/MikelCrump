@@ -1,19 +1,33 @@
 import { Header } from "@/components/layout/header";
 import { TemplateCard } from "@/components/templates/template-card";
-import { smsTemplates } from "@/lib/mock-data";
+import { TwilioStatusBanner } from "@/components/twilio/status-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { listSmsTemplates } from "@/lib/twilio";
 
-export default function SmsTemplatesPage() {
-  const categories = [...new Set(smsTemplates.map((t) => t.category))];
+export const dynamic = "force-dynamic";
+
+export default async function SmsTemplatesPage() {
+  const { templates, source } = await listSmsTemplates();
+  const categories = [...new Set(templates.map((t) => t.category))];
 
   return (
     <>
       <Header
         title="SMS Templates"
         description="Browse and preview SMS templates for Twilio"
-        action={{ label: "New Template", href: "/sms/templates/new" }}
+        action={{ label: "New Campaign", href: "/sms/campaigns/new" }}
       />
       <div className="p-8 space-y-6 animate-fade-in">
+        <TwilioStatusBanner />
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            {templates.length} templates
+          </h2>
+          <Badge variant={source === "twilio" ? "success" : "warning"}>
+            {source === "twilio" ? "From Twilio Content" : "In-app templates"}
+          </Badge>
+        </div>
         <Tabs defaultValue="all">
           <TabsList>
             <TabsTrigger value="all">All Templates</TabsTrigger>
@@ -25,7 +39,7 @@ export default function SmsTemplatesPage() {
           </TabsList>
           <TabsContent value="all" className="mt-6">
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {smsTemplates.map((template) => (
+              {templates.map((template) => (
                 <TemplateCard
                   key={template.id}
                   template={template}
@@ -37,7 +51,7 @@ export default function SmsTemplatesPage() {
           {categories.map((cat) => (
             <TabsContent key={cat} value={cat} className="mt-6">
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {smsTemplates
+                {templates
                   .filter((t) => t.category === cat)
                   .map((template) => (
                     <TemplateCard

@@ -24,7 +24,7 @@ import type { Template } from "@/lib/mock-data";
 interface ScheduleCampaignFormProps {
   channel: "email" | "sms";
   templates: Template[];
-  dataSource?: "brevo" | "demo";
+  dataSource?: "brevo" | "twilio" | "demo";
 }
 
 export function ScheduleCampaignForm({
@@ -37,10 +37,12 @@ export function ScheduleCampaignForm({
   const [sendMode, setSendMode] = useState<"now" | "schedule">("schedule");
   const [name, setName] = useState("");
   const [subject, setSubject] = useState(templates[0]?.subject ?? "");
+  const [smsBody, setSmsBody] = useState(templates[0]?.body ?? "");
   const [date, setDate] = useState("2026-08-25");
   const [time, setTime] = useState("09:00");
   const [listIds, setListIds] = useState("");
   const [testEmail, setTestEmail] = useState("");
+  const [smsTo, setSmsTo] = useState("");
   const [submitting, setSubmitting] = useState<"idle" | "send" | "draft" | "test">("idle");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(
     null
@@ -58,6 +60,7 @@ export function ScheduleCampaignForm({
     setSelectedTemplate(id);
     const next = templates.find((t) => t.id === id);
     if (next?.subject) setSubject(next.subject);
+    if (next?.body && channel === "sms") setSmsBody(next.body);
   };
 
   const buildScheduledAt = () => {
@@ -159,6 +162,50 @@ export function ScheduleCampaignForm({
     }
   };
 
+  const submitSms = async () => {
+    if (isEmail) return;
+    if (!smsTo.trim()) {
+      setFeedback({ type: "error", text: "Enter a recipient phone number (E.164)." });
+      return;
+    }
+    setSubmitting("send");
+    setFeedback(null);
+    try {
+      const payload: Record<string, unknown> = {
+        to: smsTo,
+        body: smsBody || template?.body || "",
+      };
+      if (sendMode === "schedule") {
+        const sendAt = buildScheduledAt();
+        if (sendAt) payload.sendAt = sendAt;
+      }
+      const res = await fetch("/api/twilio/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "SMS send failed");
+      setFeedback({
+        type: "success",
+        text:
+          data.source === "demo"
+            ? data.message
+            : `SMS ${data.status}. SID: ${data.sid}`,
+      });
+      if (data.source === "twilio") {
+        setTimeout(() => router.push("/sms/campaigns"), 1200);
+      }
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        text: error instanceof Error ? error.message : "SMS send failed",
+      });
+    } finally {
+      setSubmitting("idle");
+    }
+  };
+
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-6">
@@ -217,22 +264,6 @@ export function ScheduleCampaignForm({
                 />
               </div>
             )}
-
-            {!isEmail && template && (
-              <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
-                <Textarea
-                  id="message"
-                  defaultValue={template.body}
-                  rows={4}
-                  className="font-mono text-sm"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {template.body.length} characters ·{" "}
-                  {Math.ceil(template.body.length / 160)} segment(s)
-                </p>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -277,28 +308,30 @@ export function ScheduleCampaignForm({
             ) : (
               <>
                 <div className="space-y-2">
-                  <Label>Recipient List</Label>
-                  <Select defaultValue={audienceOptions[0]}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {audienceOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="sms-to">Recipient phone (E.164)</Label>
+                  <Input
+                    id="sms-to"
+                    placeholder="+15551234567"
+                    value={smsTo}
+                    onChange={(e) => setSmsTo(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    For now this sends to one number via Twilio. Bulk audiences come next with contact lists.
+                  </p>
                 </div>
-                <div className="rounded-lg bg-muted/50 p-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium">Estimated recipients</p>
-                    <p className="text-xs text-muted-foreground">
-                      Based on current contact list and filters
-                    </p>
-                  </div>
-                  <span className="text-2xl font-bold text-primary">8,420</span>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea
+                    id="message"
+                    value={smsBody}
+                    onChange={(e) => setSmsBody(e.target.value)}
+                    rows={4}
+                    className="font-mono text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {smsBody.length} characters ·{" "}
+                    {Math.ceil(smsBody.length / 160) || 1} segment(s)
+                  </p>
                 </div>
               </>
             )}
@@ -392,7 +425,7 @@ export function ScheduleCampaignForm({
                 <Badge variant="outline">
                   {isEmail
                     ? `Email · ${dataSource === "brevo" ? "Brevo live" : "Demo"}`
-                    : "SMS · Twilio"}
+                    : `SMS · ${dataSource === "twilio" ? "Twilio live" : "Demo"}`}
                 </Badge>
               </div>
               <div className="flex justify-between">
@@ -456,16 +489,18 @@ export function ScheduleCampaignForm({
                   </Button>
                 </>
               ) : (
-                <>
-                  <Button className="w-full gap-2">
+                <Button
+                  className="w-full gap-2"
+                  disabled={submitting !== "idle" || !smsTo}
+                  onClick={submitSms}
+                >
+                  {submitting === "send" ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
                     <Send className="h-4 w-4" />
-                    {sendMode === "now" ? "Send Campaign" : "Schedule Campaign"}
-                  </Button>
-                  <Button variant="outline" className="w-full gap-2">
-                    <Save className="h-4 w-4" />
-                    Save as Draft
-                  </Button>
-                </>
+                  )}
+                  {sendMode === "now" ? "Send SMS" : "Schedule SMS"}
+                </Button>
               )}
               <Button variant="ghost" className="w-full" asChild>
                 <Link href={`/${channel}/campaigns`}>Cancel</Link>

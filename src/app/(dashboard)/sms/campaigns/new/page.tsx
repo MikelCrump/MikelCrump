@@ -1,16 +1,31 @@
 import { Header } from "@/components/layout/header";
 import { ScheduleCampaignForm } from "@/components/campaigns/schedule-form";
-import { smsTemplates } from "@/lib/mock-data";
+import { TwilioStatusBanner } from "@/components/twilio/status-banner";
+import { listSmsTemplates, isTwilioConfigured } from "@/lib/twilio";
 
-export default function NewSmsCampaignPage() {
+export const dynamic = "force-dynamic";
+
+export default async function NewSmsCampaignPage() {
+  const { templates, source } = await listSmsTemplates();
+  const dataSource = isTwilioConfigured()
+    ? source === "twilio"
+      ? "twilio"
+      : "twilio"
+    : "demo";
+
   return (
     <>
       <Header
         title="New SMS Campaign"
-        description="Compose, schedule, or send an SMS campaign"
+        description="Compose, schedule, or send an SMS via Twilio"
       />
-      <div className="p-8 animate-fade-in">
-        <ScheduleCampaignForm channel="sms" templates={smsTemplates} />
+      <div className="p-8 space-y-6 animate-fade-in">
+        <TwilioStatusBanner />
+        <ScheduleCampaignForm
+          channel="sms"
+          templates={templates}
+          dataSource={dataSource}
+        />
       </div>
     </>
   );

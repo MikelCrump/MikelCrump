@@ -358,7 +358,7 @@ export const integrations: Integration[] = [
     name: "Twilio",
     description: "Send SMS messages, manage phone numbers, and track delivery status.",
     category: "sms",
-    connected: true,
+    connected: false,
     logo: "T",
   },
   {
