@@ -13,3 +13,4 @@ export {
 } from "./campaigns";
 export { sendTransactionalEmail, type SendTransactionalInput } from "./send";
 export { getBrevoConnectionStatus } from "./status";
+export { listBrevoContacts, getBrevoContactCount } from "./contacts";

@@ -8,8 +8,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { recentActivity } from "@/lib/mock-data";
+import type { ActivityItem } from "@/lib/analytics/dashboard";
 import { cn } from "@/lib/utils";
 
 const quickActions = [
@@ -36,7 +35,7 @@ const quickActions = [
   },
   {
     title: "Import Contacts",
-    description: "Add contacts from CSV or CRM",
+    description: "View contacts from Brevo",
     href: "/contacts",
     icon: Users,
     color: "bg-amber-100 text-amber-700",
@@ -87,41 +86,44 @@ export function QuickActions() {
   );
 }
 
-export function ActivityFeed() {
+export function ActivityFeed({ activity }: { activity: ActivityItem[] }) {
   return (
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Latest updates across your platform</CardDescription>
+          <CardDescription>Latest sends from Brevo and Twilio</CardDescription>
         </div>
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/email/campaigns">View all</Link>
-        </Button>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {recentActivity.map((item) => {
-            const Icon = activityIcons[item.type];
-            const color = activityColors[item.type];
-            return (
-              <div key={item.id} className="flex items-start gap-3">
-                <div className={cn("rounded-lg p-2 shrink-0", color)}>
-                  <Icon className="h-4 w-4" />
+        {activity.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-6 text-center">
+            No recent activity yet. Send an email or SMS to see it here.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {activity.map((item) => {
+              const Icon = activityIcons[item.type];
+              const color = activityColors[item.type];
+              return (
+                <div key={item.id} className="flex items-start gap-3">
+                  <div className={cn("rounded-lg p-2 shrink-0", color)}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium">{item.title}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {item.description}
+                    </p>
+                  </div>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    {item.time}
+                  </span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium">{item.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {item.description}
-                  </p>
-                </div>
-                <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {item.time}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
