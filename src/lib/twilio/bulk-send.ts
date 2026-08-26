@@ -1,4 +1,5 @@
 import { listBrevoContactsWithPhone } from "@/lib/brevo/contacts";
+import { isTwilioConfigured } from "./client";
 import { sendSms } from "./send";
 
 export interface BulkSmsInput {
@@ -91,10 +92,10 @@ export async function sendBulkSms(input: BulkSmsInput): Promise<BulkSmsResult> {
     }
   }
 
-  const source = results.some((r) => r.sid?.startsWith("SM")) ? "twilio" : "demo";
+  const source: BulkSmsResult["source"] = isTwilioConfigured() ? "twilio" : "demo";
 
   return {
-    source: source as "twilio" | "demo",
+    source,
     sent,
     failed,
     skipped,
