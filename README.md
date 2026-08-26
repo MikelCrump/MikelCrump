@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TableFlow
 
-## Getting Started
+An open, affordable Airtable alternative — spreadsheet databases, embeddable forms, CSV import/export, and team access.
 
-First, run the development server:
+Built for **Reawaken USA** to replace expensive Airtable subscriptions while keeping the workflows you rely on.
+
+## Features (v0.1 — UI First)
+
+- **Bases & Tables** — Organize data in nested bases with customizable field types
+- **Spreadsheet Grid** — Click-to-edit cells, search, add/delete rows and columns
+- **Form Builder** — Create public forms with live preview and field toggles
+- **Embeddable Forms** — Copy iframe code to embed on any website (e.g. reawakenusa.org/pastors)
+- **CSV Import/Export** — Move data in and out like Excel
+- **Team Management** — Invite members with role-based permissions (owner, admin, editor, commenter, viewer)
+- **Demo Data** — Pre-loaded Pastor Partnership base matching your current form fields
+
+## Quick Start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Key Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route | Description |
+|-------|-------------|
+| `/` | Dashboard with all bases |
+| `/base/base-pastors` | Pastor Partnerships base |
+| `/base/base-pastors/table/tbl-pastors` | Spreadsheet grid view |
+| `/base/base-pastors/table/tbl-pastors/form/form-pastors` | Form builder |
+| `/embed/form-pastors` | Embeddable public form |
+| `/settings/team` | Team & permissions |
 
-## Learn More
+## Embed a Form
 
-To learn more about Next.js, take a look at the following resources:
+In the form builder, click **Embed** to copy:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```html
+<iframe src="https://your-domain.com/embed/form-pastors" width="100%" height="800" frameborder="0" style="border:none;border-radius:12px;"></iframe>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Data Storage
 
-## Deploy on Vercel
+Currently uses **browser localStorage** for UI prototyping. Export CSV anytime from any table. Phase 2 will connect **Supabase** (PostgreSQL + auth) deployed on **Vercel**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- Radix UI primitives
+- Zustand (state + persistence)
+
+## License
+
+Private — Reawaken USA
