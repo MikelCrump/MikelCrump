@@ -14,15 +14,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { templateVariables } from "@/lib/mock-data";
 import type { Template } from "@/lib/mock-data";
+import { buildReawakenWelcomeEmailHtml } from "@/lib/reawaken/welcome-email";
+import { REAWAKEN_WELCOME_TEMPLATE_NAME } from "@/lib/reawaken/welcome-email";
+import { brand } from "@/lib/brand";
 
-const starterHtml = `<div style="font-family: Arial, Helvetica, sans-serif; max-width: 600px; margin: 0 auto; color: #0f172a; line-height: 1.6;">
-  <h1 style="color: #4f46e5; font-size: 24px;">Hi {{params.first_name}},</h1>
-  <p>Write your message here. You can use HTML for layout, links, and styling.</p>
-  <p style="margin: 24px 0;">
-    <a href="{{params.link}}" style="background:#4f46e5;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block;">Call to action</a>
-  </p>
-  <p style="color:#64748b;font-size:14px;">— {{params.company_name}}</p>
-</div>`;
+const starterHtml = buildReawakenWelcomeEmailHtml();
 
 interface EmailTemplateEditorProps {
   mode: "create" | "edit";
@@ -32,8 +28,10 @@ interface EmailTemplateEditorProps {
 export function EmailTemplateEditor({ mode, template }: EmailTemplateEditorProps) {
   const router = useRouter();
   const bodyRef = useRef<HTMLTextAreaElement>(null);
-  const [name, setName] = useState(template?.name ?? "");
-  const [subject, setSubject] = useState(template?.subject ?? "");
+  const [name, setName] = useState(template?.name ?? REAWAKEN_WELCOME_TEMPLATE_NAME);
+  const [subject, setSubject] = useState(
+    template?.subject ?? `Welcome to ${brand.legalName}!`
+  );
   const [tag, setTag] = useState(
     template?.category && !["Active", "Inactive"].includes(template.category)
       ? template.category
@@ -160,7 +158,7 @@ export function EmailTemplateEditor({ mode, template }: EmailTemplateEditorProps
             <CardHeader>
               <CardTitle>Template details</CardTitle>
               <CardDescription>
-                Changes save to Brevo — no need to leave ReachFlow
+                Changes save to Brevo — synced with {brand.legalName}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

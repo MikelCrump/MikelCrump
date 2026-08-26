@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { REAWAKEN_WELCOME_SMS_BODY } from "@/lib/reawaken/welcome-sms";
+import { brand } from "@/lib/brand";
 
 export function TwilioTestSend() {
   const [to, setTo] = useState("");
-  const [body, setBody] = useState(
-    "ReachFlow test SMS via Twilio — your messaging platform is connected."
-  );
+  const [body, setBody] = useState(REAWAKEN_WELCOME_SMS_BODY);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle"
   );
@@ -44,9 +44,9 @@ export function TwilioTestSend() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Send a test SMS</CardTitle>
+        <CardTitle>Send welcome SMS test</CardTitle>
         <CardDescription>
-          Verifies your Twilio credentials and from-number with a one-off text.
+          Sends the default {brand.legalName} welcome text via Twilio.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

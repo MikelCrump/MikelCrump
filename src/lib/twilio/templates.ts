@@ -1,5 +1,5 @@
 import type { Template } from "@/lib/mock-data";
-import { smsTemplates as mockTemplates } from "@/lib/mock-data";
+import { getReawakenWelcomeSmsTemplate } from "@/lib/reawaken/welcome-sms";
 import { getTwilioClient, isTwilioConfigured } from "./client";
 
 function mapContentTemplate(item: {
@@ -16,13 +16,16 @@ function mapContentTemplate(item: {
   const body = textType?.body;
   if (!body) return null;
 
+  const name = item.friendlyName || item.sid;
+  if (!name.toLowerCase().includes("reawaken")) return null;
+
   return {
     id: item.sid,
-    name: item.friendlyName || item.sid,
+    name,
     channel: "sms",
     preview: body.slice(0, 160),
     body,
-    category: item.language || "Content",
+    category: "reawaken",
     updatedAt: (item.dateUpdated || new Date()).toISOString().slice(0, 10),
     usageCount: 0,
   };
@@ -32,13 +35,14 @@ export async function listSmsTemplates(): Promise<{
   templates: Template[];
   source: "twilio" | "demo";
 }> {
+  const reawaken = getReawakenWelcomeSmsTemplate();
+
   if (!isTwilioConfigured()) {
-    return { templates: mockTemplates, source: "demo" };
+    return { templates: [reawaken], source: "demo" };
   }
 
   try {
     const twilio = getTwilioClient();
-    // Content API templates (optional). Fall back to in-app demo templates if none.
     const contents = await twilio.content.v1.contents.list({ limit: 50 });
     const templates = contents
       .map((c) =>
@@ -53,13 +57,12 @@ export async function listSmsTemplates(): Promise<{
       .filter((t): t is Template => Boolean(t));
 
     if (templates.length === 0) {
-      return { templates: mockTemplates, source: "demo" };
+      return { templates: [reawaken], source: "twilio" };
     }
 
     return { templates, source: "twilio" };
   } catch {
-    // Content API may be unavailable on some accounts — keep usable templates.
-    return { templates: mockTemplates, source: "demo" };
+    return { templates: [reawaken], source: "twilio" };
   }
 }
 

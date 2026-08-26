@@ -1,64 +1,31 @@
 import type { Template } from "@/lib/mock-data";
-import { emailTemplates as mockTemplates } from "@/lib/mock-data";
 import { getBrevoClient, getBrevoConfig, isBrevoConfigured } from "./client";
-
-function stripHtml(html: string): string {
-  return html
-    .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function mapBrevoTemplate(t: {
-  id: number;
-  name: string;
-  subject: string;
-  htmlContent: string;
-  tag?: string;
-  modifiedAt: string;
-  isActive: boolean;
-}): Template {
-  const preview = stripHtml(t.htmlContent).slice(0, 160);
-  return {
-    id: String(t.id),
-    name: t.name,
-    channel: "email",
-    subject: t.subject,
-    preview: preview || t.subject,
-    body: t.htmlContent,
-    category: t.tag || (t.isActive ? "Active" : "Inactive"),
-    updatedAt: t.modifiedAt.slice(0, 10),
-    usageCount: 0,
-  };
-}
+import { mapBrevoTemplate } from "./templates-shared";
+import { listReawakenEmailTemplates } from "./welcome";
 
 export async function listEmailTemplates(options?: {
   activeOnly?: boolean;
 }): Promise<{ templates: Template[]; source: "brevo" | "demo" }> {
-  if (!isBrevoConfigured()) {
-    return { templates: mockTemplates, source: "demo" };
+  const result = await listReawakenEmailTemplates();
+  if (options?.activeOnly) {
+    return {
+      ...result,
+      templates: result.templates.filter(
+        (t) => t.category !== "Inactive"
+      ),
+    };
   }
-
-  const brevo = getBrevoClient();
-  const response = await brevo.transactionalEmails.getSmtpTemplates({
-    templateStatus: options?.activeOnly ? true : undefined,
-    limit: 50,
-    sort: "desc",
-  });
-
-  const templates = (response.templates ?? []).map(mapBrevoTemplate);
-  return { templates, source: "brevo" };
+  return result;
 }
 
 export async function getEmailTemplate(
   id: string
 ): Promise<{ template: Template; source: "brevo" | "demo" } | null> {
-  if (!isBrevoConfigured()) {
-    const template = mockTemplates.find((t) => t.id === id);
-    return template ? { template, source: "demo" } : null;
-  }
+  const { templates, source } = await listReawakenEmailTemplates();
+  const local = templates.find((t) => t.id === id);
+  if (local) return { template: local, source };
+
+  if (!isBrevoConfigured()) return null;
 
   const numericId = Number(id);
   if (Number.isNaN(numericId)) return null;
@@ -86,7 +53,7 @@ export async function createEmailTemplate(input: UpsertEmailTemplateInput) {
       source: "demo" as const,
       templateId: `demo-${Date.now()}`,
       message:
-        "Demo mode: template not saved to Brevo. Add BREVO_API_KEY to sync.",
+        "Connect Brevo to save templates. Use the Reawaken welcome template for new contacts.",
     };
   }
 
@@ -102,7 +69,7 @@ export async function createEmailTemplate(input: UpsertEmailTemplateInput) {
     subject: input.subject,
     htmlContent: input.htmlContent,
     isActive: input.isActive ?? true,
-    tag: input.tag,
+    tag: input.tag ?? "reawaken",
     replyTo: input.replyTo,
     sender: {
       email: senderEmail,
@@ -125,8 +92,7 @@ export async function updateEmailTemplate(
     return {
       source: "demo" as const,
       templateId: id,
-      message:
-        "Demo mode: template not updated in Brevo. Add BREVO_API_KEY to sync.",
+      message: "Connect Brevo to update templates.",
     };
   }
 
@@ -148,7 +114,7 @@ export async function updateEmailTemplate(
     subject: input.subject,
     htmlContent: input.htmlContent,
     isActive: input.isActive ?? true,
-    tag: input.tag,
+    tag: input.tag ?? "reawaken",
     replyTo: input.replyTo,
     sender: {
       email: senderEmail,

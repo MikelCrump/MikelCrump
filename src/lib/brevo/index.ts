@@ -15,3 +15,8 @@ export { sendTransactionalEmail, type SendTransactionalInput } from "./send";
 export { getBrevoConnectionStatus } from "./status";
 export { listBrevoContacts, getBrevoContactCount } from "./contacts";
 export { listBrevoLists, type BrevoList } from "./lists";
+export {
+  ensureReawakenWelcomeTemplate,
+  getReawakenWelcomeTemplate,
+  listReawakenEmailTemplates,
+} from "./welcome";

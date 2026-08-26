@@ -127,7 +127,7 @@ export default async function ContactsPage() {
             <p className="font-medium">No contacts found</p>
             <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
               {crm.needsServiceRole && isSupabaseConfigured()
-                ? "Command Center is linked, but ReachFlow needs the Supabase service role key to read CRM rows behind RLS."
+                ? "Command Center is linked, but Reawaken Communications needs the Supabase service role key to read CRM rows behind RLS."
                 : preferCrm
                   ? "Add contacts in Command Center CRM and they will show up here."
                   : "Add contacts in Brevo or connect Command Center CRM."}

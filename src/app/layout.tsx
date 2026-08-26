@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { brand } from "@/lib/brand";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ReachFlow — Email & SMS Automation Platform",
+  title: `${brand.legalName} — Communications`,
   description:
-    "Schedule emails and SMS, manage templates, and build automations with Brevo, Twilio, and ManyChat.",
+    "Schedule email and SMS for Reawaken USA. Brevo, Twilio, and Command Center CRM.",
+  icons: {
+    icon: brand.logoPath,
+    apple: brand.logoPath,
+  },
 };
 
 export default function RootLayout({

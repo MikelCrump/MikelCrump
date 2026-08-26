@@ -48,8 +48,8 @@ export function Header({ title, description, action }: HeaderProps) {
             </Button>
           )}
 
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
-            MC
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+            R
           </div>
         </div>
       </div>

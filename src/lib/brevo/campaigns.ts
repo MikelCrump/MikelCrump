@@ -1,5 +1,4 @@
 import type { Campaign, CampaignStatus } from "@/lib/mock-data";
-import { campaigns as mockCampaigns } from "@/lib/mock-data";
 import { getBrevoClient, getBrevoConfig, isBrevoConfigured } from "./client";
 
 function mapBrevoStatus(status: string): CampaignStatus {
@@ -70,7 +69,7 @@ export async function listEmailCampaigns(): Promise<{
 }> {
   if (!isBrevoConfigured()) {
     return {
-      campaigns: mockCampaigns.filter((c) => c.channel === "email"),
+      campaigns: [],
       source: "demo",
     };
   }

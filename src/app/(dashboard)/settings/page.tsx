@@ -1,5 +1,3 @@
-"use client";
-
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,40 +12,46 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { brand } from "@/lib/brand";
+import { getBrevoConfig, isBrevoConfigured } from "@/lib/brevo/client";
+import { getTwilioConfig, isTwilioConfigured } from "@/lib/twilio/client";
 
 export default function SettingsPage() {
+  const brevo = isBrevoConfigured() ? getBrevoConfig() : null;
+  const twilio = isTwilioConfigured() ? getTwilioConfig() : null;
+
   return (
     <>
       <Header
         title="Settings"
-        description="Configure your workspace and team preferences"
+        description={`${brand.legalName} communications workspace`}
       />
       <div className="p-8 max-w-3xl space-y-6 animate-fade-in">
         <Card>
           <CardHeader>
             <CardTitle>Workspace</CardTitle>
-            <CardDescription>General workspace settings</CardDescription>
+            <CardDescription>Organization profile</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="workspace-name">Workspace Name</Label>
-              <Input id="workspace-name" defaultValue="ReachFlow" />
+              <Label htmlFor="workspace-name">Organization</Label>
+              <Input id="workspace-name" defaultValue={brand.legalName} readOnly />
             </div>
             <div className="space-y-2">
               <Label htmlFor="timezone">Default Timezone</Label>
-              <Select defaultValue="america-new-york">
+              <Select defaultValue="america-chicago">
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="america-new-york">
-                    America/New_York (EST)
-                  </SelectItem>
                   <SelectItem value="america-chicago">
                     America/Chicago (CST)
                   </SelectItem>
-                  <SelectItem value="america-los-angeles">
-                    America/Los_Angeles (PST)
+                  <SelectItem value="america-new-york">
+                    America/New_York (EST)
+                  </SelectItem>
+                  <SelectItem value="america-denver">
+                    America/Denver (MST)
                   </SelectItem>
                   <SelectItem value="utc">UTC</SelectItem>
                 </SelectContent>
@@ -59,20 +63,28 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Email Defaults (Brevo)</CardTitle>
-            <CardDescription>Default sender settings for email campaigns</CardDescription>
+            <CardDescription>Live sender from your connected Brevo account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="from-name">From Name</Label>
-              <Input id="from-name" defaultValue="Your Company" />
+              <Input
+                id="from-name"
+                defaultValue={brevo?.senderName ?? brand.senderName}
+                readOnly
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="from-email">From Email</Label>
-              <Input id="from-email" defaultValue="hello@yourcompany.com" />
+              <Input
+                id="from-email"
+                defaultValue={brevo?.senderEmail ?? brand.senderEmail}
+                readOnly
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="reply-to">Reply-To Email</Label>
-              <Input id="reply-to" defaultValue="support@yourcompany.com" />
+              <Input id="reply-to" defaultValue={brand.supportEmail} readOnly />
             </div>
           </CardContent>
         </Card>
@@ -80,21 +92,25 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>SMS Defaults (Twilio)</CardTitle>
-            <CardDescription>Default settings for SMS campaigns</CardDescription>
+            <CardDescription>Live sender from your connected Twilio account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="from-number">From Phone Number</Label>
-              <Input id="from-number" defaultValue="+1 (555) 123-4567" />
+              <Input
+                id="from-number"
+                defaultValue={twilio?.phoneNumber ?? "Not connected"}
+                readOnly
+              />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium">Include opt-out message</p>
                 <p className="text-xs text-muted-foreground">
-                  Automatically append &quot;Reply STOP to opt out&quot; to marketing SMS
+                  Marketing SMS include &quot;Reply STOP to opt out&quot;
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked disabled />
             </div>
           </CardContent>
         </Card>
@@ -102,7 +118,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Team Notifications</CardTitle>
-            <CardDescription>Get notified about campaign activity</CardDescription>
+            <CardDescription>Campaign activity alerts</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -112,33 +128,23 @@ export default function SettingsPage() {
                   Email when a scheduled campaign completes
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked disabled />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">Automation alerts</p>
+                <p className="text-sm font-medium">Command Center contact sync</p>
                 <p className="text-xs text-muted-foreground">
-                  Notify when an automation errors or pauses
+                  Daily summary when CRM contacts update
                 </p>
               </div>
-              <Switch defaultChecked />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium">New contact sync</p>
-                <p className="text-xs text-muted-foreground">
-                  Daily summary of contacts synced from ManyChat
-                </p>
-              </div>
-              <Switch />
+              <Switch disabled />
             </div>
           </CardContent>
         </Card>
 
         <div className="flex justify-end">
-          <Button>Save Changes</Button>
+          <Button disabled>Save Changes</Button>
         </div>
       </div>
     </>

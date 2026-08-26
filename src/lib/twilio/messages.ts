@@ -1,5 +1,4 @@
 import type { Campaign, CampaignStatus } from "@/lib/mock-data";
-import { campaigns as mockCampaigns } from "@/lib/mock-data";
 import { getTwilioClient, isTwilioConfigured } from "./client";
 
 function mapStatus(status: string): CampaignStatus {
@@ -28,7 +27,7 @@ export async function listSmsCampaigns(): Promise<{
 }> {
   if (!isTwilioConfigured()) {
     return {
-      campaigns: mockCampaigns.filter((c) => c.channel === "sms"),
+      campaigns: [],
       source: "demo",
     };
   }

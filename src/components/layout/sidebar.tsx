@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -14,9 +15,9 @@ import {
   ChevronDown,
   Send,
   FileText,
-  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { brand } from "@/lib/brand";
 
 interface NavItem {
   title: string;
@@ -60,13 +61,17 @@ export function Sidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-sidebar-border bg-sidebar">
-      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Send className="h-5 w-5" />
-        </div>
+      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-5">
+        <Image
+          src={brand.logoWhitePath}
+          alt={brand.legalName}
+          width={36}
+          height={36}
+          className="rounded-md"
+        />
         <div>
-          <h1 className="text-base font-bold text-foreground">ReachFlow</h1>
-          <p className="text-[11px] text-muted-foreground">Messaging Platform</p>
+          <h1 className="text-base font-bold text-sidebar-foreground">{brand.name}</h1>
+          <p className="text-[11px] text-sidebar-foreground/60">{brand.tagline}</p>
         </div>
       </div>
 
@@ -90,8 +95,8 @@ export function Sidebar() {
                   className={cn(
                     "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-sidebar-accent text-accent-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                      ? "bg-sidebar-accent text-sidebar-foreground"
+                      : "text-sidebar-foreground/80 hover:bg-sidebar-accent/80 hover:text-sidebar-foreground"
                   )}
                 >
                   <span className="flex items-center gap-3">
@@ -116,8 +121,8 @@ export function Sidebar() {
                           pathname === child.href ||
                             (child.href !== "/" &&
                               pathname.startsWith(child.href))
-                            ? "bg-sidebar-accent font-medium text-accent-foreground"
-                            : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground"
+                            ? "bg-sidebar-accent font-medium text-sidebar-foreground"
+                            : "text-sidebar-foreground/60 hover:bg-sidebar-accent/80 hover:text-sidebar-foreground"
                         )}
                       >
                         <child.icon className="h-3.5 w-3.5" />
@@ -137,8 +142,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 pathname === item.href
-                  ? "bg-sidebar-accent text-accent-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                  ? "bg-sidebar-accent text-sidebar-foreground"
+                  : "text-sidebar-foreground/80 hover:bg-sidebar-accent/80 hover:text-sidebar-foreground"
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -149,13 +154,12 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-sidebar-border p-4">
-        <div className="rounded-lg bg-accent/50 p-3">
-          <div className="flex items-center gap-2 text-xs font-medium text-accent-foreground">
-            <Calendar className="h-3.5 w-3.5" />
-            Quick tip
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-            Schedule campaigns in advance and let automations handle follow-ups automatically.
+        <div className="rounded-lg bg-sidebar-accent p-3">
+          <p className="text-xs font-medium text-sidebar-foreground">
+            {brand.legalName}
+          </p>
+          <p className="mt-1 text-xs text-sidebar-foreground/60 leading-relaxed">
+            Email & SMS for your team, chapters, and outreach.
           </p>
         </div>
       </div>

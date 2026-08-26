@@ -452,13 +452,8 @@ export const audienceOptions = [
 ];
 
 export const templateVariables = [
-  "{{first_name}}",
-  "{{last_name}}",
-  "{{email}}",
-  "{{phone}}",
-  "{{company_name}}",
-  "{{appointment_date}}",
-  "{{appointment_time}}",
-  "{{promo_code}}",
-  "{{link}}",
+  "{{ params.FIRSTNAME }}",
+  "{{ params.LASTNAME }}",
+  "{{ params.EMAIL }}",
+  "{{ params.LINK }}",
 ];

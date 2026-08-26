@@ -13,7 +13,7 @@ export default async function DashboardPage() {
     <>
       <Header
         title="Dashboard"
-        description="Live overview from Brevo and Twilio"
+        description="Live overview for Reawaken USA outreach"
       />
       <div className="space-y-6 p-8 animate-fade-in">
         <StatsCards stats={stats} />
