@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { WorkspaceData } from "@/lib/supabase/mappers";
 import type {
   Base,
   CellValue,
@@ -26,9 +27,31 @@ import {
   EXTRA_RECORDS,
   EXTRA_TABLE,
 } from "./seed-data";
+import {
+  setWorkspaceId,
+  syncBase,
+  syncDeleteBase,
+  syncDeleteForm,
+  syncDeleteMember,
+  syncDeleteRecord,
+  syncDeleteTable,
+  syncForm,
+  syncMember,
+  syncMemberRole,
+  syncRecord,
+  syncRecords,
+  syncTable,
+  syncTableFields,
+  submitFormLocal,
+  submitFormRemote,
+} from "./sync";
+
+export type DataMode = "loading" | "local" | "remote";
 
 interface AppState {
+  mode: DataMode;
   workspace: Workspace;
+  workspaceId: string | null;
   bases: Base[];
   tables: Table[];
   records: TableRecord[];
@@ -36,40 +59,39 @@ interface AppState {
   team: TeamMember[];
   currentUserId: string;
 
-  // Base operations
+  setMode: (mode: DataMode) => void;
+  hydrate: (data: WorkspaceData) => void;
+
   createBase: (name: string, color?: string) => Base;
   updateBase: (id: string, updates: Partial<Base>) => void;
   deleteBase: (id: string) => void;
 
-  // Table operations
   createTable: (baseId: string, name: string) => Table;
   updateTable: (id: string, updates: Partial<Table>) => void;
   deleteTable: (id: string) => void;
 
-  // Field operations
   addField: (tableId: string, name: string, type: FieldType) => Field;
   updateField: (tableId: string, fieldId: string, updates: Partial<Field>) => void;
   deleteField: (tableId: string, fieldId: string) => void;
   reorderFields: (tableId: string, fieldIds: string[]) => void;
 
-  // Record operations
   addRecord: (tableId: string, values?: Record<string, CellValue>) => TableRecord;
   updateRecord: (id: string, values: Record<string, CellValue>) => void;
   deleteRecord: (id: string) => void;
   importRecords: (tableId: string, rows: Record<string, CellValue>[]) => void;
 
-  // Form operations
   createForm: (tableId: string, name: string) => Form;
   updateForm: (id: string, updates: Partial<Form>) => void;
   deleteForm: (id: string) => void;
-  submitForm: (formId: string, values: Record<string, CellValue>) => TableRecord;
+  submitForm: (
+    formId: string,
+    values: Record<string, CellValue>
+  ) => Promise<{ success: boolean; message?: string }>;
 
-  // Team operations
   inviteMember: (email: string, name: string, role: MemberRole) => TeamMember;
   updateMemberRole: (id: string, role: MemberRole) => void;
   removeMember: (id: string) => void;
 
-  // Selectors
   getBase: (id: string) => Base | undefined;
   getTable: (id: string) => Table | undefined;
   getTablesForBase: (baseId: string) => Table[];
@@ -78,16 +100,45 @@ interface AppState {
   getForm: (id: string) => Form | undefined;
 }
 
+const defaultState = {
+  mode: "loading" as DataMode,
+  workspace: DEMO_WORKSPACE,
+  workspaceId: null as string | null,
+  bases: [DEMO_BASE, EXTRA_BASE],
+  tables: [DEMO_TABLE, EXTRA_TABLE],
+  records: [...DEMO_RECORDS, ...EXTRA_RECORDS],
+  forms: [DEMO_FORM],
+  team: DEMO_TEAM,
+  currentUserId: "tm-1",
+};
+
+function maybeSync(mode: DataMode, fn: () => Promise<void>) {
+  if (mode === "remote") {
+    fn().catch(console.error);
+  }
+}
+
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
-      workspace: DEMO_WORKSPACE,
-      bases: [DEMO_BASE, EXTRA_BASE],
-      tables: [DEMO_TABLE, EXTRA_TABLE],
-      records: [...DEMO_RECORDS, ...EXTRA_RECORDS],
-      forms: [DEMO_FORM],
-      team: DEMO_TEAM,
-      currentUserId: "tm-1",
+      ...defaultState,
+
+      setMode: (mode) => set({ mode }),
+
+      hydrate: (data) => {
+        setWorkspaceId(data.workspace.id);
+        set({
+          mode: "remote",
+          workspace: data.workspace,
+          workspaceId: data.workspace.id,
+          bases: data.bases,
+          tables: data.tables,
+          records: data.records,
+          forms: data.forms,
+          team: data.team,
+          currentUserId: data.currentUserId,
+        });
+      },
 
       createBase: (name, color = "#6366f1") => {
         const base: Base = {
@@ -97,15 +148,19 @@ export const useAppStore = create<AppState>()(
           createdAt: new Date().toISOString(),
         };
         set((s) => ({ bases: [...s.bases, base] }));
+        maybeSync(get().mode, () => syncBase(base));
         return base;
       },
 
-      updateBase: (id, updates) =>
+      updateBase: (id, updates) => {
         set((s) => ({
           bases: s.bases.map((b) => (b.id === id ? { ...b, ...updates } : b)),
-        })),
+        }));
+        const base = get().getBase(id);
+        if (base) maybeSync(get().mode, () => syncBase(base));
+      },
 
-      deleteBase: (id) =>
+      deleteBase: (id) => {
         set((s) => ({
           bases: s.bases.filter((b) => b.id !== id),
           tables: s.tables.filter((t) => t.baseId !== id),
@@ -113,7 +168,9 @@ export const useAppStore = create<AppState>()(
             (r) => !s.tables.find((t) => t.id === r.tableId && t.baseId === id)
           ),
           forms: s.forms.filter((f) => f.baseId !== id),
-        })),
+        }));
+        maybeSync(get().mode, () => syncDeleteBase(id));
+      },
 
       createTable: (baseId, name) => {
         const table: Table = {
@@ -127,20 +184,26 @@ export const useAppStore = create<AppState>()(
           views: [{ id: generateId(), name: "Grid view", type: "grid" }],
         };
         set((s) => ({ tables: [...s.tables, table] }));
+        maybeSync(get().mode, () => syncTable(table));
         return table;
       },
 
-      updateTable: (id, updates) =>
+      updateTable: (id, updates) => {
         set((s) => ({
           tables: s.tables.map((t) => (t.id === id ? { ...t, ...updates } : t)),
-        })),
+        }));
+        const table = get().getTable(id);
+        if (table) maybeSync(get().mode, () => syncTable(table));
+      },
 
-      deleteTable: (id) =>
+      deleteTable: (id) => {
         set((s) => ({
           tables: s.tables.filter((t) => t.id !== id),
           records: s.records.filter((r) => r.tableId !== id),
           forms: s.forms.filter((f) => f.tableId !== id),
-        })),
+        }));
+        maybeSync(get().mode, () => syncDeleteTable(id));
+      },
 
       addField: (tableId, name, type) => {
         const field: Field = {
@@ -157,10 +220,12 @@ export const useAppStore = create<AppState>()(
             t.id === tableId ? { ...t, fields: [...t.fields, field] } : t
           ),
         }));
+        const table = get().getTable(tableId);
+        if (table) maybeSync(get().mode, () => syncTableFields(tableId, table.fields));
         return field;
       },
 
-      updateField: (tableId, fieldId, updates) =>
+      updateField: (tableId, fieldId, updates) => {
         set((s) => ({
           tables: s.tables.map((t) =>
             t.id === tableId
@@ -172,9 +237,12 @@ export const useAppStore = create<AppState>()(
                 }
               : t
           ),
-        })),
+        }));
+        const table = get().getTable(tableId);
+        if (table) maybeSync(get().mode, () => syncTableFields(tableId, table.fields));
+      },
 
-      deleteField: (tableId, fieldId) =>
+      deleteField: (tableId, fieldId) => {
         set((s) => ({
           tables: s.tables.map((t) =>
             t.id === tableId
@@ -186,9 +254,12 @@ export const useAppStore = create<AppState>()(
             const { [fieldId]: _, ...rest } = r.values;
             return { ...r, values: rest };
           }),
-        })),
+        }));
+        const table = get().getTable(tableId);
+        if (table) maybeSync(get().mode, () => syncTableFields(tableId, table.fields));
+      },
 
-      reorderFields: (tableId, fieldIds) =>
+      reorderFields: (tableId, fieldIds) => {
         set((s) => ({
           tables: s.tables.map((t) => {
             if (t.id !== tableId) return t;
@@ -200,7 +271,10 @@ export const useAppStore = create<AppState>()(
                 .filter(Boolean) as Field[],
             };
           }),
-        })),
+        }));
+        const table = get().getTable(tableId);
+        if (table) maybeSync(get().mode, () => syncTableFields(tableId, table.fields));
+      },
 
       addRecord: (tableId, values = {}) => {
         const now = new Date().toISOString();
@@ -212,10 +286,11 @@ export const useAppStore = create<AppState>()(
           updatedAt: now,
         };
         set((s) => ({ records: [...s.records, record] }));
+        maybeSync(get().mode, () => syncRecord(record));
         return record;
       },
 
-      updateRecord: (id, values) =>
+      updateRecord: (id, values) => {
         set((s) => ({
           records: s.records.map((r) =>
             r.id === id
@@ -226,10 +301,15 @@ export const useAppStore = create<AppState>()(
                 }
               : r
           ),
-        })),
+        }));
+        const record = get().records.find((r) => r.id === id);
+        if (record) maybeSync(get().mode, () => syncRecord(record));
+      },
 
-      deleteRecord: (id) =>
-        set((s) => ({ records: s.records.filter((r) => r.id !== id) })),
+      deleteRecord: (id) => {
+        set((s) => ({ records: s.records.filter((r) => r.id !== id) }));
+        maybeSync(get().mode, () => syncDeleteRecord(id));
+      },
 
       importRecords: (tableId, rows) => {
         const now = new Date().toISOString();
@@ -241,6 +321,7 @@ export const useAppStore = create<AppState>()(
           updatedAt: now,
         }));
         set((s) => ({ records: [...s.records, ...newRecords] }));
+        maybeSync(get().mode, () => syncRecords(newRecords));
       },
 
       createForm: (tableId, name) => {
@@ -258,27 +339,52 @@ export const useAppStore = create<AppState>()(
           published: false,
         };
         set((s) => ({ forms: [...s.forms, form] }));
+        maybeSync(get().mode, () => syncForm(form));
         return form;
       },
 
-      updateForm: (id, updates) =>
+      updateForm: (id, updates) => {
         set((s) => ({
           forms: s.forms.map((f) => (f.id === id ? { ...f, ...updates } : f)),
-        })),
+        }));
+        const form = get().getForm(id);
+        if (form) maybeSync(get().mode, () => syncForm(form));
+      },
 
-      deleteForm: (id) =>
-        set((s) => ({ forms: s.forms.filter((f) => f.id !== id) })),
+      deleteForm: (id) => {
+        set((s) => ({ forms: s.forms.filter((f) => f.id !== id) }));
+        maybeSync(get().mode, () => syncDeleteForm(id));
+      },
 
-      submitForm: (formId, values) => {
+      submitForm: async (formId, values) => {
         const form = get().getForm(formId);
-        if (!form) throw new Error("Form not found");
-        const now = new Date().toISOString();
-        const record = get().addRecord(form.tableId, {
-          ...values,
-          "f-submitted": now.split("T")[0],
-          "f-status": "New",
-        });
-        return record;
+        if (!form) return { success: false };
+
+        if (get().mode === "remote") {
+          const result = await submitFormRemote(formId, values);
+          if (result.success) {
+            const now = new Date().toISOString();
+            const record: TableRecord = {
+              id: result.recordId ?? generateId(),
+              tableId: form.tableId,
+              values: {
+                ...values,
+                "f-submitted": now.split("T")[0],
+                "f-status": "New",
+              },
+              createdAt: now,
+              updatedAt: now,
+            };
+            set((s) => ({ records: [...s.records, record] }));
+          }
+          return {
+            success: result.success,
+            message: result.message ?? form.successMessage,
+          };
+        }
+
+        submitFormLocal(formId, values, get().addRecord, get().getForm);
+        return { success: true, message: form.successMessage };
       },
 
       inviteMember: (email, name, role) => {
@@ -292,16 +398,22 @@ export const useAppStore = create<AppState>()(
           status: "pending",
         };
         set((s) => ({ team: [...s.team, member] }));
+        const wId = get().workspaceId;
+        if (wId) maybeSync(get().mode, () => syncMember(member, wId));
         return member;
       },
 
-      updateMemberRole: (id, role) =>
+      updateMemberRole: (id, role) => {
         set((s) => ({
           team: s.team.map((m) => (m.id === id ? { ...m, role } : m)),
-        })),
+        }));
+        maybeSync(get().mode, () => syncMemberRole(id, role));
+      },
 
-      removeMember: (id) =>
-        set((s) => ({ team: s.team.filter((m) => m.id !== id) })),
+      removeMember: (id) => {
+        set((s) => ({ team: s.team.filter((m) => m.id !== id) }));
+        maybeSync(get().mode, () => syncDeleteMember(id));
+      },
 
       getBase: (id) => get().bases.find((b) => b.id === id),
       getTable: (id) => get().tables.find((t) => t.id === id),
@@ -315,7 +427,18 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "tableflow-storage",
-      version: 1,
+      version: 2,
+      partialize: (state) => ({
+        mode: state.mode === "remote" ? "remote" : "local",
+        workspace: state.workspace,
+        workspaceId: state.workspaceId,
+        bases: state.bases,
+        tables: state.tables,
+        records: state.records,
+        forms: state.forms,
+        team: state.team,
+        currentUserId: state.currentUserId,
+      }),
     }
   )
 );

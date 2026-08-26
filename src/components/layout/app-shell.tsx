@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Database,
   LayoutGrid,
@@ -9,30 +9,49 @@ import {
   Users,
   Plus,
   ChevronDown,
+  LogOut,
+  Cloud,
+  HardDrive,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/lib/store";
+import { isSupabaseConfigured } from "@/lib/config";
+import { tryCreateClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const workspace = useAppStore((s) => s.workspace);
   const bases = useAppStore((s) => s.bases);
+  const mode = useAppStore((s) => s.mode);
   const currentUser = useAppStore((s) =>
     s.team.find((m) => m.id === s.currentUserId)
   );
 
   const isEmbed = pathname.startsWith("/embed");
+  const isAuth = pathname.startsWith("/login") || pathname.startsWith("/signup");
 
-  if (isEmbed) {
+  if (isEmbed || isAuth) {
     return <>{children}</>;
   }
+
+  const handleSignOut = async () => {
+    const supabase = tryCreateClient();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    router.push("/login");
+    router.refresh();
+  };
 
   const navItems = [
     { href: "/", label: "Home", icon: LayoutGrid },
@@ -48,7 +67,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Database className="h-4 w-4" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900">TableFlow</p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-semibold text-slate-900">TableFlow</p>
+              {mode === "remote" ? (
+                <Badge variant="success" className="px-1.5 py-0 text-[10px]">
+                  <Cloud className="mr-0.5 h-2.5 w-2.5" />
+                  Cloud
+                </Badge>
+              ) : mode === "local" ? (
+                <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                  <HardDrive className="mr-0.5 h-2.5 w-2.5" />
+                  Local
+                </Badge>
+              ) : null}
+            </div>
             <p className="truncate text-xs text-slate-500">{workspace.name}</p>
           </div>
         </div>
@@ -149,6 +181,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <DropdownMenuItem asChild>
                 <Link href="/settings">Settings</Link>
               </DropdownMenuItem>
+              {isSupabaseConfigured() && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

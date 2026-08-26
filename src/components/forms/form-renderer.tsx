@@ -20,7 +20,9 @@ import { CheckCircle2 } from "lucide-react";
 interface FormRendererProps {
   form: Form;
   fields: Field[];
-  onSubmit: (values: Record<string, CellValue>) => void;
+  onSubmit: (
+    values: Record<string, CellValue>
+  ) => void | Promise<void | { success?: boolean; message?: string }>;
   embed?: boolean;
 }
 
@@ -32,7 +34,9 @@ export function FormRenderer({
 }: FormRendererProps) {
   const [values, setValues] = useState<Record<string, CellValue>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const orderedFields = form.fieldIds
     .map((id) => fields.find((f) => f.id === id))
@@ -76,11 +80,23 @@ export function FormRenderer({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    onSubmit(values);
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const result = await onSubmit(values);
+      setSuccessMessage(
+        (result && typeof result === "object" && "message" in result && result.message) ||
+          form.successMessage ||
+          "Thank you!"
+      );
+      setSubmitted(true);
+    } catch {
+      setErrors({ _form: "Something went wrong. Please try again." });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -99,7 +115,7 @@ export function FormRenderer({
           Thank you!
         </h2>
         <p className="mt-2 max-w-md text-slate-600">
-          {form.successMessage}
+          {successMessage ?? form.successMessage}
         </p>
       </div>
     );
@@ -237,9 +253,13 @@ export function FormRenderer({
         type="submit"
         className="mt-8 w-full sm:w-auto"
         style={{ backgroundColor: primaryColor }}
+        disabled={submitting}
       >
-        {form.submitButtonText || "Submit"}
+        {submitting ? "Submitting..." : form.submitButtonText || "Submit"}
       </Button>
+      {errors._form && (
+        <p className="mt-2 text-sm text-red-500">{errors._form}</p>
+      )}
     </form>
   );
 }
