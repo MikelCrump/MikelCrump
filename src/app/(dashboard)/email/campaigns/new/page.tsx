@@ -1,12 +1,15 @@
 import { Header } from "@/components/layout/header";
 import { ScheduleCampaignForm } from "@/components/campaigns/schedule-form";
 import { BrevoStatusBanner } from "@/components/brevo/status-banner";
-import { listEmailTemplates } from "@/lib/brevo";
+import { listEmailTemplates, listBrevoLists } from "@/lib/brevo";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewEmailCampaignPage() {
-  const { templates, source } = await listEmailTemplates({ activeOnly: true });
+  const [{ templates, source }, { lists }] = await Promise.all([
+    listEmailTemplates({ activeOnly: true }),
+    listBrevoLists(),
+  ]);
 
   return (
     <>
@@ -20,6 +23,7 @@ export default async function NewEmailCampaignPage() {
           channel="email"
           templates={templates}
           dataSource={source}
+          brevoLists={lists}
         />
       </div>
     </>

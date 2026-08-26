@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Calendar, Clock, Users, FileText, Send, Save, Loader2 } from "lucide-react";
@@ -18,19 +18,24 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { audienceOptions, templateVariables } from "@/lib/mock-data";
+import { templateVariables } from "@/lib/mock-data";
 import type { Template } from "@/lib/mock-data";
+import type { BrevoList } from "@/lib/brevo/lists";
 
 interface ScheduleCampaignFormProps {
   channel: "email" | "sms";
   templates: Template[];
   dataSource?: "brevo" | "twilio" | "demo";
+  brevoLists?: BrevoList[];
 }
+
+type SmsAudienceMode = "single" | "list" | "paste";
 
 export function ScheduleCampaignForm({
   channel,
   templates,
   dataSource = "demo",
+  brevoLists = [],
 }: ScheduleCampaignFormProps) {
   const router = useRouter();
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]?.id ?? "");
@@ -38,15 +43,32 @@ export function ScheduleCampaignForm({
   const [name, setName] = useState("");
   const [subject, setSubject] = useState(templates[0]?.subject ?? "");
   const [smsBody, setSmsBody] = useState(templates[0]?.body ?? "");
-  const [date, setDate] = useState("2026-08-25");
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [time, setTime] = useState("09:00");
-  const [listIds, setListIds] = useState("");
+  const [selectedListIds, setSelectedListIds] = useState<number[]>([]);
+  const [lists, setLists] = useState<BrevoList[]>(brevoLists);
   const [testEmail, setTestEmail] = useState("");
   const [smsTo, setSmsTo] = useState("");
+  const [smsAudienceMode, setSmsAudienceMode] = useState<SmsAudienceMode>("single");
+  const [smsListId, setSmsListId] = useState<string>("");
+  const [smsPasteNumbers, setSmsPasteNumbers] = useState("");
   const [submitting, setSubmitting] = useState<"idle" | "send" | "draft" | "test">("idle");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(
     null
   );
+
+  useEffect(() => {
+    if (channel !== "email" && channel !== "sms") return;
+    if (dataSource !== "brevo" && channel === "email") return;
+    if (brevoLists.length > 0) return;
+
+    fetch("/api/brevo/lists")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.lists)) setLists(data.lists);
+      })
+      .catch(() => {});
+  }, [channel, dataSource, brevoLists.length]);
 
   const template = templates.find((t) => t.id === selectedTemplate);
   const isEmail = channel === "email";
@@ -55,6 +77,18 @@ export function ScheduleCampaignForm({
     if (sendMode === "now") return "Immediately";
     return `${date} at ${time}`;
   }, [sendMode, date, time]);
+
+  const smsRecipientPreview = useMemo(() => {
+    if (smsAudienceMode === "single") return smsTo ? 1 : 0;
+    if (smsAudienceMode === "paste") {
+      return smsPasteNumbers
+        .split(/[\n,;]+/)
+        .map((v) => v.trim())
+        .filter(Boolean).length;
+    }
+    const list = lists.find((l) => String(l.id) === smsListId);
+    return list?.totalSubscribers ?? 0;
+  }, [smsAudienceMode, smsTo, smsPasteNumbers, smsListId, lists]);
 
   const onTemplateChange = (id: string) => {
     setSelectedTemplate(id);
@@ -70,11 +104,11 @@ export function ScheduleCampaignForm({
     return iso.toISOString();
   };
 
-  const parseListIds = () =>
-    listIds
-      .split(",")
-      .map((v) => Number(v.trim()))
-      .filter((n) => Number.isInteger(n) && n > 0);
+  const toggleListId = (id: number) => {
+    setSelectedListIds((prev) =>
+      prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
+    );
+  };
 
   const submitEmailCampaign = async (mode: "send" | "draft") => {
     if (!isEmail) return;
@@ -89,7 +123,7 @@ export function ScheduleCampaignForm({
         sendNow: mode === "send" && sendMode === "now",
         scheduledAt:
           mode === "send" && sendMode === "schedule" ? buildScheduledAt() : undefined,
-        listIds: parseListIds(),
+        listIds: selectedListIds,
       };
 
       if (!Number.isNaN(numericTemplateId) && dataSource === "brevo") {
@@ -164,37 +198,68 @@ export function ScheduleCampaignForm({
 
   const submitSms = async () => {
     if (isEmail) return;
-    if (!smsTo.trim()) {
-      setFeedback({ type: "error", text: "Enter a recipient phone number (E.164)." });
-      return;
-    }
+
     setSubmitting("send");
     setFeedback(null);
+
     try {
-      const payload: Record<string, unknown> = {
-        to: smsTo,
-        body: smsBody || template?.body || "",
-      };
-      if (sendMode === "schedule") {
-        const sendAt = buildScheduledAt();
-        if (sendAt) payload.sendAt = sendAt;
+      const body = smsBody || template?.body || "";
+      const sendAt =
+        sendMode === "schedule" ? buildScheduledAt() : undefined;
+
+      if (smsAudienceMode === "single") {
+        if (!smsTo.trim()) {
+          throw new Error("Enter a recipient phone number (E.164).");
+        }
+        const res = await fetch("/api/twilio/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: smsTo,
+            body,
+            sendAt,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "SMS send failed");
+        setFeedback({
+          type: "success",
+          text:
+            data.source === "demo"
+              ? data.message
+              : `SMS ${data.status}. SID: ${data.sid}`,
+        });
+      } else {
+        const payload: Record<string, unknown> = { body, sendAt };
+        if (smsAudienceMode === "list") {
+          if (!smsListId) throw new Error("Select a Brevo list.");
+          payload.listId = Number(smsListId);
+        } else {
+          const recipients = smsPasteNumbers
+            .split(/[\n,;]+/)
+            .map((v) => v.trim())
+            .filter(Boolean);
+          if (!recipients.length) {
+            throw new Error("Paste at least one phone number.");
+          }
+          payload.recipients = recipients;
+        }
+
+        const res = await fetch("/api/twilio/bulk-send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Bulk SMS failed");
+        setFeedback({
+          type: "success",
+          text: data.message,
+        });
       }
-      const res = await fetch("/api/twilio/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "SMS send failed");
-      setFeedback({
-        type: "success",
-        text:
-          data.source === "demo"
-            ? data.message
-            : `SMS ${data.status}. SID: ${data.sid}`,
-      });
-      if (data.source === "twilio") {
-        setTimeout(() => router.push("/sms/campaigns"), 1200);
+
+      if (dataSource === "twilio") {
+        setTimeout(() => router.push("/sms/campaigns"), 1500);
       }
     } catch (error) {
       setFeedback({
@@ -205,6 +270,13 @@ export function ScheduleCampaignForm({
       setSubmitting("idle");
     }
   };
+
+  const canSubmitSms =
+    smsAudienceMode === "single"
+      ? Boolean(smsTo.trim())
+      : smsAudienceMode === "list"
+        ? Boolean(smsListId)
+        : Boolean(smsPasteNumbers.trim());
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
@@ -283,15 +355,36 @@ export function ScheduleCampaignForm({
             {isEmail ? (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="list-ids">Brevo List IDs (optional)</Label>
-                  <Input
-                    id="list-ids"
-                    placeholder="e.g., 2, 5"
-                    value={listIds}
-                    onChange={(e) => setListIds(e.target.value)}
-                  />
+                  <Label>Brevo lists</Label>
+                  {lists.length > 0 ? (
+                    <div className="space-y-2 rounded-lg border border-border p-3 max-h-48 overflow-y-auto">
+                      {lists.map((list) => (
+                        <label
+                          key={list.id}
+                          className="flex items-center gap-3 text-sm cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            className="rounded border-border"
+                            checked={selectedListIds.includes(list.id)}
+                            onChange={() => toggleListId(list.id)}
+                          />
+                          <span className="flex-1">{list.name}</span>
+                          <span className="text-muted-foreground text-xs">
+                            {list.totalSubscribers.toLocaleString()}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      {dataSource === "brevo"
+                        ? "No lists found in Brevo yet. Create one under Contacts → Lists."
+                        : "Connect Brevo to pick lists from your account."}
+                    </p>
+                  )}
                   <p className="text-xs text-muted-foreground">
-                    Required to send/schedule a marketing campaign to a list. Find IDs in Brevo → Contacts → Lists.
+                    Required to send or schedule a marketing campaign. Test sends below go to one inbox.
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -307,18 +400,57 @@ export function ScheduleCampaignForm({
               </>
             ) : (
               <>
-                <div className="space-y-2">
-                  <Label htmlFor="sms-to">Recipient phone (E.164)</Label>
-                  <Input
-                    id="sms-to"
-                    placeholder="+15551234567"
-                    value={smsTo}
-                    onChange={(e) => setSmsTo(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    For now this sends to one number via Twilio. Bulk audiences come next with contact lists.
-                  </p>
-                </div>
+                <Tabs
+                  value={smsAudienceMode}
+                  onValueChange={(v) => setSmsAudienceMode(v as SmsAudienceMode)}
+                >
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="single">Single</TabsTrigger>
+                    <TabsTrigger value="list">Brevo list</TabsTrigger>
+                    <TabsTrigger value="paste">Paste numbers</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="single" className="mt-4 space-y-2">
+                    <Label htmlFor="sms-to">Recipient phone (E.164)</Label>
+                    <Input
+                      id="sms-to"
+                      placeholder="+15551234567"
+                      value={smsTo}
+                      onChange={(e) => setSmsTo(e.target.value)}
+                    />
+                  </TabsContent>
+                  <TabsContent value="list" className="mt-4 space-y-2">
+                    <Label>Brevo list (SMS attribute required)</Label>
+                    <Select value={smsListId} onValueChange={setSmsListId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a list" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {lists.map((list) => (
+                          <SelectItem key={list.id} value={String(list.id)}>
+                            {list.name} ({list.totalSubscribers.toLocaleString()})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Sends to contacts in the list with a phone in the SMS attribute (max 50 per send).
+                    </p>
+                  </TabsContent>
+                  <TabsContent value="paste" className="mt-4 space-y-2">
+                    <Label htmlFor="sms-paste">Phone numbers</Label>
+                    <Textarea
+                      id="sms-paste"
+                      placeholder={"+15551234567\n+15559876543"}
+                      value={smsPasteNumbers}
+                      onChange={(e) => setSmsPasteNumbers(e.target.value)}
+                      rows={4}
+                      className="font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      One number per line or comma-separated (max 50).
+                    </p>
+                  </TabsContent>
+                </Tabs>
                 <div className="space-y-2">
                   <Label htmlFor="message">Message</Label>
                   <Textarea
@@ -331,6 +463,9 @@ export function ScheduleCampaignForm({
                   <p className="text-xs text-muted-foreground">
                     {smsBody.length} characters ·{" "}
                     {Math.ceil(smsBody.length / 160) || 1} segment(s)
+                    {smsAudienceMode !== "single" && smsRecipientPreview > 0
+                      ? ` · ~${smsRecipientPreview} recipient(s)`
+                      : ""}
                   </p>
                 </div>
               </>
@@ -432,6 +567,14 @@ export function ScheduleCampaignForm({
                 <span className="text-muted-foreground">Delivery</span>
                 <span className="font-medium">{scheduledLabel}</span>
               </div>
+              {!isEmail && smsAudienceMode !== "single" && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Audience</span>
+                  <span className="font-medium">
+                    {smsAudienceMode === "list" ? "Brevo list" : "Pasted numbers"}
+                  </span>
+                </div>
+              )}
             </div>
 
             {feedback && (
@@ -491,7 +634,7 @@ export function ScheduleCampaignForm({
               ) : (
                 <Button
                   className="w-full gap-2"
-                  disabled={submitting !== "idle" || !smsTo}
+                  disabled={submitting !== "idle" || !canSubmitSms}
                   onClick={submitSms}
                 >
                   {submitting === "send" ? (
@@ -499,7 +642,11 @@ export function ScheduleCampaignForm({
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  {sendMode === "now" ? "Send SMS" : "Schedule SMS"}
+                  {sendMode === "now"
+                    ? smsAudienceMode === "single"
+                      ? "Send SMS"
+                      : "Send bulk SMS"
+                    : "Schedule SMS"}
                 </Button>
               )}
               <Button variant="ghost" className="w-full" asChild>

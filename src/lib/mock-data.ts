@@ -366,7 +366,7 @@ export const integrations: Integration[] = [
     name: "ManyChat",
     description: "Capture leads from chatbots and sync subscribers to your contact lists.",
     category: "lead-gen",
-    connected: true,
+    connected: false,
     logo: "M",
   },
   {
