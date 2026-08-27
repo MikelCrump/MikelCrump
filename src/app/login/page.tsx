@@ -100,7 +100,7 @@ function LoginForm() {
         <div>
           <h1 className="text-xl font-bold text-slate-900">Sign in</h1>
           <p className="text-sm text-slate-500">
-            TableFlow · Reawaken Command Center
+            Tables · Reawaken Command Center
           </p>
         </div>
       </div>
@@ -192,7 +192,7 @@ export default function LoginPage() {
           <Database className="mx-auto mb-4 h-10 w-10 text-blue-600" />
           <h1 className="text-xl font-bold text-slate-900">Local mode</h1>
           <p className="mt-2 text-sm text-slate-500">
-            Supabase is not configured. TableFlow is running with browser
+            Supabase is not configured. Tables is running with browser
             storage. Add your env vars to enable cloud sync.
           </p>
           <Button className="mt-6" asChild>

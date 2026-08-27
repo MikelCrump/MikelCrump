@@ -1,8 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --border: #e5e5e5;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-muted: #737373;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-border: #e5e5e5;
+  --primary: #2563eb;
+  --surface: #f8fafc;
+}
+
+.dark {
+  --background: hsl(224 24% 8%);
+  --foreground: hsl(210 20% 96%);
+  --card: hsl(224 20% 11%);
+  --muted: hsl(224 16% 15%);
+  --muted-foreground: hsl(217 12% 65%);
+  --border: hsl(224 16% 20%);
+  --sidebar: hsl(224 24% 8%);
+  --sidebar-foreground: hsl(210 20% 96%);
+  --sidebar-muted: hsl(217 12% 60%);
+  --sidebar-accent: hsl(224 16% 15%);
+  --sidebar-border: hsl(224 16% 18%);
+  --primary: hsl(217.2 91.2% 59.8%);
+  --surface: hsl(224 20% 11%);
 }
 
 @theme inline {
@@ -23,6 +50,10 @@ body {
   scrollbar-color: #cbd5e1 transparent;
 }
 
+.dark * {
+  scrollbar-color: hsl(224 16% 28%) transparent;
+}
+
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -31,4 +62,8 @@ body {
 *::-webkit-scrollbar-thumb {
   background-color: #cbd5e1;
   border-radius: 3px;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background-color: hsl(224 16% 28%);
 }

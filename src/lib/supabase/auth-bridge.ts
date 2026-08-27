@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Sync a Command Center (localStorage) Supabase session into TableFlow's
+ * Sync a Command Center (localStorage) Supabase session into Tables'
  * cookie-based SSR client when both apps share the same origin
  * (e.g. reawakencommandcenter.com/apps/tableflow).
  */

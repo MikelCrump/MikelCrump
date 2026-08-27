@@ -8,7 +8,6 @@ import {
   Database,
   Table2,
   FileText,
-  Users,
   ArrowRight,
   Sparkles,
 } from "lucide-react";
@@ -59,7 +58,6 @@ function HomePageContent() {
   const tables = useAppStore((s) => s.tables);
   const records = useAppStore((s) => s.records);
   const forms = useAppStore((s) => s.forms);
-  const team = useAppStore((s) => s.team);
   const createBase = useAppStore((s) => s.createBase);
 
   const [showCreate, setShowCreate] = useState(false);
@@ -84,7 +82,7 @@ function HomePageContent() {
     { label: "Bases", value: bases.length, icon: Database },
     { label: "Tables", value: tables.length, icon: Table2 },
     { label: "Records", value: records.length, icon: FileText },
-    { label: "Team", value: team.length, icon: Users },
+    { label: "Forms", value: forms.length, icon: FileText },
   ];
 
   return (

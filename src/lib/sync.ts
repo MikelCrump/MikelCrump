@@ -26,6 +26,7 @@ import type {
   TableRecord,
   TeamMember,
 } from "@/lib/types";
+import { apiPath } from "@/lib/api-path";
 
 let workspaceIdCache: string | null = null;
 
@@ -41,7 +42,7 @@ function getClient() {
 
 async function wsId(): Promise<string | null> {
   if (workspaceIdCache) return workspaceIdCache;
-  const res = await fetch("/api/workspace");
+  const res = await fetch(apiPath("/api/workspace"));
   if (!res.ok) return null;
   const data = await res.json();
   if (data.workspace?.id) {
@@ -55,7 +56,7 @@ export async function loadRemoteWorkspace(): Promise<
   (WorkspaceData & { mode: "remote" }) | { mode: "local" } | null
 > {
   try {
-    const res = await fetch("/api/workspace");
+    const res = await fetch(apiPath("/api/workspace"));
     if (res.status === 401) return null;
     const data = await res.json();
     if (data.mode === "remote") {

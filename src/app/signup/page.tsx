@@ -62,7 +62,7 @@ function SignupForm() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-slate-900">Create account</h1>
-          <p className="text-sm text-slate-500">Start using TableFlow cloud</p>
+          <p className="text-sm text-slate-500">Start using Tables cloud</p>
         </div>
       </div>
 

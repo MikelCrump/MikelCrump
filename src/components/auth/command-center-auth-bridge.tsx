@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { syncCommandCenterSession } from "@/lib/supabase/auth-bridge";
 import { isSupabaseConfigured } from "@/lib/config";
 
-/** Hydrate TableFlow session from Command Center when mounted under the same origin. */
+/** Hydrate Tables session from Command Center when mounted under the same origin. */
 export function CommandCenterAuthBridge({
   children,
 }: {

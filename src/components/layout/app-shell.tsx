@@ -6,12 +6,12 @@ import {
   Database,
   LayoutGrid,
   Settings,
-  Users,
   Plus,
   ChevronDown,
   LogOut,
   Cloud,
   HardDrive,
+  ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/lib/store";
@@ -56,20 +56,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: "/", label: "Home", icon: LayoutGrid },
-    { href: "/settings/team", label: "Team", icon: Users },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      <aside className="flex w-64 flex-col border-r border-slate-200 bg-white">
-        <div className="flex h-14 items-center gap-2 border-b border-slate-100 px-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
+    <div className="flex h-screen bg-[var(--surface)] text-[var(--foreground)]">
+      <aside className="flex w-64 flex-col border-r border-[var(--sidebar-border)] bg-[var(--sidebar)]">
+        <div className="flex h-14 items-center gap-2 border-b border-[var(--sidebar-border)] px-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white">
             <Database className="h-4 w-4" />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <p className="text-sm font-semibold text-slate-900">TableFlow</p>
+              <p className="text-sm font-semibold text-[var(--sidebar-foreground)]">
+                Tables
+              </p>
               {mode === "remote" ? (
                 <Badge variant="success" className="px-1.5 py-0 text-[10px]">
                   <Cloud className="mr-0.5 h-2.5 w-2.5" />
@@ -82,12 +83,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Badge>
               ) : null}
             </div>
-            <p className="truncate text-xs text-slate-500">{workspace.name}</p>
+            <p className="truncate text-xs text-[var(--sidebar-muted)]">
+              {workspace.name}
+            </p>
             <LiveSyncIndicator compact />
           </div>
         </div>
 
         <nav className="flex-1 overflow-y-auto p-3">
+          <a
+            href="https://reawakencommandcenter.com/tools"
+            className="mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sidebar-muted)] transition-colors hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-foreground)]"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Command Center
+          </a>
+
           <div className="mb-4">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -102,8 +113,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   className={cn(
                     "mb-1 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     active
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-blue-50 text-blue-700 dark:bg-[var(--sidebar-accent)] dark:text-[var(--primary)]"
+                      : "text-[var(--sidebar-muted)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-foreground)]"
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -114,12 +125,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="mb-2 flex items-center justify-between px-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--sidebar-muted)]">
               Bases
             </span>
             <Link
               href="/?create=base"
-              className="rounded p-0.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              className="rounded p-0.5 text-[var(--sidebar-muted)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-foreground)]"
             >
               <Plus className="h-3.5 w-3.5" />
             </Link>
@@ -135,8 +146,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   className={cn(
                     "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
                     active
-                      ? "bg-slate-100 font-medium text-slate-900"
-                      : "text-slate-600 hover:bg-slate-50"
+                      ? "bg-[var(--sidebar-accent)] font-medium text-[var(--sidebar-foreground)]"
+                      : "text-[var(--sidebar-muted)] hover:bg-[var(--sidebar-accent)]"
                   )}
                 >
                   <span
@@ -152,9 +163,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
 
-        <div className="border-t border-slate-100 p-3">
+        <div className="border-t border-[var(--sidebar-border)] p-3">
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-slate-50">
+            <DropdownMenuTrigger className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-[var(--sidebar-accent)]">
               <Avatar className="h-8 w-8">
                 <AvatarFallback
                   style={{ backgroundColor: currentUser?.avatarColor }}
@@ -166,20 +177,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     .slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-medium text-slate-900">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-[var(--sidebar-foreground)]">
                   {currentUser?.name}
                 </p>
-                <p className="truncate text-xs text-slate-500">
+                <p className="truncate text-xs text-[var(--sidebar-muted)]">
                   {currentUser?.email}
                 </p>
               </div>
-              <ChevronDown className="h-4 w-4 text-slate-400" />
+              <ChevronDown className="h-4 w-4 text-[var(--sidebar-muted)]" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuItem asChild>
-                <Link href="/settings/team">Manage team</Link>
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/settings">Settings</Link>
               </DropdownMenuItem>
@@ -197,7 +205,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <main className="flex flex-1 flex-col overflow-hidden">{children}</main>
+      <main className="flex flex-1 flex-col overflow-hidden bg-[var(--background)]">
+        {children}
+      </main>
     </div>
   );
 }
