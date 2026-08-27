@@ -153,7 +153,15 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-sidebar-border p-4">
+      <div className="border-t border-sidebar-border p-4 space-y-2">
+        {process.env.NEXT_PUBLIC_BASE_PATH === "/apps/communications" && (
+          <a
+            href="/tools"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+          >
+            ← Back to Command Center Tools
+          </a>
+        )}
         <div className="rounded-lg bg-sidebar-accent p-3">
           <p className="text-xs font-medium text-sidebar-foreground">
             {brand.legalName}
