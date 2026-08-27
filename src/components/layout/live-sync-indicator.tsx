@@ -27,7 +27,7 @@ export function LiveSyncIndicator({ compact = false }: { compact?: boolean }) {
         status === "connected" && "text-emerald-600",
         status === "connecting" && "text-amber-600",
         status === "error" && "text-red-500",
-        status === "idle" && "text-slate-400"
+        status === "idle" && "text-muted-foreground"
       )}
       title={label}
     >
@@ -41,7 +41,7 @@ export function LiveSyncIndicator({ compact = false }: { compact?: boolean }) {
             status === "connected" && "bg-emerald-500",
             status === "connecting" && "bg-amber-500",
             status === "error" && "bg-red-500",
-            status === "idle" && "bg-slate-300"
+            status === "idle" && "bg-muted-foreground/40"
           )}
         />
       </span>

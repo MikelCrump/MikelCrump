@@ -36,7 +36,10 @@ export default function TablePage({
   const base = useAppStore((s) => s.getBase(baseId));
   const table = useAppStore((s) => s.getTable(tableId));
   const allForms = useAppStore((s) => s.forms);
-  const forms = useMemo(() => allForms.filter((f) => f.tableId === tableId), [allForms, tableId]);
+  const forms = useMemo(
+    () => allForms.filter((f) => f.tableId === tableId),
+    [allForms, tableId]
+  );
   const createForm = useAppStore((s) => s.createForm);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -53,17 +56,17 @@ export default function TablePage({
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2">
+    <div className="flex h-full flex-col bg-background text-foreground">
+      <header className="flex items-center justify-between border-b border-border bg-card px-4 py-2">
         <div className="flex items-center gap-2">
           <Link
             href={`/base/${baseId}`}
-            className="text-sm text-slate-500 hover:text-slate-700"
+            className="text-sm text-muted-foreground hover:text-foreground"
           >
             {base.name}
           </Link>
-          <span className="text-slate-300">/</span>
-          <h1 className="text-sm font-semibold text-slate-900">{table.name}</h1>
+          <span className="text-muted-foreground/50">/</span>
+          <h1 className="text-sm font-semibold">{table.name}</h1>
         </div>
 
         <div className="flex items-center gap-2">
@@ -85,7 +88,7 @@ export default function TablePage({
                   >
                     {form.name}
                     {form.published && (
-                      <span className="ml-auto text-xs text-emerald-600">
+                      <span className="ml-auto text-xs text-emerald-600 dark:text-emerald-400">
                         Live
                       </span>
                     )}
@@ -101,8 +104,8 @@ export default function TablePage({
         </div>
       </header>
 
-      <div className="flex items-center gap-1 border-b border-slate-200 bg-white px-4">
-        <button className="flex items-center gap-1.5 border-b-2 border-blue-600 px-3 py-2 text-sm font-medium text-blue-700">
+      <div className="flex items-center gap-1 border-b border-border bg-card px-4">
+        <button className="flex items-center gap-1.5 border-b-2 border-primary px-3 py-2 text-sm font-medium text-primary">
           <LayoutGrid className="h-3.5 w-3.5" />
           Grid view
         </button>
@@ -110,7 +113,7 @@ export default function TablePage({
           <Link
             key={form.id}
             href={`/base/${baseId}/table/${tableId}/form/${form.id}`}
-            className="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2 text-sm text-slate-500 hover:text-slate-700"
+            className="flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
           >
             <FileText className="h-3.5 w-3.5" />
             {form.name}
@@ -118,7 +121,7 @@ export default function TablePage({
         ))}
       </div>
 
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden bg-background">
         <SpreadsheetGrid tableId={tableId} />
       </div>
 

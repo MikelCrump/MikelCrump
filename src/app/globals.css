@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #f8fafc;
   --foreground: #0f172a;
   --card: #ffffff;
@@ -19,6 +20,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: hsl(224 24% 8%);
   --foreground: hsl(210 20% 96%);
   --card: hsl(224 20% 12%);
@@ -34,6 +36,22 @@
   --primary-foreground: #ffffff;
   --surface: hsl(224 24% 8%);
   --accent-soft: color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+/* Public form / live preview always renders in a light surface */
+.form-preview-surface {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --accent-soft: color-mix(in srgb, #2563eb 10%, transparent);
+  background: var(--background);
+  color: var(--foreground);
 }
 
 @theme inline {

@@ -92,14 +92,14 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
           <Database className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Sign in</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-foreground">Sign in</h1>
+          <p className="text-sm text-muted-foreground">
             Tables · Reawaken Command Center
           </p>
         </div>
@@ -122,10 +122,10 @@ function LoginForm() {
         )}
       </Button>
 
-      <div className="mb-4 flex items-center gap-3 text-xs text-slate-400">
-        <div className="h-px flex-1 bg-slate-200" />
+      <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="h-px flex-1 bg-border" />
         or email
-        <div className="h-px flex-1 bg-slate-200" />
+        <div className="h-px flex-1 bg-border" />
       </div>
 
       <form onSubmit={handleLogin} className="space-y-4">
@@ -171,7 +171,7 @@ function LoginForm() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         No account?{" "}
         <Link
           href="/signup"
@@ -187,11 +187,11 @@ function LoginForm() {
 export default function LoginPage() {
   if (!isSupabaseConfigured()) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-        <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-6">
+        <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 text-center shadow-sm">
           <Database className="mx-auto mb-4 h-10 w-10 text-blue-600" />
-          <h1 className="text-xl font-bold text-slate-900">Local mode</h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-foreground">Local mode</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Supabase is not configured. Tables is running with browser
             storage. Add your env vars to enable cloud sync.
           </p>
@@ -204,7 +204,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-6">
       <Suspense>
         <LoginForm />
       </Suspense>

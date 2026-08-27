@@ -71,22 +71,22 @@ export function FormBuilder({ formId }: FormBuilderProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+      <header className="flex items-center justify-between border-b border-border bg-card px-6 py-3">
         <div className="flex items-center gap-3">
           <Link
             href={`/base/${form.baseId}/table/${form.tableId}`}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-muted-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-slate-900">{form.name}</h1>
+              <h1 className="text-lg font-semibold text-foreground">{form.name}</h1>
               <Badge variant={form.published ? "success" : "secondary"}>
                 {form.published ? "Published" : "Draft"}
               </Badge>
             </div>
-            <p className="text-sm text-slate-500">Form builder</p>
+            <p className="text-sm text-muted-foreground">Form builder</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ export function FormBuilder({ formId }: FormBuilderProps) {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="w-80 shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-4">
+        <aside className="w-80 shrink-0 overflow-y-auto border-r border-border bg-card p-4">
           <Tabs defaultValue="fields">
             <TabsList className="w-full">
               <TabsTrigger value="fields" className="flex-1">
@@ -124,7 +124,7 @@ export function FormBuilder({ formId }: FormBuilderProps) {
             </TabsList>
 
             <TabsContent value="fields" className="mt-4 space-y-2">
-              <p className="mb-3 text-xs text-slate-500">
+              <p className="mb-3 text-xs text-muted-foreground">
                 Toggle fields to include in your form
               </p>
               {table.fields.map((field) => {
@@ -132,17 +132,17 @@ export function FormBuilder({ formId }: FormBuilderProps) {
                 return (
                   <label
                     key={field.id}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 px-3 py-2.5 hover:bg-slate-50"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-3 py-2.5 hover:bg-muted"
                   >
                     <Switch
                       checked={included}
                       onCheckedChange={() => toggleField(field.id)}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-foreground">
                         {field.name}
                       </p>
-                      <p className="text-xs text-slate-400">{field.type}</p>
+                      <p className="text-xs text-muted-foreground">{field.type}</p>
                     </div>
                     {field.required && (
                       <span className="text-xs text-red-400">Required</span>
@@ -205,7 +205,7 @@ export function FormBuilder({ formId }: FormBuilderProps) {
                         },
                       })
                     }
-                    className="h-9 w-12 cursor-pointer rounded border border-slate-200"
+                    className="h-9 w-12 cursor-pointer rounded border border-border"
                   />
                   <Input
                     value={form.settings.primaryColor || "#2563eb"}
@@ -224,13 +224,13 @@ export function FormBuilder({ formId }: FormBuilderProps) {
           </Tabs>
         </aside>
 
-        <div className="flex flex-1 flex-col overflow-hidden bg-slate-100">
-          <div className="flex items-center gap-2 border-b border-slate-200 bg-white px-4 py-2">
-            <Eye className="h-4 w-4 text-slate-400" />
-            <span className="text-sm text-slate-500">Live preview</span>
+        <div className="flex flex-1 flex-col overflow-hidden bg-muted">
+          <div className="flex items-center gap-2 border-b border-border bg-card px-4 py-2">
+            <Eye className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Live preview</span>
           </div>
-          <div className="flex-1 overflow-y-auto p-6">
-            <div className="mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex-1 overflow-y-auto bg-muted p-6">
+            <div className="form-preview-surface mx-auto max-w-2xl rounded-xl border border-border shadow-sm">
               <FormRenderer
                 form={form}
                 fields={table.fields}
@@ -252,7 +252,7 @@ export function FormBuilder({ formId }: FormBuilderProps) {
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div>
-              <Label className="text-xs text-slate-500">Direct link</Label>
+              <Label className="text-xs text-muted-foreground">Direct link</Label>
               <div className="mt-1 flex items-center gap-2">
                 <Input value={embedUrl} readOnly className="font-mono text-xs" />
                 <Button
@@ -265,9 +265,9 @@ export function FormBuilder({ formId }: FormBuilderProps) {
               </div>
             </div>
             <div>
-              <Label className="text-xs text-slate-500">Iframe embed code</Label>
+              <Label className="text-xs text-muted-foreground">Iframe embed code</Label>
               <div className="relative mt-1">
-                <pre className="overflow-x-auto rounded-lg bg-slate-900 p-4 text-xs text-slate-100">
+                <pre className="overflow-x-auto rounded-lg bg-[#0f172a] p-4 text-xs text-slate-100">
                   {iframeCode}
                 </pre>
                 <Button

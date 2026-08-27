@@ -1,53 +1,63 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  THEME_CHANGE_EVENT,
+  THEME_STORAGE_KEY,
+  applyResolvedTheme,
+  readThemePreference,
+  resolveTheme,
+  type ResolvedTheme,
+  type ThemePreference,
+} from "@/lib/theme";
 
-const STORAGE_KEY = "cc-theme";
-
-function getSystemPrefersDark() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
-function resolve(theme: string) {
-  return theme === "system"
-    ? getSystemPrefersDark()
-      ? "dark"
-      : "light"
-    : theme;
-}
-
-function applyResolvedTheme(resolved: string) {
-  document.documentElement.classList.toggle("dark", resolved === "dark");
-}
-
-/** Keep Tables night mode in sync with Command Center (`cc-theme` localStorage). */
+/** Keep Tables theme in sync with Command Center (`cc-theme`) and local toggles. */
 export function CommandCenterThemeSync() {
   useEffect(() => {
     const apply = () => {
-      const theme = localStorage.getItem(STORAGE_KEY) || "system";
-      applyResolvedTheme(resolve(theme));
+      applyResolvedTheme(resolveTheme(readThemePreference()));
     };
 
     apply();
 
     const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY || e.key === null) apply();
+      if (e.key === THEME_STORAGE_KEY || e.key === null) apply();
     };
-    window.addEventListener("storage", onStorage);
-
+    const onLocal = () => apply();
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onMedia = () => apply();
-    media.addEventListener("change", onMedia);
 
-    // Poll lightly in case CC toggles theme in the same tab via iframe parent
-    const interval = window.setInterval(apply, 1500);
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(THEME_CHANGE_EVENT, onLocal);
+    media.addEventListener("change", apply);
 
     return () => {
       window.removeEventListener("storage", onStorage);
-      media.removeEventListener("change", onMedia);
-      window.clearInterval(interval);
+      window.removeEventListener(THEME_CHANGE_EVENT, onLocal);
+      media.removeEventListener("change", apply);
     };
   }, []);
 
   return null;
+}
+
+export function useTheme() {
+  const [preference, setPreference] = useState<ThemePreference>("system");
+  const [resolved, setResolved] = useState<ResolvedTheme>("light");
+
+  useEffect(() => {
+    const sync = () => {
+      const pref = readThemePreference();
+      setPreference(pref);
+      setResolved(resolveTheme(pref));
+    };
+    sync();
+    window.addEventListener(THEME_CHANGE_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(THEME_CHANGE_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  return { preference, resolved };
 }

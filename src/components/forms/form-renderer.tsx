@@ -111,10 +111,10 @@ export function FormRenderer({
           className="mb-4 h-12 w-12"
           style={{ color: primaryColor }}
         />
-        <h2 className="text-xl font-semibold text-slate-900">
+        <h2 className="text-xl font-semibold text-foreground">
           Thank you!
         </h2>
-        <p className="mt-2 max-w-md text-slate-600">
+        <p className="mt-2 max-w-md text-muted-foreground">
           {successMessage ?? form.successMessage}
         </p>
       </div>
@@ -130,9 +130,9 @@ export function FormRenderer({
       )}
     >
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">{form.name}</h1>
+        <h1 className="text-2xl font-bold text-foreground">{form.name}</h1>
         {form.description && (
-          <p className="mt-2 text-slate-600">{form.description}</p>
+          <p className="mt-2 text-muted-foreground">{form.description}</p>
         )}
       </div>
 
@@ -183,7 +183,7 @@ export function FormRenderer({
                         "rounded-full border px-3 py-1.5 text-sm transition-colors",
                         selected
                           ? "border-transparent text-white"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                          : "border-border bg-card text-foreground hover:border-border"
                       )}
                       style={
                         selected
@@ -207,7 +207,7 @@ export function FormRenderer({
                 />
                 <label
                   htmlFor={field.id}
-                  className="text-sm leading-relaxed text-slate-600"
+                  className="text-sm leading-relaxed text-muted-foreground"
                 >
                   {field.description || field.name}
                 </label>

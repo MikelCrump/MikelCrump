@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LiveSyncIndicator } from "@/components/layout/live-sync-indicator";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -88,6 +89,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </p>
             <LiveSyncIndicator compact />
           </div>
+          <ThemeToggle className="h-8 w-8 shrink-0" />
         </div>
 
         <nav className="flex-1 overflow-y-auto p-3">

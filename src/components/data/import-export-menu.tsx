@@ -115,14 +115,14 @@ export function ImportExportMenu({ tableId }: ImportExportMenuProps) {
 
           <div className="space-y-4 pt-2">
             <div
-              className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 transition-colors hover:border-blue-300 hover:bg-blue-50/30"
+              className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted py-10 transition-colors hover:border-primary/50 hover:bg-[var(--accent-soft)]"
               onClick={() => fileRef.current?.click()}
             >
-              <FileSpreadsheet className="mb-2 h-8 w-8 text-slate-400" />
-              <p className="text-sm font-medium text-slate-700">
+              <FileSpreadsheet className="mb-2 h-8 w-8 text-muted-foreground" />
+              <p className="text-sm font-medium text-foreground">
                 Click to upload CSV
               </p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Headers: {table.fields.map((f) => f.name).join(", ")}
               </p>
               <input
@@ -142,8 +142,8 @@ export function ImportExportMenu({ tableId }: ImportExportMenuProps) {
             )}
 
             {importPreview.length > 0 && (
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <p className="text-sm font-medium text-slate-700">
+              <div className="rounded-lg border border-border bg-muted p-3">
+                <p className="text-sm font-medium text-foreground">
                   Ready to import {importPreview.length} row
                   {importPreview.length !== 1 ? "s" : ""}
                 </p>

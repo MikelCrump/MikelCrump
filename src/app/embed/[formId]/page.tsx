@@ -48,8 +48,8 @@ export default function EmbedFormPage({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="form-preview-surface flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -59,29 +59,35 @@ export default function EmbedFormPage({
 
   if (notFound || !form || !fields) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-6">
-        <p className="text-slate-500">Form not found.</p>
+      <div className="form-preview-surface flex min-h-screen items-center justify-center p-6">
+        <p className="text-muted-foreground">Form not found.</p>
       </div>
     );
   }
 
   if (!form.published) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-6">
-        <p className="text-slate-500">This form is not published yet.</p>
+      <div className="form-preview-surface flex min-h-screen items-center justify-center p-6">
+        <p className="text-muted-foreground">This form is not published yet.</p>
       </div>
     );
   }
 
   const handleSubmit = async (values: Record<string, unknown>) => {
     if (isSupabaseConfigured() && mode === "remote") {
-      return submitFormRemote(formId, values as Record<string, string | string[] | boolean | number | null>);
+      return submitFormRemote(
+        formId,
+        values as Record<string, string | string[] | boolean | number | null>
+      );
     }
-    return submitForm(formId, values as Record<string, string | string[] | boolean | number | null>);
+    return submitForm(
+      formId,
+      values as Record<string, string | string[] | boolean | number | null>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="form-preview-surface min-h-screen">
       <FormRenderer form={form} fields={fields} onSubmit={handleSubmit} embed />
     </div>
   );
