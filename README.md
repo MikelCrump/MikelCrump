@@ -13,6 +13,11 @@ Built for **Reawaken USA** to replace expensive Airtable subscriptions.
 - **CSV Import/Export** — Move data in and out like Excel
 - **Team Management** — Role-based permissions (owner, admin, editor, commenter, viewer)
 - **Supabase Backend** — PostgreSQL, auth, row-level security (optional — falls back to localStorage)
+- **Instant Sync** — Supabase Realtime pushes grid changes live across tabs and team members
+
+## Production deploy
+
+See **[DEPLOY.md](./DEPLOY.md)** for the full checklist.
 
 ## Quick Start (Local Mode)
 
@@ -28,9 +33,10 @@ Open [http://localhost:3000](http://localhost:3000) — works immediately with b
 ### 1. Create Supabase project
 
 1. Go to [supabase.com/dashboard](https://supabase.com/dashboard) and create a project
-2. Open **SQL Editor** and run the full contents of:
+2. Open **SQL Editor** and run both migrations in order:
 
-   `supabase/migrations/001_initial_schema.sql`
+   - `supabase/migrations/001_initial_schema.sql`
+   - `supabase/migrations/002_enable_realtime.sql` (instant sync)
 
 3. Under **Project Settings → API**, copy:
    - Project URL
@@ -96,7 +102,7 @@ Public submissions go through `POST /api/forms/[formId]` — no auth required.
 ## Tech Stack
 
 - Next.js 16 (App Router) on Vercel
-- Supabase (PostgreSQL + Auth + RLS)
+- Supabase (PostgreSQL + Auth + RLS + **Realtime**)
 - TypeScript, Tailwind CSS v4, Radix UI
 - Zustand (client cache + localStorage fallback)
 

@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { LiveSyncIndicator } from "@/components/layout/live-sync-indicator";
 
 interface SpreadsheetGridProps {
   tableId: string;
@@ -225,6 +226,7 @@ export function SpreadsheetGrid({ tableId }: SpreadsheetGridProps) {
         <span className="text-sm text-slate-500">
           {filteredRecords.length} record{filteredRecords.length !== 1 ? "s" : ""}
         </span>
+        <LiveSyncIndicator />
         <Button
           variant="outline"
           size="sm"

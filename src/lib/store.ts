@@ -62,6 +62,18 @@ interface AppState {
   setMode: (mode: DataMode) => void;
   hydrate: (data: WorkspaceData) => void;
 
+  // Realtime patches (no re-sync to server)
+  upsertRemoteBase: (base: Base) => void;
+  removeRemoteBase: (id: string) => void;
+  upsertRemoteTable: (table: Table) => void;
+  removeRemoteTable: (id: string) => void;
+  upsertRemoteRecord: (record: TableRecord) => void;
+  removeRemoteRecord: (id: string) => void;
+  upsertRemoteForm: (form: Form) => void;
+  removeRemoteForm: (id: string) => void;
+  upsertRemoteMember: (member: TeamMember) => void;
+  removeRemoteMember: (id: string) => void;
+
   createBase: (name: string, color?: string) => Base;
   updateBase: (id: string, updates: Partial<Base>) => void;
   deleteBase: (id: string) => void;
@@ -139,6 +151,87 @@ export const useAppStore = create<AppState>()(
           currentUserId: data.currentUserId,
         });
       },
+
+      upsertRemoteBase: (base) =>
+        set((s) => {
+          const idx = s.bases.findIndex((b) => b.id === base.id);
+          if (idx >= 0) {
+            const bases = [...s.bases];
+            bases[idx] = base;
+            return { bases };
+          }
+          return { bases: [...s.bases, base] };
+        }),
+
+      removeRemoteBase: (id) =>
+        set((s) => ({
+          bases: s.bases.filter((b) => b.id !== id),
+          tables: s.tables.filter((t) => t.baseId !== id),
+          records: s.records.filter(
+            (r) => !s.tables.find((t) => t.id === r.tableId && t.baseId === id)
+          ),
+          forms: s.forms.filter((f) => f.baseId !== id),
+        })),
+
+      upsertRemoteTable: (table) =>
+        set((s) => {
+          const idx = s.tables.findIndex((t) => t.id === table.id);
+          if (idx >= 0) {
+            const tables = [...s.tables];
+            tables[idx] = table;
+            return { tables };
+          }
+          return { tables: [...s.tables, table] };
+        }),
+
+      removeRemoteTable: (id) =>
+        set((s) => ({
+          tables: s.tables.filter((t) => t.id !== id),
+          records: s.records.filter((r) => r.tableId !== id),
+          forms: s.forms.filter((f) => f.tableId !== id),
+        })),
+
+      upsertRemoteRecord: (record) =>
+        set((s) => {
+          const idx = s.records.findIndex((r) => r.id === record.id);
+          if (idx >= 0) {
+            const records = [...s.records];
+            records[idx] = record;
+            return { records };
+          }
+          return { records: [...s.records, record] };
+        }),
+
+      removeRemoteRecord: (id) =>
+        set((s) => ({ records: s.records.filter((r) => r.id !== id) })),
+
+      upsertRemoteForm: (form) =>
+        set((s) => {
+          const idx = s.forms.findIndex((f) => f.id === form.id);
+          if (idx >= 0) {
+            const forms = [...s.forms];
+            forms[idx] = form;
+            return { forms };
+          }
+          return { forms: [...s.forms, form] };
+        }),
+
+      removeRemoteForm: (id) =>
+        set((s) => ({ forms: s.forms.filter((f) => f.id !== id) })),
+
+      upsertRemoteMember: (member) =>
+        set((s) => {
+          const idx = s.team.findIndex((m) => m.id === member.id);
+          if (idx >= 0) {
+            const team = [...s.team];
+            team[idx] = member;
+            return { team };
+          }
+          return { team: [...s.team, member] };
+        }),
+
+      removeRemoteMember: (id) =>
+        set((s) => ({ team: s.team.filter((m) => m.id !== id) })),
 
       createBase: (name, color = "#6366f1") => {
         const base: Base = {

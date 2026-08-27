@@ -26,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LiveSyncIndicator } from "@/components/layout/live-sync-indicator";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -82,6 +83,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               ) : null}
             </div>
             <p className="truncate text-xs text-slate-500">{workspace.name}</p>
+            <LiveSyncIndicator compact />
           </div>
         </div>
 

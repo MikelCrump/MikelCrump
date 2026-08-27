@@ -212,5 +212,4 @@ create policy "Editors can manage forms" on tf_forms for all using (
   exists (select 1 from bases b where b.id = base_id and public.can_edit(b.workspace_id))
 );
 
--- Realtime (optional — enable in Supabase dashboard)
--- alter publication supabase_realtime add table tf_records;
+-- Realtime: run supabase/migrations/002_enable_realtime.sql after this file

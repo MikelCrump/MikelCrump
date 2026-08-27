@@ -53,7 +53,11 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                <p>Public forms submit via secure API routes using the service role key.</p>
+                <p>Instant sync via Supabase Realtime — grid updates live when forms are submitted or cells edited.</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                <p>Public forms submit via secure API routes (rate limited, 5/min per IP).</p>
               </div>
               {mode === "local" && (
                 <p className="rounded-lg bg-amber-50 p-3 text-amber-800">

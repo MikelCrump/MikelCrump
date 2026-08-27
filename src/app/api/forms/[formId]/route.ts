@@ -4,6 +4,7 @@ import { isSupabaseConfigured } from "@/lib/config";
 import { fetchPublishedForm } from "@/lib/supabase/queries";
 import { submitFormRecord } from "@/lib/supabase/mutations";
 import { generateId } from "@/lib/utils";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import type { CellValue } from "@/lib/types";
 
 export async function GET(
@@ -34,6 +35,18 @@ export async function POST(
   { params }: { params: Promise<{ formId: string }> }
 ) {
   const { formId } = await params;
+
+  const ip = getClientIp(request);
+  const limit = rateLimit(`form:${formId}:${ip}`, 5, 60_000);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: "Too many submissions. Please try again later." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.ceil(limit.retryAfterMs / 1000)) },
+      }
+    );
+  }
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ mode: "local" });
