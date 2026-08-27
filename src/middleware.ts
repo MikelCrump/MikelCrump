@@ -38,6 +38,7 @@ export async function middleware(request: NextRequest) {
     path.startsWith("/signup") ||
     path.startsWith("/embed/") ||
     path.startsWith("/api/forms/") ||
+    path.startsWith("/api/health") ||
     path.startsWith("/auth/");
 
   if (!user && !isPublic) {
