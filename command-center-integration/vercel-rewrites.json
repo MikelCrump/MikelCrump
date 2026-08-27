@@ -1,0 +1,13 @@
+{
+  "comment": "Add these rewrites to the Command Center Vercel project (reawakencommandcenter.com) alongside the existing TableFlow rewrite.",
+  "rewrites": [
+    {
+      "source": "/apps/communications",
+      "destination": "https://reachflow-zeta.vercel.app/apps/communications"
+    },
+    {
+      "source": "/apps/communications/:path*",
+      "destination": "https://reachflow-zeta.vercel.app/apps/communications/:path*"
+    }
+  ]
+}
