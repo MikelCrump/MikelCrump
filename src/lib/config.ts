@@ -6,8 +6,11 @@ export function isSupabaseConfigured(): boolean {
 }
 
 export function getAppUrl(): string {
-  return (
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const origin =
     process.env.NEXT_PUBLIC_APP_URL ||
-    (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000")
-  );
+    (typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost:3000");
+  return `${origin.replace(/\/$/, "")}${basePath}`;
 }

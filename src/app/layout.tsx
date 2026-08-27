@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell } from "@/components/layout/app-shell";
 import { AppProvider } from "@/components/providers/app-provider";
+import { CommandCenterAuthBridge } from "@/components/auth/command-center-auth-bridge";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,9 +28,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <AppProvider>
-          <AppShell>{children}</AppShell>
-        </AppProvider>
+        <CommandCenterAuthBridge>
+          <AppProvider>
+            <AppShell>{children}</AppShell>
+          </AppProvider>
+        </CommandCenterAuthBridge>
       </body>
     </html>
   );
