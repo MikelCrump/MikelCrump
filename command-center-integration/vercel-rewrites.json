@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/apps/communications",
-      "destination": "https://reachflow-zeta.vercel.app/apps/communications"
+      "destination": "https://reachflow-cc.vercel.app/apps/communications"
     },
     {
       "source": "/apps/communications/:path*",
-      "destination": "https://reachflow-zeta.vercel.app/apps/communications/:path*"
+      "destination": "https://reachflow-cc.vercel.app/apps/communications/:path*"
     }
   ]
 }
