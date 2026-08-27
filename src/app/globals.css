@@ -1,13 +1,69 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #f8fafc;
   --foreground: #0f172a;
+  --card: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-muted: #64748b;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --surface: #f8fafc;
+  --accent-soft: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: hsl(224 24% 8%);
+  --foreground: hsl(210 20% 96%);
+  --card: hsl(224 20% 12%);
+  --muted: hsl(224 16% 15%);
+  --muted-foreground: hsl(217 12% 65%);
+  --border: hsl(224 16% 20%);
+  --sidebar: hsl(224 26% 7%);
+  --sidebar-foreground: hsl(210 20% 96%);
+  --sidebar-muted: hsl(217 12% 60%);
+  --sidebar-accent: hsl(224 16% 14%);
+  --sidebar-border: hsl(224 16% 16%);
+  --primary: hsl(217.2 91.2% 59.8%);
+  --primary-foreground: #ffffff;
+  --surface: hsl(224 24% 8%);
+  --accent-soft: color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+/* Public form / live preview always renders in a light surface */
+.form-preview-surface {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --accent-soft: color-mix(in srgb, #2563eb 10%, transparent);
+  background: var(--background);
+  color: var(--foreground);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-surface: var(--surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -20,7 +76,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--border) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -29,6 +85,6 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: var(--border);
   border-radius: 3px;
 }

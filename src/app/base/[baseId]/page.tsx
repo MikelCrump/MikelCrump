@@ -23,7 +23,10 @@ export default function BasePage({
   const { baseId } = use(params);
   const base = useAppStore((s) => s.getBase(baseId));
   const allTables = useAppStore((s) => s.tables);
-  const tables = useMemo(() => allTables.filter((t) => t.baseId === baseId), [allTables, baseId]);
+  const tables = useMemo(
+    () => allTables.filter((t) => t.baseId === baseId),
+    [allTables, baseId]
+  );
   const records = useAppStore((s) => s.records);
   const forms = useAppStore((s) => s.forms);
   const createTable = useAppStore((s) => s.createTable);
@@ -42,23 +45,28 @@ export default function BasePage({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-background text-foreground">
       <header
-        className="border-b border-slate-200 bg-white px-8 py-6"
+        className="border-b border-border px-8 py-6"
         style={{ borderTopColor: base.color, borderTopWidth: 3 }}
       >
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
               className="flex h-12 w-12 items-center justify-center rounded-xl text-xl"
-              style={{ backgroundColor: `${base.color}15`, color: base.color }}
+              style={{
+                backgroundColor: `${base.color}22`,
+                color: base.color,
+              }}
             >
               {base.icon || base.name.charAt(0)}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">{base.name}</h1>
+              <h1 className="text-2xl font-bold">{base.name}</h1>
               {base.description && (
-                <p className="mt-0.5 text-slate-500">{base.description}</p>
+                <p className="mt-0.5 text-muted-foreground">
+                  {base.description}
+                </p>
               )}
             </div>
           </div>
@@ -70,7 +78,7 @@ export default function BasePage({
       </header>
 
       <div className="mx-auto max-w-4xl px-8 py-8">
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-400">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           Tables
         </h2>
         <div className="space-y-2">
@@ -82,28 +90,28 @@ export default function BasePage({
               <Link
                 key={table.id}
                 href={`/base/${baseId}/table/${table.id}`}
-                className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 py-4 transition-all hover:border-blue-200 hover:shadow-sm"
+                className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 transition-colors hover:border-primary/40 hover:bg-[var(--accent-soft)]"
               >
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 group-hover:bg-blue-50 group-hover:text-blue-600">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:text-primary">
                   <Table2 className="h-4 w-4" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-slate-900">{table.name}</p>
-                  <p className="text-sm text-slate-400">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">{table.name}</p>
+                  <p className="text-sm text-muted-foreground">
                     {table.fields.length} fields · {tableRecords.length} records
                     {tableForms.length > 0 &&
                       ` · ${tableForms.length} form${tableForms.length !== 1 ? "s" : ""}`}
                   </p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
               </Link>
             );
           })}
 
           {tables.length === 0 && (
-            <div className="rounded-xl border border-dashed border-slate-200 py-12 text-center">
-              <Table2 className="mx-auto mb-2 h-8 w-8 text-slate-300" />
-              <p className="text-sm text-slate-500">No tables yet</p>
+            <div className="rounded-xl border border-dashed border-border py-12 text-center">
+              <Table2 className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">No tables yet</p>
               <Button
                 variant="link"
                 className="mt-1"
@@ -117,7 +125,7 @@ export default function BasePage({
 
         {forms.filter((f) => f.baseId === baseId).length > 0 && (
           <>
-            <h2 className="mb-4 mt-10 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            <h2 className="mb-4 mt-10 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Forms
             </h2>
             <div className="space-y-2">
@@ -127,18 +135,18 @@ export default function BasePage({
                   <Link
                     key={form.id}
                     href={`/base/${baseId}/table/${form.tableId}/form/${form.id}`}
-                    className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 py-4 transition-all hover:border-blue-200 hover:shadow-sm"
+                    className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 transition-colors hover:border-primary/40 hover:bg-[var(--accent-soft)]"
                   >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
                       <FileText className="h-4 w-4" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-slate-900">{form.name}</p>
-                      <p className="text-sm text-slate-400">
+                      <p className="font-medium">{form.name}</p>
+                      <p className="text-sm text-muted-foreground">
                         {form.published ? "Published" : "Draft"} · Embed ready
                       </p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
                   </Link>
                 ))}
             </div>

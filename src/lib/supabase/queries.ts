@@ -14,7 +14,6 @@ import {
   DEMO_FORM,
   DEMO_RECORDS,
   DEMO_TABLE,
-  DEMO_TEAM,
   DEMO_WORKSPACE,
   EXTRA_BASE,
   EXTRA_RECORDS,
@@ -83,9 +82,63 @@ export async function getUserWorkspaceId(
     .eq("user_id", userId)
     .eq("status", "active")
     .limit(1)
-    .single();
+    .maybeSingle();
 
   return data?.workspace_id ?? null;
+}
+
+/** Shared org workspace — same people as Command Center (profiles / @reawakenusa.org). */
+export const SHARED_WORKSPACE_ID = DEMO_WORKSPACE.id;
+
+export async function ensureSharedWorkspaceAccess(
+  supabase: SupabaseClient,
+  userId: string,
+  email: string,
+  name: string
+): Promise<string> {
+  const workspaceId = SHARED_WORKSPACE_ID;
+
+  await supabase.from("workspaces").upsert({
+    id: workspaceId,
+    name: DEMO_WORKSPACE.name,
+  });
+
+  const { data: existing } = await supabase
+    .from("workspace_members")
+    .select("id")
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (!existing) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name, email, avatar_color")
+      .eq("id", userId)
+      .maybeSingle();
+
+    await supabase.from("workspace_members").upsert({
+      id: `tm-${userId}`,
+      workspace_id: workspaceId,
+      user_id: userId,
+      email: profile?.email || email,
+      name: profile?.name || name,
+      role: "editor",
+      avatar_color: profile?.avatar_color || "#2563eb",
+      status: "active",
+    });
+  }
+
+  const { count } = await supabase
+    .from("bases")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", workspaceId);
+
+  if (!count) {
+    await seedDemoData(supabase, workspaceId);
+  }
+
+  return workspaceId;
 }
 
 export async function provisionWorkspace(
@@ -95,6 +148,11 @@ export async function provisionWorkspace(
   name: string,
   seedDemo = true
 ): Promise<string> {
+  // Prefer the shared Command Center workspace for org users
+  if (email.toLowerCase().endsWith("@reawakenusa.org")) {
+    return ensureSharedWorkspaceAccess(supabase, userId, email, name);
+  }
+
   const workspaceId = generateId();
   const memberId = generateId();
 
@@ -195,23 +253,8 @@ export async function seedDemoData(
     published: DEMO_FORM.published,
   });
 
-  const extraTeam = DEMO_TEAM.filter((m) => m.role !== "owner");
-  if (extraTeam.length > 0) {
-    await supabase.from("workspace_members").upsert(
-      extraTeam.map((m) => ({
-        id: m.id,
-        workspace_id: workspaceId,
-        user_id: null,
-        email: m.email,
-        name: m.name,
-        role: m.role,
-        avatar_color: m.avatarColor,
-        status: m.status,
-        invited_at: m.invitedAt,
-      })),
-      { onConflict: "id" }
-    );
-  }
+  // Skip seeding fake demo team — access follows Command Center profiles
+  // (workspace_members are created when users open Tables).
 }
 
 export async function fetchPublishedForm(

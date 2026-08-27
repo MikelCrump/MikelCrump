@@ -43,7 +43,7 @@ interface SpreadsheetGridProps {
 
 function CellDisplay({ field, value }: { field: Field; value: CellValue }) {
   if (value === null || value === undefined || value === "") {
-    return <span className="text-slate-300">—</span>;
+    return <span className="text-muted-foreground">—</span>;
   }
 
   switch (field.type) {
@@ -69,7 +69,7 @@ function CellDisplay({ field, value }: { field: Field; value: CellValue }) {
       return (
         <a
           href={`mailto:${value}`}
-          className="text-blue-600 hover:underline"
+          className="text-primary hover:underline"
           onClick={(e) => e.stopPropagation()}
         >
           {String(value)}
@@ -81,7 +81,7 @@ function CellDisplay({ field, value }: { field: Field; value: CellValue }) {
           href={String(value)}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-primary hover:underline"
           onClick={(e) => e.stopPropagation()}
         >
           {String(value)}
@@ -113,7 +113,7 @@ function EditableCell({
         type="checkbox"
         checked={Boolean(value)}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 rounded border-slate-300"
+        className="h-4 w-4 rounded border-border"
       />
     );
   }
@@ -123,7 +123,7 @@ function EditableCell({
       <select
         value={String(value ?? "")}
         onChange={(e) => onChange(e.target.value || null)}
-        className="w-full rounded border border-blue-300 bg-white px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+        className="w-full rounded border border-primary/50 bg-card px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
       >
         <option value="">Select...</option>
         {field.options.map((opt) => (
@@ -140,7 +140,7 @@ function EditableCell({
       <textarea
         value={String(value ?? "")}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full min-h-[60px] rounded border border-blue-300 bg-white px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+        className="w-full min-h-[60px] rounded border border-primary/50 bg-card px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
     );
   }
@@ -166,7 +166,7 @@ function EditableCell({
             : e.target.value
         )
       }
-      className="w-full rounded border border-blue-300 bg-white px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+      className="w-full rounded border border-primary/50 bg-card px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
     />
   );
 }
@@ -213,9 +213,9 @@ export function SpreadsheetGrid({ tableId }: SpreadsheetGridProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-2">
+      <div className="flex items-center gap-3 border-b border-border bg-card px-4 py-2">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search records..."
             value={search}
@@ -223,7 +223,7 @@ export function SpreadsheetGrid({ tableId }: SpreadsheetGridProps) {
             className="pl-9 h-8"
           />
         </div>
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-muted-foreground">
           {filteredRecords.length} record{filteredRecords.length !== 1 ? "s" : ""}
         </span>
         <LiveSyncIndicator />
@@ -246,35 +246,35 @@ export function SpreadsheetGrid({ tableId }: SpreadsheetGridProps) {
         onClick={() => setEditingCell(null)}
       >
         <table className="w-full border-collapse text-sm">
-          <thead className="sticky top-0 z-10 bg-slate-50">
+          <thead className="sticky top-0 z-10 bg-muted">
             <tr>
-              <th className="border-b border-r border-slate-200 bg-slate-50 px-2 py-2 text-left w-12">
-                <span className="text-xs text-slate-400">#</span>
+              <th className="border-b border-r border-border bg-muted px-2 py-2 text-left w-12">
+                <span className="text-xs text-muted-foreground">#</span>
               </th>
               {table.fields.map((field) => (
                 <th
                   key={field.id}
-                  className="border-b border-r border-slate-200 bg-slate-50 py-2 text-left min-w-[160px]"
+                  className="border-b border-r border-border bg-muted py-2 text-left min-w-[160px]"
                 >
                   <div className="flex items-center gap-1.5 px-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {field.name}
                     </span>
                     {field.required && <span className="text-red-400">*</span>}
                   </div>
                 </th>
               ))}
-              <th className="border-b border-slate-200 bg-slate-50 w-10" />
+              <th className="border-b border-border bg-muted w-10" />
             </tr>
           </thead>
           <tbody>
             {filteredRecords.map((record: TableRecord, index: number) => (
               <tr
                 key={record.id}
-                className="group border-b border-slate-100 hover:bg-blue-50/30"
+                className="group border-b border-border hover:bg-[var(--accent-soft)]"
               >
-                <td className="border-r border-slate-100 px-2 py-1.5">
-                  <span className="text-xs text-slate-400">{index + 1}</span>
+                <td className="border-r border-border px-2 py-1.5">
+                  <span className="text-xs text-muted-foreground">{index + 1}</span>
                 </td>
                 {table.fields.map((field) => {
                   const isEditing =
@@ -286,9 +286,9 @@ export function SpreadsheetGrid({ tableId }: SpreadsheetGridProps) {
                     <td
                       key={field.id}
                       className={cn(
-                        "border-r border-slate-100 align-top",
+                        "border-r border-border align-top",
                         isEditing &&
-                          "bg-blue-50/50 ring-1 ring-inset ring-blue-200"
+                          "bg-[var(--accent-soft)] ring-1 ring-inset ring-primary/40"
                       )}
                     >
                       <div
@@ -319,8 +319,8 @@ export function SpreadsheetGrid({ tableId }: SpreadsheetGridProps) {
                 <td className="align-top py-1.5">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="rounded p-1 opacity-0 group-hover:opacity-100 hover:bg-slate-100">
-                        <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                      <button className="rounded p-1 opacity-0 group-hover:opacity-100 hover:bg-muted">
+                        <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -340,7 +340,7 @@ export function SpreadsheetGrid({ tableId }: SpreadsheetGridProps) {
         </table>
 
         {filteredRecords.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-slate-400">
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <p className="text-sm">No records yet</p>
             <Button
               variant="link"

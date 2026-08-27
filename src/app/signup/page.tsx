@@ -55,20 +55,20 @@ function SignupForm() {
   };
 
   return (
-    <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
           <Database className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Create account</h1>
-          <p className="text-sm text-slate-500">Start using TableFlow cloud</p>
+          <h1 className="text-xl font-bold text-foreground">Create account</h1>
+          <p className="text-sm text-muted-foreground">Start using Tables cloud</p>
         </div>
       </div>
 
       {success ? (
         <div className="text-center">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted-foreground">
             Check your email to confirm your account, then sign in.
           </p>
           <Button className="mt-4" asChild>
@@ -111,7 +111,7 @@ function SignupForm() {
               required
               className="mt-1.5"
             />
-            <p className="mt-1 text-xs text-slate-400">Minimum 8 characters</p>
+            <p className="mt-1 text-xs text-muted-foreground">Minimum 8 characters</p>
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
@@ -129,7 +129,7 @@ function SignupForm() {
         </form>
       )}
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link href="/login" className="font-medium text-blue-600 hover:underline">
           Sign in
@@ -142,9 +142,9 @@ function SignupForm() {
 export default function SignupPage() {
   if (!isSupabaseConfigured()) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-        <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <p className="text-sm text-slate-500">
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-6">
+        <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 text-center shadow-sm">
+          <p className="text-sm text-muted-foreground">
             Supabase is not configured.{" "}
             <Link href="/" className="text-blue-600 hover:underline">
               Continue in local mode
@@ -156,7 +156,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-6">
       <Suspense>
         <SignupForm />
       </Suspense>

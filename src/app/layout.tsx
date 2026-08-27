@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell } from "@/components/layout/app-shell";
 import { AppProvider } from "@/components/providers/app-provider";
+import { CommandCenterAuthBridge } from "@/components/auth/command-center-auth-bridge";
+import { CommandCenterThemeSync } from "@/components/theme/command-center-theme-sync";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TableFlow — Spreadsheet Database & Forms",
+  title: "Tables — Reawaken Command Center",
   description:
-    "Create bases, manage data like Airtable, and embed forms on your website.",
+    "Spreadsheet databases and embeddable forms inside Reawaken Command Center.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -27,9 +29,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <AppProvider>
-          <AppShell>{children}</AppShell>
-        </AppProvider>
+        <CommandCenterAuthBridge>
+          <CommandCenterThemeSync />
+          <AppProvider>
+            <AppShell>{children}</AppShell>
+          </AppProvider>
+        </CommandCenterAuthBridge>
       </body>
     </html>
   );
