@@ -1,35 +1,36 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { AppShell } from "@/components/layout/app-shell";
-import { AppProvider } from "@/components/providers/app-provider";
+import { Figtree, Fraunces } from "next/font/google";
+import { AuthGate } from "@/components/steward/auth-gate";
+import { StewardShell } from "@/components/steward/shell";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "TableFlow — Spreadsheet Database & Forms",
+  title: "Steward — Private Life Dashboard",
   description:
-    "Create bases, manage data like Airtable, and embed forms on your website.",
+    "Mikel’s private command center for money, health, calendar, Tesla, and more.",
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${figtree.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full">
-        <AppProvider>
-          <AppShell>{children}</AppShell>
-        </AppProvider>
+      <body className="min-h-full font-sans text-ink">
+        <AuthGate>
+          <StewardShell>{children}</StewardShell>
+        </AuthGate>
       </body>
     </html>
   );

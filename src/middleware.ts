@@ -1,9 +1,21 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { isSupabaseConfigured } from "@/lib/config";
+import { isAllowedEmail } from "@/lib/auth-allowlist";
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const isPublic =
+    path.startsWith("/login") ||
+    path.startsWith("/auth/") ||
+    path.startsWith("/api/health");
+
+  // UI-first mode: no Supabase yet — allow browsing after preview cookie/session
+  // is established client-side. Protect by requiring visit via /login first in prod
+  // once Supabase is wired.
   if (!isSupabaseConfigured()) {
+    if (isPublic) return NextResponse.next();
+    // Allow app routes in local UI preview (login gate is client-side).
     return NextResponse.next();
   }
 
@@ -30,15 +42,9 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const path = request.nextUrl.pathname;
-  const isPublic =
-    path.startsWith("/login") ||
-    path.startsWith("/signup") ||
-    path.startsWith("/embed/") ||
-    path.startsWith("/api/forms/") ||
-    path.startsWith("/auth/");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
@@ -47,9 +53,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && (path === "/login" || path === "/signup")) {
+  if (user && !isAllowedEmail(user.email)) {
+    await supabase.auth.signOut();
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("error", "forbidden");
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((c) => {
+      response.cookies.set(c.name, c.value);
+    });
+    return response;
+  }
+
+  if (user && path === "/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
+
+  // Block open signup — Steward is single-owner
+  if (path.startsWith("/signup")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
