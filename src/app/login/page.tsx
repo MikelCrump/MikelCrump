@@ -50,7 +50,8 @@ function LoginInner() {
 
   const enterPreview = () => {
     startPreviewSession();
-    router.push(redirect);
+    // Hard navigation so AuthGate reliably reads the preview session.
+    window.location.assign(redirect.startsWith("/") ? redirect : "/");
   };
 
   const signInWithGoogle = async () => {
