@@ -1,111 +1,57 @@
-# TableFlow
+# Steward
 
-An open, affordable Airtable alternative — spreadsheet databases, embeddable forms, CSV import/export, and team access.
+Private life dashboard for **Mikel** — money, health, calendar, Tesla, tasks, news, and daily scripture.
 
-Built for **Reawaken USA** to replace expensive Airtable subscriptions.
+UI-first. Integrations connect one at a time. Locked to `MikelCrump611@gmail.com`.
 
-## Features
+## Security
 
-- **Bases & Tables** — Organize data with customizable field types
-- **Spreadsheet Grid** — Click-to-edit cells, search, add/delete rows and columns
-- **Form Builder** — Create public forms with live preview and embed codes
-- **Embeddable Forms** — iframe embed for your website (e.g. reawakenusa.org/pastors)
-- **CSV Import/Export** — Move data in and out like Excel
-- **Team Management** — Role-based permissions (owner, admin, editor, commenter, viewer)
-- **Supabase Backend** — PostgreSQL, auth, row-level security (optional — falls back to localStorage)
-- **Instant Sync** — Supabase Realtime pushes grid changes live across tabs and team members
+- **Google sign-in** (recommended primary)
+- **Passkeys** (Touch ID / Face ID / security key)
+- **Authenticator 2FA** (TOTP)
+- **Email allowlist** — only your Gmail may enter
+- `robots: noindex` — not for search engines
 
-## Production deploy
-
-See **[DEPLOY.md](./DEPLOY.md)** for the full checklist.
-
-## Quick Start (Local Mode)
+## Quick start
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — works immediately with browser storage.
+Open [http://localhost:3000/login](http://localhost:3000/login).
 
-## Enable Cloud Sync (Supabase + Vercel)
+Without Supabase env vars, use **Enter UI preview** to polish the dashboard.
 
-### 1. Create Supabase project
+## Enable real auth (Supabase)
 
-1. Go to [supabase.com/dashboard](https://supabase.com/dashboard) and create a project
-2. Open **SQL Editor** and run both migrations in order:
-
-   - `supabase/migrations/001_initial_schema.sql`
-   - `supabase/migrations/002_enable_realtime.sql` (instant sync)
-
-3. Under **Project Settings → API**, copy:
-   - Project URL
-   - `anon` public key
-   - `service_role` secret key
-
-### 2. Configure environment
-
-Copy `.env.example` to `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Fill in:
+1. Create a Supabase project
+2. Auth → Providers → enable **Google**
+3. Auth → MFA → enable **TOTP** and **WebAuthn / passkeys**
+4. Add redirect URL: `https://your-domain/auth/callback`
+5. Copy `.env.example` → `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### 3. Deploy to Vercel
+## Routes
 
-```bash
-npx vercel
-```
+| Route | Purpose |
+|-------|---------|
+| `/login` | Google / passkey / 2FA gate |
+| `/` | Today dashboard |
+| `/tasks` | Task board |
+| `/connections` | Integration hub (Capital One, Health, Tesla, …) |
+| `/security` | Passkeys & authenticator enrollment |
 
-Add the same four env vars in **Vercel → Project Settings → Environment Variables**.
+## Coming next (one at a time)
 
-Set **Site URL** and **Redirect URLs** in Supabase Auth settings to your Vercel domain (e.g. `https://your-app.vercel.app/auth/callback`).
+Capital One · Apple Health · Google Calendar · Tesla · MyFitnessPal · Renpho · News stations
 
-### 4. Sign up
+## Stack
 
-Visit `/signup`, create an account. On first login, TableFlow auto-provisions your workspace with the Pastor Partnerships demo data.
-
-## Key Routes
-
-| Route | Description |
-|-------|-------------|
-| `/` | Dashboard |
-| `/base/base-pastors/table/tbl-pastors` | Spreadsheet grid |
-| `/base/base-pastors/table/tbl-pastors/form/form-pastors` | Form builder |
-| `/embed/form-pastors` | Public embeddable form |
-| `/settings/team` | Team & permissions |
-| `/settings` | Backend connection status |
-
-## Embed a Form
-
-```html
-<iframe
-  src="https://your-app.vercel.app/embed/form-pastors"
-  width="100%"
-  height="800"
-  frameborder="0"
-  style="border:none;border-radius:12px;">
-</iframe>
-```
-
-Public submissions go through `POST /api/forms/[formId]` — no auth required.
-
-## Tech Stack
-
-- Next.js 16 (App Router) on Vercel
-- Supabase (PostgreSQL + Auth + RLS + **Realtime**)
-- TypeScript, Tailwind CSS v4, Radix UI
-- Zustand (client cache + localStorage fallback)
-
-## License
-
-Private — Reawaken USA
+Next.js 16 · React 19 · Tailwind CSS v4 · Supabase Auth · Zustand
