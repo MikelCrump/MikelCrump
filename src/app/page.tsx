@@ -9,7 +9,6 @@ import {
   Table2,
   FileText,
   ArrowRight,
-  Sparkles,
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -42,10 +41,10 @@ export default function HomePage() {
 
 function HomePageFallback() {
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-b border-slate-200 bg-white px-8 py-10">
-        <div className="h-8 w-48 animate-pulse rounded bg-slate-100" />
-        <div className="mt-3 h-4 w-96 animate-pulse rounded bg-slate-100" />
+    <div className="flex-1 overflow-y-auto bg-background">
+      <div className="mx-auto max-w-5xl px-8 py-10">
+        <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-4 w-96 max-w-full animate-pulse rounded bg-muted" />
       </div>
     </div>
   );
@@ -59,6 +58,9 @@ function HomePageContent() {
   const records = useAppStore((s) => s.records);
   const forms = useAppStore((s) => s.forms);
   const createBase = useAppStore((s) => s.createBase);
+  const currentUser = useAppStore((s) =>
+    s.team.find((m) => m.id === s.currentUserId)
+  );
 
   const [showCreate, setShowCreate] = useState(false);
   const [newBaseName, setNewBaseName] = useState("");
@@ -78,6 +80,11 @@ function HomePageContent() {
     window.location.href = `/base/${base.id}`;
   };
 
+  const firstName =
+    currentUser?.name?.split(" ")[0] ||
+    currentUser?.email?.split("@")[0] ||
+    "there";
+
   const stats = [
     { label: "Bases", value: bases.length, icon: Database },
     { label: "Tables", value: tables.length, icon: Table2 },
@@ -86,58 +93,42 @@ function HomePageContent() {
   ];
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-8 py-10">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-600">
-                {workspace.name}
-              </p>
-              <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
-                Welcome back, Mikel
-              </h1>
-              <p className="mt-2 max-w-xl text-slate-500">
-                Manage your data, build embeddable forms, and collaborate with
-                your team — all in one place.
-              </p>
-            </div>
-            <Button onClick={() => setShowCreate(true)}>
-              <Plus className="h-4 w-4" />
-              New base
-            </Button>
+    <div className="flex-1 overflow-y-auto bg-background text-foreground">
+      <div className="mx-auto max-w-5xl px-6 py-10 sm:px-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-primary">{workspace.name}</p>
+            <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">
+              Welcome back, {firstName}
+            </h1>
+            <p className="mt-2 max-w-lg text-muted-foreground">
+              Bases, grids, and embeddable forms for the Reawaken team.
+            </p>
           </div>
-
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <div
-                  key={stat.label}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
-                >
-                  <div className="flex items-center gap-2 text-slate-500">
-                    <Icon className="h-4 w-4" />
-                    <span className="text-xs font-medium uppercase tracking-wide">
-                      {stat.label}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-2xl font-bold text-slate-900">
-                    {stat.value}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-6xl px-8 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Your bases</h2>
+          <Button onClick={() => setShowCreate(true)} className="shrink-0">
+            <Plus className="h-4 w-4" />
+            New base
+          </Button>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-y border-border py-4 text-sm text-muted-foreground">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="flex items-center gap-2">
+                <Icon className="h-4 w-4 opacity-70" />
+                <span className="font-medium text-foreground">{stat.value}</span>
+                <span>{stat.label}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        <h2 className="mt-10 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Your bases
+        </h2>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {bases.map((base) => {
             const baseTables = tables.filter((t) => t.baseId === base.id);
             const baseRecords = records.filter((r) =>
@@ -149,70 +140,46 @@ function HomePageContent() {
               <Link
                 key={base.id}
                 href={`/base/${base.id}`}
-                className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
+                className="group flex items-start gap-3 rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-[var(--accent-soft)]"
               >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-lg"
-                    style={{
-                      backgroundColor: `${base.color}15`,
-                      color: base.color,
-                    }}
-                  >
-                    {base.icon || base.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-slate-900 group-hover:text-blue-700">
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg"
+                  style={{
+                    backgroundColor: `${base.color}22`,
+                    color: base.color,
+                  }}
+                >
+                  {base.icon || base.name.charAt(0)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-semibold text-foreground group-hover:text-primary">
                       {base.name}
                     </h3>
-                    {base.description && (
-                      <p className="mt-0.5 line-clamp-2 text-sm text-slate-500">
-                        {base.description}
-                      </p>
-                    )}
-                    <div className="mt-3 flex gap-3 text-xs text-slate-400">
-                      <span>{baseTables.length} tables</span>
-                      <span>{baseRecords.length} records</span>
-                      <span>{baseForms.length} forms</span>
-                    </div>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100 group-hover:text-primary" />
                   </div>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-500" />
+                  {base.description && (
+                    <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+                      {base.description}
+                    </p>
+                  )}
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {baseTables.length} tables · {baseRecords.length} records ·{" "}
+                    {baseForms.length} forms
+                  </p>
                 </div>
               </Link>
             );
           })}
 
           <button
+            type="button"
             onClick={() => setShowCreate(true)}
-            className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 p-8 text-slate-400 transition-colors hover:border-blue-300 hover:bg-blue-50/30 hover:text-blue-600"
+            className="flex min-h-[7.5rem] flex-col items-center justify-center rounded-xl border border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50 hover:bg-[var(--accent-soft)] hover:text-primary"
           >
-            <Plus className="mb-2 h-6 w-6" />
+            <Plus className="mb-2 h-5 w-5" />
             <span className="text-sm font-medium">Create new base</span>
           </button>
-        </div>
-
-        <div className="mt-10 rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-blue-600 p-2.5 text-white">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                Embed forms on your website
-              </h3>
-              <p className="mt-1 text-sm text-slate-600">
-                Build forms like your Pastor Partnership page and embed them
-                anywhere with a simple iframe snippet. Check out the demo form
-                in Pastor Partnerships.
-              </p>
-              <Button variant="outline" size="sm" className="mt-3" asChild>
-                <Link href="/base/base-pastors/table/tbl-pastors/form/form-pastors">
-                  Open form builder
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -227,7 +194,7 @@ function HomePageContent() {
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div>
-              <label className="text-sm font-medium text-slate-700">
+              <label className="text-sm font-medium text-foreground">
                 Base name
               </label>
               <Input
@@ -239,7 +206,7 @@ function HomePageContent() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-700">
+              <label className="text-sm font-medium text-foreground">
                 Color
               </label>
               <div className="mt-2 flex gap-2">

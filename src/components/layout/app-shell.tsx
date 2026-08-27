@@ -113,7 +113,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   className={cn(
                     "mb-1 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     active
-                      ? "bg-blue-50 text-blue-700 dark:bg-[var(--sidebar-accent)] dark:text-[var(--primary)]"
+                      ? "bg-[var(--sidebar-accent)] text-[var(--primary)]"
                       : "text-[var(--sidebar-muted)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-foreground)]"
                   )}
                 >
