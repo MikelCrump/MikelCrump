@@ -1,35 +1,48 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { AppShell } from "@/components/layout/app-shell";
-import { AppProvider } from "@/components/providers/app-provider";
+import type { Metadata, Viewport } from "next";
+import { Fraunces, Manrope } from "next/font/google";
+import { TabletChrome } from "@/components/arrival/tablet-chrome";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "TableFlow — Spreadsheet Database & Forms",
+  title: {
+    default: "Northstar Arrival",
+    template: "%s · Northstar Arrival",
+  },
   description:
-    "Create bases, manage data like Airtable, and embed forms on your website.",
+    "Tablet-first onsite check-in for Northstar — registrations, QR scanning, kiosk mode, templates, and live event stats.",
+  appleWebApp: {
+    capable: true,
+    title: "Northstar Arrival",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#1b6b6e",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <AppProvider>
-          <AppShell>{children}</AppShell>
-        </AppProvider>
+        <TabletChrome>{children}</TabletChrome>
       </body>
     </html>
   );

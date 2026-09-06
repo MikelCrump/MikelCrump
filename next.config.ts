@@ -7,21 +7,18 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
   async headers() {
     return [
       {
-        source: "/embed/:path*",
-        headers: [
-          ...securityHeaders,
-          {
-            key: "Content-Security-Policy",
-            value:
-              "frame-ancestors 'self' https://reawakenusa.org https://*.reawakenusa.org http://localhost:*",
-          },
-        ],
-      },
-      {
-        source: "/((?!embed).*)",
+        source: "/:path*",
         headers: [
           ...securityHeaders,
           { key: "X-Frame-Options", value: "DENY" },
