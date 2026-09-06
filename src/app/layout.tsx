@@ -16,13 +16,13 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL("https://crump360.com"),
   title: {
-    default: "Crump360 — Events & Learning",
-    template: "%s · Crump360",
+    default: "CRUMP360 — Events & Learning",
+    template: "%s · CRUMP360",
   },
   description:
-    "Crump360 is an events management and LMS platform that keeps gatherings and courses on one learning path.",
+    "CRUMP360 is an events management and LMS platform that keeps gatherings and courses on one learning path.",
   openGraph: {
-    siteName: "Crump360",
+    siteName: "CRUMP360",
     url: "https://crump360.com",
   },
 };

@@ -1,4 +1,4 @@
-# Crump360 deploy
+# CRUMP360 deploy
 
 1. Push branch to GitHub
 2. Deploy: `npx vercel --prod --token $VERCEL_TOKEN`

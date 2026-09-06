@@ -32,7 +32,7 @@ export function SiteHeader({ variant = "marketing" }: { variant?: "marketing" | 
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-5 md:px-8">
         <Link href="/" className="group flex items-center gap-2.5 text-ink">
           <Crump360Mark className="h-8 w-8" animate />
-          <span className="font-display text-2xl tracking-tight">Crump360</span>
+          <span className="font-display text-2xl tracking-tight">CRUMP360</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -116,20 +116,20 @@ export function SiteFooter() {
         <div>
           <div className="flex items-center gap-2 text-ink">
             <Crump360Mark className="h-6 w-6" />
-            <span className="font-display text-xl">Crump360</span>
+            <span className="font-display text-xl">CRUMP360</span>
           </div>
           <p className="mt-2 max-w-sm text-sm text-ink-soft">
             Events and learning on one path — so gatherings create skill, not just memories.
           </p>
           <a
             href="https://crump360.com"
-            className="mt-3 inline-block text-sm font-semibold text-sea hover:underline"
+            className="mt-3 inline-block text-sm font-semibold tracking-wide text-sea hover:underline"
           >
-            crump360.com
+            CRUMP360.com
           </a>
         </div>
         <p className="text-xs uppercase tracking-[0.14em] text-ink-soft/80">
-          Crump360 · © {new Date().getFullYear()}
+          CRUMP360 · © {new Date().getFullYear()}
         </p>
       </div>
     </footer>

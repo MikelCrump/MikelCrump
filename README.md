@@ -1,8 +1,8 @@
-# Crump360
+# CRUMP360
 
 Events management and LMS — gatherings and courses on one learning path.
 
-**Brand:** [Crump360.com](https://crump360.com)
+**Brand:** [CRUMP360.com](https://crump360.com)
 
 ## Features
 
@@ -28,4 +28,4 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Deploy
 
-Production project: `crump360` on Vercel, aliased to **crump360.com**.
+Production project: `crump360` on Vercel, aliased to **CRUMP360.com**.

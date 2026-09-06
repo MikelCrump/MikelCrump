@@ -23,10 +23,10 @@ export default function HomePage() {
                 <Crump360Mark className="h-14 w-14" animate />
                 <div>
                   <p className="font-display text-5xl tracking-tight text-ink sm:text-6xl md:text-7xl">
-                    Crump360
+                    CRUMP360
                   </p>
                   <p className="mt-1 text-sm font-semibold uppercase tracking-[0.18em] text-sea">
-                    crump360.com
+                    CRUMP360.com
                   </p>
                 </div>
               </div>
@@ -67,13 +67,13 @@ export default function HomePage() {
           <section id="method" className="mx-auto max-w-6xl px-5 py-20 md:px-8">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sea">
-                The Crump360 method
+                The CRUMP360 method
               </p>
               <h2 className="mt-3 font-display text-3xl text-ink md:text-4xl">
                 Events create energy. Courses lock it in.
               </h2>
               <p className="mt-4 text-ink-soft">
-                Most tools split gatherings from learning. Crump360 keeps registration,
+                Most tools split gatherings from learning. CRUMP360 keeps registration,
                 curriculum, and progress on one map.
               </p>
             </div>
