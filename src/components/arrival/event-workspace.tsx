@@ -14,14 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { QrBadge } from "@/components/arrival/qr-badge";
-import { useArrivalStore } from "@/lib/store";
+import { useArrivalStore, useEventAttendees, useEventStats } from "@/lib/store";
 import type { ArrivalEvent, Attendee } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function EventOverviewTab({ event }: { event: ArrivalEvent }) {
   const updateDeviceName = useArrivalStore((s) => s.updateDeviceName);
   const setKioskMode = useArrivalStore((s) => s.setKioskMode);
-  const stats = useArrivalStore((s) => s.getEventStats(event.id));
+  const stats = useEventStats(event.id);
   const [deviceName, setDeviceName] = useState(event.deviceName);
 
   useEffect(() => {
@@ -198,7 +198,7 @@ function Stat({
 }
 
 export function ScanTab({ event }: { event: ArrivalEvent }) {
-  const attendees = useArrivalStore((s) => s.getEventAttendees(event.id));
+  const attendees = useEventAttendees(event.id);
   const checkIn = useArrivalStore((s) => s.checkIn);
   const lastId = useArrivalStore((s) => s.lastCheckedInId);
   const [scanning, setScanning] = useState(false);
@@ -314,7 +314,7 @@ export function ScanTab({ event }: { event: ArrivalEvent }) {
 }
 
 export function AttendeesTab({ event }: { event: ArrivalEvent }) {
-  const attendees = useArrivalStore((s) => s.getEventAttendees(event.id));
+  const attendees = useEventAttendees(event.id);
   const checkIn = useArrivalStore((s) => s.checkIn);
   const undoCheckIn = useArrivalStore((s) => s.undoCheckIn);
   const [query, setQuery] = useState("");
@@ -470,8 +470,8 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 export function StatsTab({ event }: { event: ArrivalEvent }) {
-  const attendees = useArrivalStore((s) => s.getEventAttendees(event.id));
-  const stats = useArrivalStore((s) => s.getEventStats(event.id));
+  const attendees = useEventAttendees(event.id);
+  const stats = useEventStats(event.id);
   const byHour = useMemo(() => {
     const buckets = Array.from({ length: 8 }, (_, i) => ({
       label: `${8 + i}a`.replace("12a", "12p").replace("13a", "1p"),

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { create } from "zustand";
 import { buildSeedAttendees, seedEvents } from "./data";
 import type {
@@ -187,3 +188,38 @@ export const useArrivalStore = create<ArrivalState>((set, get) => ({
     };
   },
 }));
+
+export function useEventAttendees(eventId: string) {
+  const attendees = useArrivalStore((s) => s.attendees);
+  return useMemo(
+    () => attendees.filter((a) => a.eventId === eventId),
+    [attendees, eventId]
+  );
+}
+
+export function useEventStats(eventId: string) {
+  const attendees = useArrivalStore((s) => s.attendees);
+  const activity = useArrivalStore((s) => s.activity);
+
+  return useMemo(() => {
+    const list = attendees.filter((a) => a.eventId === eventId);
+    const checkedIn = list.filter((a) => a.status === "checked-in").length;
+    const registered = list.length;
+    const byGuestType: Record<string, number> = {};
+    for (const a of list.filter((x) => x.status === "checked-in")) {
+      byGuestType[a.guestType] = (byGuestType[a.guestType] ?? 0) + 1;
+    }
+    return {
+      registered,
+      checkedIn,
+      remaining: Math.max(0, registered - checkedIn),
+      rate: registered ? Math.round((checkedIn / registered) * 100) : 0,
+      byGuestType,
+      recent: activity.filter((a) => a.eventId === eventId).slice(0, 12),
+    };
+  }, [attendees, activity, eventId]);
+}
+
+export function useArrivalEvent(eventId: string) {
+  return useArrivalStore((s) => s.events.find((e) => e.id === eventId));
+}

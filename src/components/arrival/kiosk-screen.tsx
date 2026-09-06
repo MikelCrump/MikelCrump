@@ -14,12 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NorthstarMark } from "@/components/brand/northstar-mark";
 import { QrBadge } from "@/components/arrival/qr-badge";
-import { useArrivalStore } from "@/lib/store";
+import { useArrivalStore, useEventAttendees } from "@/lib/store";
 import type { ArrivalEvent, Attendee } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function KioskScreen({ event }: { event: ArrivalEvent }) {
-  const attendees = useArrivalStore((s) => s.getEventAttendees(event.id));
+  const attendees = useEventAttendees(event.id);
   const checkIn = useArrivalStore((s) => s.checkIn);
   const [view, setView] = useState<"home" | "search" | "scan" | "success">(
     "home"
