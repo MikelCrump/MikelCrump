@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { courseLessonCount, courses, events } from "@/lib/data";
-import { useNorthstar } from "@/lib/store";
+import { useCrump360 } from "@/lib/store";
 import { formatEventRange } from "@/lib/utils";
 
 export default function ProgressPage() {
-  const registeredEventIds = useNorthstar((s) => s.registeredEventIds);
-  const enrolledCourseIds = useNorthstar((s) => s.enrolledCourseIds);
-  const completedLessons = useNorthstar((s) => s.completedLessons);
-  const courseProgress = useNorthstar((s) => s.courseProgress);
+  const registeredEventIds = useCrump360((s) => s.registeredEventIds);
+  const enrolledCourseIds = useCrump360((s) => s.enrolledCourseIds);
+  const completedLessons = useCrump360((s) => s.completedLessons);
+  const courseProgress = useCrump360((s) => s.courseProgress);
   const [ready, setReady] = useState(false);
 
   useEffect(() => setReady(true), []);

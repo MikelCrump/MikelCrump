@@ -14,12 +14,17 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://crump360.com"),
   title: {
-    default: "Northstar — Events & Learning",
-    template: "%s · Northstar",
+    default: "Crump360 — Events & Learning",
+    template: "%s · Crump360",
   },
   description:
-    "Northstar is an events management and LMS platform that keeps gatherings and courses on one learning path.",
+    "Crump360 is an events management and LMS platform that keeps gatherings and courses on one learning path.",
+  openGraph: {
+    siteName: "Crump360",
+    url: "https://crump360.com",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

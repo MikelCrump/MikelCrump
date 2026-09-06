@@ -111,8 +111,9 @@
     animation-delay: 270ms;
   }
 
-  .pulse-star {
-    animation: pulse-star 3.2s ease-in-out infinite;
+  .pulse-star,
+  .pulse-orbit {
+    animation: pulse-orbit 3.2s ease-in-out infinite;
   }
 
   .drift {
@@ -131,14 +132,14 @@
   }
 }
 
-@keyframes pulse-star {
+@keyframes pulse-orbit {
   0%,
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
     filter: drop-shadow(0 0 0 rgba(212, 168, 75, 0));
   }
   50% {
-    transform: scale(1.06);
+    transform: scale(1.05) rotate(6deg);
     filter: drop-shadow(0 0 10px rgba(212, 168, 75, 0.45));
   }
 }
@@ -155,6 +156,7 @@
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .pulse-star,
+  .pulse-orbit,
   .drift,
   .lift {
     animation: none !important;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useNorthstar } from "@/lib/store";
+import { useCrump360 } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export function RegisterButton({
@@ -14,8 +14,8 @@ export function RegisterButton({
   full?: boolean;
   className?: string;
 }) {
-  const registerForEvent = useNorthstar((s) => s.registerForEvent);
-  const isRegistered = useNorthstar((s) => s.isRegistered);
+  const registerForEvent = useCrump360((s) => s.registerForEvent);
+  const isRegistered = useCrump360((s) => s.isRegistered);
   const [ready, setReady] = useState(false);
 
   useEffect(() => setReady(true), []);
@@ -42,8 +42,8 @@ export function EnrollButton({
   courseId: string;
   className?: string;
 }) {
-  const enrollInCourse = useNorthstar((s) => s.enrollInCourse);
-  const isEnrolled = useNorthstar((s) => s.isEnrolled);
+  const enrollInCourse = useCrump360((s) => s.enrollInCourse);
+  const isEnrolled = useCrump360((s) => s.isEnrolled);
   const [ready, setReady] = useState(false);
 
   useEffect(() => setReady(true), []);
@@ -70,8 +70,8 @@ export function CompleteLessonButton({
   courseId: string;
   lessonId: string;
 }) {
-  const completeLesson = useNorthstar((s) => s.completeLesson);
-  const isLessonComplete = useNorthstar((s) => s.isLessonComplete);
+  const completeLesson = useCrump360((s) => s.completeLesson);
+  const isLessonComplete = useCrump360((s) => s.isLessonComplete);
   const [ready, setReady] = useState(false);
 
   useEffect(() => setReady(true), []);

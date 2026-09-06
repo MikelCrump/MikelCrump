@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Compass, Map, Sparkles } from "lucide-react";
-import { NorthstarMark } from "@/components/brand/northstar-mark";
+import { Crump360Mark } from "@/components/brand/crump360-mark";
 import { EventCard, CourseCard } from "@/components/catalog/cards";
 import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,15 @@ export default function HomePage() {
           <section className="relative mx-auto grid max-w-6xl gap-10 px-5 pb-8 pt-6 md:px-8 md:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:gap-12 lg:pb-14">
             <div className="relative z-10">
               <div className="reveal flex items-center gap-3">
-                <NorthstarMark className="h-14 w-14" animate />
-                <p className="font-display text-5xl tracking-tight text-ink sm:text-6xl md:text-7xl">
-                  Northstar
-                </p>
+                <Crump360Mark className="h-14 w-14" animate />
+                <div>
+                  <p className="font-display text-5xl tracking-tight text-ink sm:text-6xl md:text-7xl">
+                    Crump360
+                  </p>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-[0.18em] text-sea">
+                    crump360.com
+                  </p>
+                </div>
               </div>
               <h1 className="reveal reveal-delay-1 mt-6 max-w-xl font-display text-3xl leading-[1.12] text-ink text-balance sm:text-4xl md:text-[2.75rem]">
                 Gatherings that teach. Courses that stick.
@@ -62,13 +67,13 @@ export default function HomePage() {
           <section id="method" className="mx-auto max-w-6xl px-5 py-20 md:px-8">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sea">
-                The Northstar method
+                The Crump360 method
               </p>
               <h2 className="mt-3 font-display text-3xl text-ink md:text-4xl">
                 Events create energy. Courses lock it in.
               </h2>
               <p className="mt-4 text-ink-soft">
-                Most tools split gatherings from learning. Northstar keeps registration,
+                Most tools split gatherings from learning. Crump360 keeps registration,
                 curriculum, and progress on one map.
               </p>
             </div>

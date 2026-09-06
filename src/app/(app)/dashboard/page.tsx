@@ -6,7 +6,7 @@ import { ArrowRight, BookOpen, CalendarDays } from "lucide-react";
 import { CourseCard, EventCard } from "@/components/catalog/cards";
 import { Button } from "@/components/ui/button";
 import { courses, events, learner, courseLessonCount } from "@/lib/data";
-import { useNorthstar } from "@/lib/store";
+import { useCrump360 } from "@/lib/store";
 import { formatEventRange } from "@/lib/utils";
 
 function ProgressBadge({ children }: { children: React.ReactNode }) {
@@ -18,10 +18,10 @@ function ProgressBadge({ children }: { children: React.ReactNode }) {
 }
 
 export default function DashboardPage() {
-  const registeredEventIds = useNorthstar((s) => s.registeredEventIds);
-  const enrolledCourseIds = useNorthstar((s) => s.enrolledCourseIds);
-  const courseProgress = useNorthstar((s) => s.courseProgress);
-  const completedLessons = useNorthstar((s) => s.completedLessons);
+  const registeredEventIds = useCrump360((s) => s.registeredEventIds);
+  const enrolledCourseIds = useCrump360((s) => s.enrolledCourseIds);
+  const courseProgress = useCrump360((s) => s.courseProgress);
+  const completedLessons = useCrump360((s) => s.completedLessons);
   const [ready, setReady] = useState(false);
 
   useEffect(() => setReady(true), []);

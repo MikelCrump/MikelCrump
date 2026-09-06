@@ -4,7 +4,7 @@ export const learner: LearnerProfile = {
   id: "u-mikel",
   name: "Mikel Crump",
   role: "Operations Lead",
-  org: "Northstar Cohort",
+  org: "Crump360 Cohort",
   avatarInitials: "MC",
 };
 
@@ -35,8 +35,8 @@ export const instructors: Instructor[] = [
 export const events: PlatformEvent[] = [
   {
     id: "evt-summit-26",
-    slug: "northstar-summit-2026",
-    title: "Northstar Summit 2026",
+    slug: "crump360-summit-2026",
+    title: "Crump360 Summit 2026",
     subtitle: "Three days to recalibrate how your teams learn and gather.",
     description:
       "A working summit for operators, facilitators, and L&D leads. Mix of keynotes, design studios, and peer clinics. Leave with a 90-day learning calendar and a playbook for hybrid events that people actually attend.",
@@ -120,7 +120,7 @@ export const events: PlatformEvent[] = [
     title: "Office Hours: Learning Ops Office",
     subtitle: "Bring a stuck program. Leave with next steps.",
     description:
-      "Open virtual clinic for Northstar members. Drop in with a syllabus draft, attendance problem, or measurement question. Small groups rotate with faculty.",
+      "Open virtual clinic for Crump360 members. Drop in with a syllabus draft, attendance problem, or measurement question. Small groups rotate with faculty.",
     cover:
       "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?auto=format&fit=crop&w=1600&q=80",
     format: "virtual",
@@ -207,7 +207,7 @@ export const courses: Course[] = [
             title: "Why most LMS journeys go quiet",
             type: "video",
             durationMin: 12,
-            summary: "The drop-off pattern and how Northstar counters it.",
+            summary: "The drop-off pattern and how Crump360 counters it.",
             content:
               "Completion rates fall when learning feels like a second job. We start by naming the friction: unclear outcomes, event overload, and no path between a workshop and daily work. This lesson sets the frame for the rest of the course.",
           },
@@ -328,7 +328,7 @@ export const courses: Course[] = [
             durationMin: 45,
             summary: "Watch a recorded Field Lab debrief.",
             content:
-              "Replay of a Northstar Field Lab with instructor annotations. Pause points ask you to predict the facilitator’s next move.",
+              "Replay of a Crump360 Field Lab with instructor annotations. Pause points ask you to predict the facilitator’s next move.",
           },
         ],
       },

@@ -83,7 +83,7 @@ export default async function LessonPage({
           </p>
         </div>
 
-        <div className="prose-northstar mt-8 max-w-2xl space-y-4 text-[15px] leading-relaxed text-ink-soft">
+        <div className="prose-crump360 mt-8 max-w-2xl space-y-4 text-[15px] leading-relaxed text-ink-soft">
           {lesson.content.split("\n\n").map((para) => (
             <p key={para.slice(0, 24)}>{para}</p>
           ))}

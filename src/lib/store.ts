@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface NorthstarState {
+interface Crump360State {
   registeredEventIds: string[];
   enrolledCourseIds: string[];
   completedLessons: Record<string, string[]>;
@@ -16,7 +16,7 @@ interface NorthstarState {
   courseProgress: (courseId: string, totalLessons: number) => number;
 }
 
-export const useNorthstar = create<NorthstarState>()(
+export const useCrump360 = create<Crump360State>()(
   persist(
     (set, get) => ({
       registeredEventIds: ["evt-office-hours"],
@@ -60,6 +60,9 @@ export const useNorthstar = create<NorthstarState>()(
         return Math.round((done / totalLessons) * 100);
       },
     }),
-    { name: "northstar-learner" }
+    { name: "crump360-learner" }
   )
 );
+
+/** @deprecated Use useCrump360 */
+export const useNorthstar = useCrump360;
