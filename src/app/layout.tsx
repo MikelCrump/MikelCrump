@@ -1,36 +1,34 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { AppShell } from "@/components/layout/app-shell";
-import { AppProvider } from "@/components/providers/app-provider";
+import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "TableFlow — Spreadsheet Database & Forms",
+  title: {
+    default: "Northstar — Events & Learning",
+    template: "%s · Northstar",
+  },
   description:
-    "Create bases, manage data like Airtable, and embed forms on your website.",
+    "Northstar is an events management and LMS platform that keeps gatherings and courses on one learning path.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full">
-        <AppProvider>
-          <AppShell>{children}</AppShell>
-        </AppProvider>
-      </body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }
