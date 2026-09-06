@@ -1,122 +1,80 @@
-export type FieldType =
-  | "text"
-  | "email"
-  | "phone"
-  | "number"
-  | "singleSelect"
-  | "multiSelect"
-  | "checkbox"
-  | "date"
-  | "longText"
-  | "url";
+export type EventFormat = "in-person" | "virtual" | "hybrid";
+export type EventStatus = "open" | "almost-full" | "waitlist" | "closed";
+export type LessonType = "video" | "reading" | "quiz" | "live";
 
-export type ViewType = "grid" | "form" | "kanban";
-
-export type MemberRole = "owner" | "admin" | "editor" | "commenter" | "viewer";
-
-export interface Field {
+export interface Instructor {
   id: string;
   name: string;
-  type: FieldType;
-  options?: string[];
-  required?: boolean;
-  description?: string;
+  title: string;
+  avatar: string;
+  bio: string;
 }
 
-export type CellValue = string | string[] | boolean | number | null;
-
-export interface TableRecord {
+export interface EventSession {
   id: string;
-  tableId: string;
-  values: Record<string, CellValue>;
-  createdAt: string;
-  updatedAt: string;
+  title: string;
+  startsAt: string;
+  endsAt: string;
+  location: string;
 }
 
-export interface View {
+export interface PlatformEvent {
   id: string;
-  name: string;
-  type: ViewType;
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  cover: string;
+  format: EventFormat;
+  status: EventStatus;
+  category: string;
+  city: string;
+  startsAt: string;
+  endsAt: string;
+  capacity: number;
+  registered: number;
+  price: number;
+  instructorIds: string[];
+  sessions: EventSession[];
+  tags: string[];
 }
 
-export interface Table {
+export interface Lesson {
   id: string;
-  baseId: string;
-  name: string;
-  description?: string;
-  fields: Field[];
-  views: View[];
+  title: string;
+  type: LessonType;
+  durationMin: number;
+  summary: string;
+  content: string;
 }
 
-export interface FormSettings {
-  showLogo?: boolean;
-  primaryColor?: string;
-  embedEnabled?: boolean;
-  redirectUrl?: string;
-}
-
-export interface Form {
+export interface Module {
   id: string;
-  tableId: string;
-  baseId: string;
-  name: string;
-  description?: string;
-  submitButtonText?: string;
-  successMessage?: string;
-  fieldIds: string[];
-  settings: FormSettings;
-  published: boolean;
+  title: string;
+  lessons: Lesson[];
 }
 
-export interface Base {
+export interface Course {
   id: string;
-  name: string;
-  description?: string;
-  color: string;
-  icon?: string;
-  createdAt: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  cover: string;
+  level: "Foundation" | "Practitioner" | "Leadership";
+  category: string;
+  durationHours: number;
+  enrolled: number;
+  rating: number;
+  instructorIds: string[];
+  modules: Module[];
+  outcomes: string[];
 }
 
-export interface TeamMember {
-  id: string;
-  email: string;
-  name: string;
-  role: MemberRole;
-  avatarColor: string;
-  invitedAt: string;
-  status: "active" | "pending";
-}
-
-export interface Workspace {
+export interface LearnerProfile {
   id: string;
   name: string;
+  role: string;
+  org: string;
+  avatarInitials: string;
 }
-
-export const FIELD_TYPE_LABELS: Record<FieldType, string> = {
-  text: "Single line text",
-  email: "Email",
-  phone: "Phone",
-  number: "Number",
-  singleSelect: "Single select",
-  multiSelect: "Multiple select",
-  checkbox: "Checkbox",
-  date: "Date",
-  longText: "Long text",
-  url: "URL",
-};
-
-export const ROLE_LABELS: Record<MemberRole, string> = {
-  owner: "Owner",
-  admin: "Admin",
-  editor: "Editor",
-  commenter: "Commenter",
-  viewer: "Viewer",
-};
-
-export const ROLE_DESCRIPTIONS: Record<MemberRole, string> = {
-  owner: "Full access including billing and deletion",
-  admin: "Can manage bases, tables, and team members",
-  editor: "Can edit records and create forms",
-  commenter: "Can view and comment on records",
-  viewer: "Read-only access to bases and records",
-};

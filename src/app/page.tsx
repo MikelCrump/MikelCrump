@@ -1,277 +1,155 @@
-"use client";
-
-import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import {
-  Plus,
-  Database,
-  Table2,
-  FileText,
-  Users,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
-import { useAppStore } from "@/lib/store";
+import { ArrowRight, Compass, Map, Sparkles } from "lucide-react";
+import { Crump360Mark } from "@/components/brand/crump360-mark";
+import { EventCard, CourseCard } from "@/components/catalog/cards";
+import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-
-const BASE_COLORS = [
-  "#2563eb",
-  "#7c3aed",
-  "#059669",
-  "#d97706",
-  "#dc2626",
-  "#0891b2",
-  "#be185d",
-];
+import { courses, events } from "@/lib/data";
 
 export default function HomePage() {
-  return (
-    <Suspense fallback={<HomePageFallback />}>
-      <HomePageContent />
-    </Suspense>
-  );
-}
-
-function HomePageFallback() {
-  return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-b border-slate-200 bg-white px-8 py-10">
-        <div className="h-8 w-48 animate-pulse rounded bg-slate-100" />
-        <div className="mt-3 h-4 w-96 animate-pulse rounded bg-slate-100" />
-      </div>
-    </div>
-  );
-}
-
-function HomePageContent() {
-  const searchParams = useSearchParams();
-  const workspace = useAppStore((s) => s.workspace);
-  const bases = useAppStore((s) => s.bases);
-  const tables = useAppStore((s) => s.tables);
-  const records = useAppStore((s) => s.records);
-  const forms = useAppStore((s) => s.forms);
-  const team = useAppStore((s) => s.team);
-  const createBase = useAppStore((s) => s.createBase);
-
-  const [showCreate, setShowCreate] = useState(false);
-  const [newBaseName, setNewBaseName] = useState("");
-  const [selectedColor, setSelectedColor] = useState(BASE_COLORS[0]);
-
-  useEffect(() => {
-    if (searchParams.get("create") === "base") {
-      setShowCreate(true);
-    }
-  }, [searchParams]);
-
-  const handleCreateBase = () => {
-    if (!newBaseName.trim()) return;
-    const base = createBase(newBaseName.trim(), selectedColor);
-    setNewBaseName("");
-    setShowCreate(false);
-    window.location.href = `/base/${base.id}`;
-  };
-
-  const stats = [
-    { label: "Bases", value: bases.length, icon: Database },
-    { label: "Tables", value: tables.length, icon: Table2 },
-    { label: "Records", value: records.length, icon: FileText },
-    { label: "Team", value: team.length, icon: Users },
-  ];
+  const featuredEvents = events.slice(0, 3);
+  const featuredCourses = courses.slice(0, 3);
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-8 py-10">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-600">
-                {workspace.name}
-              </p>
-              <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
-                Welcome back, Mikel
-              </h1>
-              <p className="mt-2 max-w-xl text-slate-500">
-                Manage your data, build embeddable forms, and collaborate with
-                your team — all in one place.
-              </p>
-            </div>
-            <Button onClick={() => setShowCreate(true)}>
-              <Plus className="h-4 w-4" />
-              New base
-            </Button>
-          </div>
+    <div className="aurora-bg min-h-screen">
+      <div className="constellation">
+        <SiteHeader />
 
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <div
-                  key={stat.label}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
-                >
-                  <div className="flex items-center gap-2 text-slate-500">
-                    <Icon className="h-4 w-4" />
-                    <span className="text-xs font-medium uppercase tracking-wide">
-                      {stat.label}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-2xl font-bold text-slate-900">
-                    {stat.value}
+        <main>
+          <section className="relative mx-auto grid max-w-6xl gap-10 px-5 pb-8 pt-6 md:px-8 md:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:gap-12 lg:pb-14">
+            <div className="relative z-10">
+              <div className="reveal flex items-center gap-3">
+                <Crump360Mark className="h-14 w-14" animate />
+                <div>
+                  <p className="font-display text-5xl tracking-tight text-ink sm:text-6xl md:text-7xl">
+                    CRUMP360
+                  </p>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-[0.18em] text-sea">
+                    CRUMP360.com
                   </p>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-6xl px-8 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Your bases</h2>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {bases.map((base) => {
-            const baseTables = tables.filter((t) => t.baseId === base.id);
-            const baseRecords = records.filter((r) =>
-              baseTables.some((t) => t.id === r.tableId)
-            );
-            const baseForms = forms.filter((f) => f.baseId === base.id);
-
-            return (
-              <Link
-                key={base.id}
-                href={`/base/${base.id}`}
-                className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-lg"
-                    style={{
-                      backgroundColor: `${base.color}15`,
-                      color: base.color,
-                    }}
-                  >
-                    {base.icon || base.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-slate-900 group-hover:text-blue-700">
-                      {base.name}
-                    </h3>
-                    {base.description && (
-                      <p className="mt-0.5 line-clamp-2 text-sm text-slate-500">
-                        {base.description}
-                      </p>
-                    )}
-                    <div className="mt-3 flex gap-3 text-xs text-slate-400">
-                      <span>{baseTables.length} tables</span>
-                      <span>{baseRecords.length} records</span>
-                      <span>{baseForms.length} forms</span>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-500" />
-                </div>
-              </Link>
-            );
-          })}
-
-          <button
-            onClick={() => setShowCreate(true)}
-            className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 p-8 text-slate-400 transition-colors hover:border-blue-300 hover:bg-blue-50/30 hover:text-blue-600"
-          >
-            <Plus className="mb-2 h-6 w-6" />
-            <span className="text-sm font-medium">Create new base</span>
-          </button>
-        </div>
-
-        <div className="mt-10 rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-blue-600 p-2.5 text-white">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                Embed forms on your website
-              </h3>
-              <p className="mt-1 text-sm text-slate-600">
-                Build forms like your Pastor Partnership page and embed them
-                anywhere with a simple iframe snippet. Check out the demo form
-                in Pastor Partnerships.
+              </div>
+              <h1 className="reveal reveal-delay-1 mt-6 max-w-xl font-display text-3xl leading-[1.12] text-ink text-balance sm:text-4xl md:text-[2.75rem]">
+                Gatherings that teach. Courses that stick.
+              </h1>
+              <p className="reveal reveal-delay-2 mt-5 max-w-lg text-base leading-relaxed text-ink-soft sm:text-lg">
+                One platform for events and learning — so every summit, clinic, and cohort
+                points the same direction.
               </p>
-              <Button variant="outline" size="sm" className="mt-3" asChild>
-                <Link href="/base/base-pastors/table/tbl-pastors/form/form-pastors">
-                  Open form builder
-                  <ArrowRight className="h-3.5 w-3.5" />
+              <div className="reveal reveal-delay-3 mt-8 flex flex-wrap items-center gap-3">
+                <Button asChild size="lg">
+                  <Link href="/dashboard">
+                    Enter platform <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="secondary">
+                  <Link href="/events">Browse events</Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="reveal reveal-delay-2 relative min-h-[320px] overflow-hidden rounded-[1.25rem] border border-line/70 shadow-[0_24px_60px_-28px_rgba(19,42,62,0.45)] sm:min-h-[420px] lg:min-h-[520px]">
+              <Image
+                src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1600&q=80"
+                alt="People gathered in a bright workshop space"
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width:1024px) 100vw, 48vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-ink/35 via-transparent to-sea/20" />
+              <div className="drift absolute -right-6 -top-6 h-40 w-40 rounded-full bg-star/25 blur-2xl" />
+              <div className="drift absolute -bottom-10 left-10 h-48 w-48 rounded-full bg-sea-bright/25 blur-3xl" />
+            </div>
+          </section>
+
+          <section id="method" className="mx-auto max-w-6xl px-5 py-20 md:px-8">
+            <div className="max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sea">
+                The CRUMP360 method
+              </p>
+              <h2 className="mt-3 font-display text-3xl text-ink md:text-4xl">
+                Events create energy. Courses lock it in.
+              </h2>
+              <p className="mt-4 text-ink-soft">
+                Most tools split gatherings from learning. CRUMP360 keeps registration,
+                curriculum, and progress on one map.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-8 md:grid-cols-3">
+              {[
+                {
+                  icon: Compass,
+                  title: "Orient",
+                  copy: "Set outcomes before agendas. Every event and course shares a true-north statement.",
+                },
+                {
+                  icon: Map,
+                  title: "Path",
+                  copy: "Connect live sessions to modules and practice. Learners always know the next step.",
+                },
+                {
+                  icon: Sparkles,
+                  title: "Signal",
+                  copy: "Track activation and transfer — not vanity enrollments — so sponsors see real movement.",
+                },
+              ].map((item) => (
+                <div key={item.title} className="border-t border-line pt-6">
+                  <item.icon className="h-6 w-6 text-sea" strokeWidth={1.5} />
+                  <h3 className="mt-4 font-display text-2xl text-ink">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">{item.copy}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mx-auto max-w-6xl px-5 py-8 md:px-8">
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sea">
+                  Upcoming
+                </p>
+                <h2 className="mt-2 font-display text-3xl text-ink">Events on the horizon</h2>
+              </div>
+              <Button asChild variant="ghost">
+                <Link href="/events">
+                  All events <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>
-          </div>
-        </div>
-      </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {featuredEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          </section>
 
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create a new base</DialogTitle>
-            <DialogDescription>
-              A base is a collection of related tables — like a project or
-              department.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div>
-              <label className="text-sm font-medium text-slate-700">
-                Base name
-              </label>
-              <Input
-                value={newBaseName}
-                onChange={(e) => setNewBaseName(e.target.value)}
-                placeholder="e.g. Volunteer Sign-ups"
-                className="mt-1.5"
-                onKeyDown={(e) => e.key === "Enter" && handleCreateBase()}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-700">
-                Color
-              </label>
-              <div className="mt-2 flex gap-2">
-                {BASE_COLORS.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => setSelectedColor(color)}
-                    className="h-8 w-8 rounded-full transition-transform hover:scale-110"
-                    style={{
-                      backgroundColor: color,
-                      outline:
-                        selectedColor === color
-                          ? `2px solid ${color}`
-                          : "none",
-                      outlineOffset: "2px",
-                    }}
-                  />
-                ))}
+          <section className="mx-auto max-w-6xl px-5 py-16 md:px-8">
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sea">
+                  Curriculum
+                </p>
+                <h2 className="mt-2 font-display text-3xl text-ink">Learning that follows through</h2>
               </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowCreate(false)}>
-                Cancel
+              <Button asChild variant="ghost">
+                <Link href="/learn">
+                  All courses <ArrowRight className="h-4 w-4" />
+                </Link>
               </Button>
-              <Button onClick={handleCreateBase}>Create base</Button>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+            <div className="grid gap-6 md:grid-cols-3">
+              {featuredCourses.map((course) => (
+                <CourseCard key={course.id} course={course} />
+              ))}
+            </div>
+          </section>
+        </main>
+
+        <SiteFooter />
+      </div>
     </div>
   );
 }
