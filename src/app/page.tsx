@@ -134,10 +134,12 @@ export default function HomePage() {
                   <ArrowIcon />
                 </a>
                 <a
-                  href="#contact"
+                  href="https://crump360.com"
+                  target="_blank"
+                  rel="noreferrer"
                   className="inline-flex h-12 items-center rounded-md border border-white/20 bg-white/10 px-6 text-base font-semibold text-cloud transition hover:bg-white/15"
                 >
-                  Request a consult
+                  See CRUMP360
                 </a>
               </div>
             </div>
@@ -365,7 +367,7 @@ export default function HomePage() {
 
           <section
             id="ventures"
-            className="mx-auto max-w-6xl px-5 py-8 md:px-8 md:pb-20"
+            className="mx-auto max-w-6xl px-5 py-8 pb-24 md:px-8"
           >
             <div className="max-w-2xl">
               <p className="text-xs font-bold tracking-[0.16em] text-blue uppercase">
@@ -404,49 +406,6 @@ export default function HomePage() {
                   </span>
                 </a>
               ))}
-            </div>
-          </section>
-
-          <section
-            id="contact"
-            className="mx-auto max-w-6xl px-5 pb-24 md:px-8"
-          >
-            <div className="relative overflow-hidden rounded-2xl bg-navy px-6 py-12 text-cloud md:px-12 md:py-16">
-              <div className="drift absolute -right-10 top-0 h-48 w-48 rounded-full bg-blue/30 blur-3xl" />
-              <div className="drift absolute bottom-0 left-10 h-40 w-40 rounded-full bg-orange/25 blur-3xl" />
-              <div className="relative max-w-2xl">
-                <p className="text-xs font-bold tracking-[0.16em] text-orange uppercase">
-                  Start a conversation
-                </p>
-                <h2 className="mt-3 font-display text-3xl md:text-4xl">
-                  Ready for infrastructure, learning, or events that hold up?
-                </h2>
-                <p className="mt-4 text-cloud/70">
-                  Tell us about your LMS roadmap, Microsoft environment, or next
-                  program. We respond with a clear scope — not a generic pitch
-                  deck.
-                </p>
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <a
-                    href="mailto:MikelCrump611@gmail.com"
-                    className="inline-flex h-12 items-center gap-2 rounded-md bg-orange px-6 text-base font-semibold text-navy transition hover:bg-star-soft"
-                  >
-                    Email Mikel Crump
-                    <ArrowIcon />
-                  </a>
-                  <a
-                    href="https://crump360.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex h-12 items-center rounded-md border border-white/20 bg-white/10 px-6 text-base font-semibold text-cloud transition hover:bg-white/15"
-                  >
-                    See CRUMP360
-                  </a>
-                </div>
-                <p className="mt-6 text-sm text-cloud/55">
-                  Dallas, TX · IT Infrastructure · LMS · Events
-                </p>
-              </div>
             </div>
           </section>
         </div>

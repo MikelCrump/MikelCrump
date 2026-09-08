@@ -9,7 +9,6 @@ const nav = [
   { href: "/#approach", label: "Approach" },
   { href: "/#trust", label: "Credentials" },
   { href: "/#ventures", label: "Ventures" },
-  { href: "/#contact", label: "Contact" },
 ];
 
 type SiteHeaderProps = {
@@ -64,12 +63,12 @@ export function SiteHeader({ tone = "dark" }: SiteHeaderProps) {
           >
             CRUMP360
           </a>
-          <Link
-            href="/#contact"
+          <a
+            href="mailto:MikelCrump611@gmail.com"
             className="inline-flex h-10 items-center rounded-md bg-orange px-4 text-sm font-semibold text-navy transition hover:bg-star-soft"
           >
             Talk with us
-          </Link>
+          </a>
         </div>
 
         <button
@@ -128,13 +127,13 @@ export function SiteHeader({ tone = "dark" }: SiteHeaderProps) {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/#contact"
+            <a
+              href="mailto:MikelCrump611@gmail.com"
               className="mt-2 inline-flex items-center justify-center rounded-md bg-orange px-4 py-3 text-sm font-semibold text-navy"
               onClick={() => setOpen(false)}
             >
               Talk with us
-            </Link>
+            </a>
           </nav>
         </div>
       ) : null}

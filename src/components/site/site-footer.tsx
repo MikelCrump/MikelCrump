@@ -35,9 +35,12 @@ export function SiteFooter() {
             <Link className="hover:text-orange" href="/#trust">
               Credentials
             </Link>
-            <Link className="hover:text-orange" href="/#contact">
+            <a
+              className="hover:text-orange"
+              href="mailto:MikelCrump611@gmail.com"
+            >
               Contact
-            </Link>
+            </a>
           </div>
           <p className="text-xs font-medium tracking-[0.14em] text-cloud/45 uppercase">
             © {new Date().getFullYear()} Crump Solutions Group · Dallas, TX
