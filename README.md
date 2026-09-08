@@ -2,9 +2,9 @@
 
 Internal web app for scaling AI lecturer video production: script in → consistent-face clips + joined audio out.
 
-## Phase 1 (current)
+## Current phase
 
-Scaffold only: Next.js App Router, TypeScript strict, Tailwind, Prisma + PostgreSQL, Vitest, Zod env validation, seed data, and a project list home page.
+**Phase 2** — provider abstraction (Mock + stubs), SceneScript schema, Director Option Formatter.
 
 ## Stack
 
@@ -14,6 +14,15 @@ Scaffold only: Next.js App Router, TypeScript strict, Tailwind, Prisma + Postgre
 - Zod env validation (`src/env.ts`)
 - Vitest
 - pnpm
+
+## Locked decisions
+
+| Concern | Choice | Notes |
+| --- | --- | --- |
+| Auth | **Clerk** | Email allowlist in Clerk dashboard; keys optional until auth UI |
+| Storage | **Vercel Blob** | `BLOB_READ_WRITE_TOKEN` when asset uploads land |
+| Video APIs | **mock** (default) + stubs for **Runway, Kling, Veo, Pika** | Plug API keys later; keep `VIDEO_PROVIDER=mock` for E2E |
+| Audio | **mock** (default) + **ElevenLabs** stub | `AUDIO_PROVIDER=mock\|elevenlabs` |
 
 ## Quick start
 
@@ -39,8 +48,12 @@ Open [http://localhost:3000](http://localhost:3000).
 | `pnpm test` | Vitest |
 | `pnpm db:seed` | Seed LMS + characters + sample project |
 
-## Open decisions (confirm before Phase 2)
+## Phase map
 
-1. Auth: Clerk vs NextAuth email allowlist
-2. File/asset storage: Vercel Blob vs S3
-3. Real video-generation APIs (Runway, Kling, Veo, Pika, …) — until then, `VIDEO_PROVIDER=mock`
+1. Scaffold ✓
+2. Providers + SceneScript + Director Formatter ← you are here
+3. LLM adapters + `/api/adapter/normalize`
+4. Project CRUD + Wizard steps 1–5
+5. Generate + poll + Wizard steps 6–8
+6. Audio + Visual Canvas (React Flow)
+7. MCP server + docs

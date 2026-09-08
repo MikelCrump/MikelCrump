@@ -9,6 +9,8 @@ export default defineConfig({
       DATABASE_URL:
         process.env.DATABASE_URL ??
         "postgresql://crump:crump@localhost:5432/crump_studio?schema=public",
+      AUTH_PROVIDER: "clerk",
+      STORAGE_PROVIDER: "blob",
       VIDEO_PROVIDER: process.env.VIDEO_PROVIDER ?? "mock",
       AUDIO_PROVIDER: process.env.AUDIO_PROVIDER ?? "mock",
       NODE_ENV: "test",

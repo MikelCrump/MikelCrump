@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatShot > is deterministic across framing codes 1`] = `
+[
+  "24mm wide lens, high-angle angle, pan-left, extreme close-up, deep depth of field, consistent studio lighting",
+  "24mm wide lens, high-angle angle, pan-left, close-up, deep depth of field, consistent studio lighting",
+  "24mm wide lens, high-angle angle, pan-left, medium close-up, deep depth of field, consistent studio lighting",
+  "24mm wide lens, high-angle angle, pan-left, medium shot, deep depth of field, consistent studio lighting",
+  "24mm wide lens, high-angle angle, pan-left, medium wide shot, deep depth of field, consistent studio lighting",
+  "24mm wide lens, high-angle angle, pan-left, wide shot, deep depth of field, consistent studio lighting",
+  "24mm wide lens, high-angle angle, pan-left, extreme wide shot, deep depth of field, consistent studio lighting",
+]
+`;
+
+exports[`formatShot > omits depth of field when unset, keeps lighting coda 1`] = `"85mm portrait lens, over-the-shoulder angle, orbit, close-up, consistent studio lighting"`;
+
+exports[`formatShot > produces a stable semantic string for a typical MCU push-in 1`] = `"35mm lens, eye-level angle, slow push-in, medium close-up, shallow depth of field, consistent studio lighting"`;
