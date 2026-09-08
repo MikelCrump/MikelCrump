@@ -1,22 +1,55 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f3efe6;
-  --bg-deep: #e7e0d2;
-  --ink: #1c1914;
-  --ink-muted: #5c564c;
-  --line: #cfc4b2;
-  --accent: #0f6b5c;
-  --accent-soft: #d7ebe5;
-  --surface: rgba(255, 252, 246, 0.82);
-  --danger: #9b2c2c;
+  --navy: #191a21;
+  --orange: #e68a2c;
+  --blue: #2e41de;
+  --page: #f5f6f9;
+  --surface: #fff;
+  --border: #dfe2ea;
+  --muted: #64687a;
+  --faint: #8a8da0;
+  --ink: var(--navy);
+  --ink-soft: var(--muted);
+  --sea: var(--blue);
+  --sea-bright: #3b4ef0;
+  --star: var(--orange);
+  --star-soft: #f0a85a;
+  --mist: #eef0f6;
+  --paper: var(--page);
+  --line: var(--border);
+  --cloud: #e8e9ed;
+  --danger: #d14343;
+  --background: var(--page);
+  --foreground: var(--ink);
+  /* Studio compatibility aliases */
+  --bg: var(--page);
+  --bg-deep: var(--mist);
+  --accent: var(--blue);
+  --accent-soft: color-mix(in oklab, var(--blue) 14%, white);
+  --ink-muted: var(--muted);
 }
 
 @theme inline {
-  --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
-  --color-background: var(--bg);
-  --color-foreground: var(--ink);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-space-grotesk);
+  --color-navy: var(--navy);
+  --color-orange: var(--orange);
+  --color-blue: var(--blue);
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-mist: var(--mist);
+  --color-cloud: var(--cloud);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-star: var(--star);
+  --color-star-soft: var(--star-soft);
+  --color-sea-bright: var(--sea-bright);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 }
 
 * {
@@ -25,20 +58,119 @@
 
 html {
   height: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   min-height: 100%;
   margin: 0;
   color: var(--ink);
-  background:
-    radial-gradient(1200px 500px at 10% -10%, #dff2ec 0%, transparent 55%),
-    radial-gradient(900px 420px at 100% 0%, #f6e7d0 0%, transparent 50%),
-    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
-  font-family: var(--font-sans), ui-sans-serif, sans-serif;
+  background: var(--page);
+  font-family: var(--font-dm-sans), ui-sans-serif, sans-serif;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--blue) 28%, white);
+}
+
+.font-display {
+  font-family: var(--font-space-grotesk), ui-sans-serif, sans-serif;
+}
+
+.brand-bg {
+  background:
+    radial-gradient(900px 420px at 0% 0%, color-mix(in oklab, var(--blue) 8%, transparent), transparent 60%),
+    radial-gradient(700px 380px at 100% 10%, color-mix(in oklab, var(--orange) 10%, transparent), transparent 55%),
+    var(--page);
+}
+
+.brand-grid {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--navy) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--navy) 4%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center top;
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(18px, -14px, 0);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pulse-orbit {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes mark-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.drift {
+  animation: drift 12s ease-in-out infinite;
+}
+
+.reveal {
+  animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-delay-1 {
+  animation-delay: 0.12s;
+}
+
+.reveal-delay-2 {
+  animation-delay: 0.24s;
+}
+
+.reveal-delay-3 {
+  animation-delay: 0.36s;
+}
+
+.pulse-orbit {
+  animation: pulse-orbit 3.6s ease-in-out infinite;
+}
+
+.mark-spin {
+  transform-origin: 32px 32px;
+  animation: mark-spin 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift,
+  .reveal,
+  .pulse-orbit,
+  .mark-spin {
+    animation: none;
+  }
 }
