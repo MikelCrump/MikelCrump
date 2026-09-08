@@ -119,16 +119,16 @@ export default function HomePage() {
 
           <section className="mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-12">
             <div className="reveal max-w-3xl">
-              <div className="inline-flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <BrandMark
-                  className="h-12 w-12 text-cloud sm:h-14 sm:w-14"
+                  className="h-11 w-11 shrink-0 text-cloud sm:h-14 sm:w-14"
                   animate
                 />
-                <span className="font-display text-4xl font-bold tracking-tight text-cloud sm:text-5xl md:text-6xl">
+                <span className="font-display text-[1.65rem] font-bold leading-none tracking-tight text-cloud sm:text-5xl md:text-6xl">
                   Crump <span className="text-blue">Solutions</span> Group
                 </span>
               </div>
-              <h1 className="reveal reveal-delay-1 mt-8 max-w-2xl font-display text-3xl leading-[1.1] text-balance sm:text-4xl md:text-5xl">
+              <h1 className="reveal reveal-delay-1 mt-8 max-w-2xl font-display text-2xl leading-[1.15] text-balance sm:text-3xl md:text-4xl">
                 Learning systems. Infrastructure. Events that deliver.
               </h1>
               <p className="reveal reveal-delay-2 mt-5 max-w-xl text-base leading-relaxed text-cloud/70 sm:text-lg">
