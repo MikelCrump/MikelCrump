@@ -7,6 +7,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MediaUploadDropzone } from "@/components/media/media-upload-dropzone";
 import { useAdminStore } from "@/lib/admin-store";
 import type { AdminCourseDraft, AdminLessonDraft } from "@/lib/admin-types";
 
@@ -300,9 +301,27 @@ export default function AdminCourseEditorPage() {
                   }
                 />
               </Field>
-              <Field label="Media URL">
+              <MediaUploadDropzone
+                label="Lesson video / audio"
+                value={activeLesson.lesson.mediaUrl}
+                onChange={(next) =>
+                  setActiveLesson({
+                    ...activeLesson,
+                    lesson: {
+                      ...activeLesson.lesson,
+                      mediaUrl: next,
+                    },
+                  })
+                }
+              />
+              <Field label="Or paste a media URL (optional)">
                 <Input
-                  value={activeLesson.lesson.mediaUrl ?? ""}
+                  placeholder="https://…"
+                  value={
+                    activeLesson.lesson.mediaUrl?.startsWith("idb:")
+                      ? ""
+                      : activeLesson.lesson.mediaUrl ?? ""
+                  }
                   onChange={(e) =>
                     setActiveLesson({
                       ...activeLesson,
