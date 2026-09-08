@@ -1,21 +1,17 @@
 # Crump Solutions Group
 
-Parent company site for LMS & e-learning engineering, IT infrastructure, event technology, and event management — including [CRUMP360](https://crump360.com) and Crump Studio.
+Public marketing site for Crump Solutions Group — LMS & e-learning engineering, IT infrastructure, event technology, and event management. Live domain: [crumpusa.com](https://crumpusa.com). Portfolio: [CRUMP360](https://crump360.com).
 
 ## Stack
 
-Next.js App Router · TypeScript · Tailwind · Prisma (Studio) · Vitest · pnpm
+Next.js App Router · TypeScript · Tailwind · pnpm
 
 ## Quick start
 
 ```bash
-cp .env.example .env
 pnpm install
 pnpm dev
 ```
-
-- Marketing site: `/`
-- Crump Studio (internal production): `/studio` — requires Postgres (`pnpm db:migrate:deploy && pnpm db:seed`)
 
 ## Scripts
 
@@ -23,5 +19,3 @@ pnpm dev
 | --- | --- |
 | `pnpm dev` | Next.js |
 | `pnpm typecheck` / `lint` / `test` / `build` | Quality gates |
-| `pnpm db:seed` | Seed LMS + characters (Studio) |
-| `pnpm mcp` | MCP stdio server |

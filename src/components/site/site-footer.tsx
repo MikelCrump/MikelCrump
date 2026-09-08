@@ -38,9 +38,6 @@ export function SiteFooter() {
             <Link className="hover:text-orange" href="/#contact">
               Contact
             </Link>
-            <Link className="hover:text-orange" href="/studio">
-              Studio
-            </Link>
           </div>
           <p className="text-xs font-medium tracking-[0.14em] text-cloud/45 uppercase">
             © {new Date().getFullYear()} Crump Solutions Group · Dallas, TX

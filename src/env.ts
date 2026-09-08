@@ -4,7 +4,10 @@ const emptyToUndefined = (value: unknown) =>
   value === "" || value === undefined || value === null ? undefined : value;
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  DATABASE_URL: z
+    .string()
+    .min(1)
+    .default("postgresql://crump:crump@localhost:5432/crump_studio?schema=public"),
 
   // Locked Phase 2 decisions
   AUTH_PROVIDER: z.enum(["clerk"]).default("clerk"),

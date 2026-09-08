@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { BrandMark } from "@/components/site/brand-mark";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
@@ -68,13 +67,6 @@ const ventures = [
     blurb:
       "Events management and LMS on one path — registration, curriculum, and progress mapped together.",
     external: true,
-  },
-  {
-    name: "Crump Studio",
-    href: "/studio",
-    blurb:
-      "Internal AI lecturer production: script in, consistent-face clips and joined audio out.",
-    external: false,
   },
 ];
 
@@ -391,50 +383,30 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-8 md:grid-cols-2">
-              {ventures.map((venture) => {
-                const content = (
-                  <>
-                    <p className="text-xs font-bold tracking-[0.14em] text-blue uppercase">
-                      Portfolio
-                    </p>
-                    <h3 className="mt-2 font-display text-2xl text-navy group-hover:text-blue">
-                      {venture.name}
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted">
-                      {venture.blurb}
-                    </p>
-                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-orange">
-                      {venture.external ? "Visit site" : "Open studio"}
-                      <ArrowIcon />
-                    </span>
-                  </>
-                );
-
-                if (venture.external) {
-                  return (
-                    <a
-                      key={venture.name}
-                      href={venture.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group block border-t-2 border-blue/25 pt-6 transition"
-                    >
-                      {content}
-                    </a>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={venture.name}
-                    href={venture.href}
-                    className="group block border-t-2 border-blue/25 pt-6 transition"
-                  >
-                    {content}
-                  </Link>
-                );
-              })}
+            <div className="mt-10 grid gap-8 md:grid-cols-1 md:max-w-xl">
+              {ventures.map((venture) => (
+                <a
+                  key={venture.name}
+                  href={venture.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group block border-t-2 border-blue/25 pt-6 transition"
+                >
+                  <p className="text-xs font-bold tracking-[0.14em] text-blue uppercase">
+                    Portfolio
+                  </p>
+                  <h3 className="mt-2 font-display text-2xl text-navy group-hover:text-blue">
+                    {venture.name}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">
+                    {venture.blurb}
+                  </p>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-orange">
+                    Visit site
+                    <ArrowIcon />
+                  </span>
+                </a>
+              ))}
             </div>
           </section>
 
