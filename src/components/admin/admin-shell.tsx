@@ -10,7 +10,7 @@ import {
   Settings2,
   Shield,
 } from "lucide-react";
-import { Crump360MarkImage } from "@/components/brand/crump360-mark";
+import { Crump360Mark } from "@/components/brand/crump360-mark";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -29,7 +29,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <header className="border-b border-line bg-navy text-cloud">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
           <Link href="/admin" className="flex items-center gap-2.5">
-            <Crump360MarkImage className="h-8 w-8" />
+            <Crump360Mark tone="dark" className="h-8 w-8" />
             <div>
               <p className="font-display text-xl tracking-tight">
                 CRUMP<span className="text-blue">360</span>

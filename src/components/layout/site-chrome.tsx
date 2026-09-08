@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Crump360Mark, Crump360MarkImage } from "@/components/brand/crump360-mark";
+import { Crump360Mark } from "@/components/brand/crump360-mark";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -45,11 +45,10 @@ export function SiteHeader({
             dark ? "text-cloud" : "text-navy"
           )}
         >
-          {dark ? (
-            <Crump360MarkImage className="h-8 w-8 transition duration-300 group-hover:scale-[1.04]" />
-          ) : (
-            <Crump360Mark className="h-8 w-8 transition duration-300 group-hover:scale-[1.04]" />
-          )}
+          <Crump360Mark
+            tone={dark ? "dark" : "light"}
+            className="h-8 w-8 transition duration-300 group-hover:scale-[1.04]"
+          />
           <span className="font-display text-xl tracking-tight sm:text-2xl">
             CRUMP<span className="text-blue">360</span>
           </span>
@@ -167,7 +166,7 @@ export function SiteFooter() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-12 md:flex-row md:items-end md:justify-between md:px-8">
         <div>
           <div className="flex items-center gap-2.5">
-            <Crump360MarkImage className="h-7 w-7" />
+            <Crump360Mark tone="dark" className="h-7 w-7" />
             <span className="font-display text-xl tracking-tight">
               CRUMP<span className="text-blue">360</span>
             </span>
