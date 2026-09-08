@@ -320,7 +320,7 @@ export default function HomePage() {
                 Leadership bench
               </p>
               <h2 className="mt-3 font-display text-3xl text-navy md:text-4xl">
-                Specialists who still do the work.
+                Experts you can trust.
               </h2>
               <p className="mt-4 text-muted">
                 A tightly coordinated team of LMS software engineering, IT
