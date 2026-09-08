@@ -1,4 +1,5 @@
 import type { Course, Instructor, LearnerProfile, PlatformEvent } from "./types";
+import { SAMPLE_MEDIA } from "./media";
 
 export const learner: LearnerProfile = {
   id: "u-mikel",
@@ -252,6 +253,8 @@ export const courses: Course[] = [
             summary: "The drop-off pattern and how CRUMP360 counters it.",
             content:
               "Completion rates fall when learning feels like a second job. We start by naming the friction: unclear outcomes, event overload, and no path between a workshop and daily work. This lesson sets the frame for the rest of the course.",
+            mediaUrl: SAMPLE_MEDIA.videoA,
+            posterUrl: SAMPLE_MEDIA.posterA,
           },
           {
             id: "l2",
@@ -261,6 +264,7 @@ export const courses: Course[] = [
             summary: "A short template for stakeholder-aligned outcomes.",
             content:
               "Write outcomes as observable shifts, not activity counts. Example: “Ops leads can run a 45-minute retrospective without a facilitator” beats “Complete Module 3.” Practice with your current program.",
+            mediaUrl: SAMPLE_MEDIA.audioA,
           },
         ],
       },
@@ -276,6 +280,8 @@ export const courses: Course[] = [
             summary: "Pick the right vessel for the change you need.",
             content:
               "Events create energy and belonging. Courses build durable skill. Rituals keep practice alive. Most programs need all three — sequenced, not stacked.",
+            mediaUrl: SAMPLE_MEDIA.videoB,
+            posterUrl: SAMPLE_MEDIA.posterB,
           },
           {
             id: "l4",
@@ -338,6 +344,8 @@ export const courses: Course[] = [
             summary: "Build a living schedule, not a wish list.",
             content:
               "Every beat needs an owner, a cue, and a fallback. We walk a sample summit day and annotate the fragile moments.",
+            mediaUrl: SAMPLE_MEDIA.videoC,
+            posterUrl: SAMPLE_MEDIA.posterC,
           },
           {
             id: "l2",
@@ -362,6 +370,8 @@ export const courses: Course[] = [
             summary: "Energy, timing, and graceful recovery.",
             content:
               "When a segment runs long, you need a practiced cut. When energy drops, change modality — not volume. Practice scripts included.",
+            mediaUrl: SAMPLE_MEDIA.videoD,
+            posterUrl: SAMPLE_MEDIA.posterA,
           },
           {
             id: "l4",
@@ -371,6 +381,8 @@ export const courses: Course[] = [
             summary: "Watch a recorded Field Lab debrief.",
             content:
               "Replay of a CRUMP360 Field Lab with instructor annotations. Pause points ask you to predict the facilitator’s next move.",
+            mediaUrl: SAMPLE_MEDIA.videoE,
+            posterUrl: SAMPLE_MEDIA.posterB,
           },
         ],
       },
@@ -409,6 +421,8 @@ export const courses: Course[] = [
             summary: "Align before you announce.",
             content:
               "A one-page contract between sponsor, facilitator, and learners: purpose, time ask, proof of progress, and exit criteria.",
+            mediaUrl: SAMPLE_MEDIA.videoF,
+            posterUrl: SAMPLE_MEDIA.posterC,
           },
           {
             id: "l2",

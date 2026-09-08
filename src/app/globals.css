@@ -168,3 +168,23 @@
   scrollbar-width: thin;
   scrollbar-color: #b7c7d2 transparent;
 }
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 999px;
+  background: var(--star);
+  border: 2px solid var(--cloud);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 999px;
+  background: var(--star);
+  border: 2px solid var(--cloud);
+  cursor: pointer;
+}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CompleteLessonButton } from "@/components/actions/learner-actions";
+import { MediaPlayer } from "@/components/media/media-player";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { findLesson, getCourse } from "@/lib/data";
@@ -24,6 +25,15 @@ export default async function LessonPage({
   const index = flat.findIndex((l) => l.id === lessonId);
   const prev = index > 0 ? flat[index - 1] : null;
   const next = index < flat.length - 1 ? flat[index + 1] : null;
+
+  const mediaKind =
+    lesson.type === "reading"
+      ? "audio"
+      : lesson.type === "live"
+        ? "live"
+        : lesson.type === "video"
+          ? "video"
+          : null;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
@@ -67,20 +77,29 @@ export default async function LessonPage({
           <Badge tone="sea">{lesson.type}</Badge>
           <span className="text-xs text-ink-soft">{lesson.durationMin} min</span>
         </div>
-        <h1 className="mt-4 font-display text-3xl text-ink md:text-4xl">{lesson.title}</h1>
+        <h1 className="mt-4 font-display text-3xl text-ink md:text-4xl">
+          {lesson.title}
+        </h1>
         <p className="mt-2 text-ink-soft">{lesson.summary}</p>
 
-        <div className="mt-8 overflow-hidden rounded-xl border border-line bg-gradient-to-br from-ink via-ink-soft to-sea p-8 text-cloud">
-          <p className="text-xs uppercase tracking-[0.16em] text-star-soft">Lesson stage</p>
-          <p className="mt-3 max-w-xl font-display text-2xl leading-snug">
-            {lesson.type === "video"
-              ? "Video lesson ready — imagine a crisp instructor walkthrough here."
-              : lesson.type === "quiz"
-                ? "Quiz checkpoint — scenario prompts with instant feedback."
-                : lesson.type === "live"
-                  ? "Live replay — annotated facilitation moments."
-                  : "Reading desk — focused prose, no slide dump."}
-          </p>
+        <div className="mt-8">
+          {lesson.mediaUrl && mediaKind ? (
+            <MediaPlayer
+              src={lesson.mediaUrl}
+              poster={lesson.posterUrl}
+              title={lesson.title}
+              kind={mediaKind}
+            />
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-line bg-gradient-to-br from-ink via-ink-soft to-sea p-8 text-cloud">
+              <p className="text-xs uppercase tracking-[0.16em] text-star-soft">
+                Lesson stage
+              </p>
+              <p className="mt-3 max-w-xl font-display text-2xl leading-snug">
+                Quiz checkpoint — scenario prompts with instant feedback.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="prose-crump360 mt-8 max-w-2xl space-y-4 text-[15px] leading-relaxed text-ink-soft">

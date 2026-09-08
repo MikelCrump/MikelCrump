@@ -46,6 +46,8 @@ export interface Lesson {
   durationMin: number;
   summary: string;
   content: string;
+  mediaUrl?: string;
+  posterUrl?: string;
 }
 
 export interface Module {
