@@ -4,7 +4,11 @@ const emptyToUndefined = (value: unknown) =>
   value === "" || value === undefined || value === null ? undefined : value;
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  // Optional so preview/anonymous deploys can boot without Postgres.
+  DATABASE_URL: z.preprocess(
+    emptyToUndefined,
+    z.string().min(1).optional(),
+  ),
 
   // Locked Phase 2 decisions
   AUTH_PROVIDER: z.enum(["clerk"]).default("clerk"),
@@ -75,3 +79,7 @@ function loadEnv(): Env {
 }
 
 export const env = loadEnv();
+
+export function hasDatabaseUrl(): boolean {
+  return Boolean(env.DATABASE_URL);
+}
