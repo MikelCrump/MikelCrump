@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-/** Official C + orange-dot mark extracted from the CRUMP360 wordmark. */
+/** Official C + orange-dot mark (white C, transparent background). */
 export function Crump360Mark({
   className = "h-8 w-8",
   priority = false,
@@ -12,23 +12,18 @@ export function Crump360Mark({
   tone?: "light" | "dark";
 }) {
   return (
-    <span className={cn("inline-flex bg-black", className)}>
-      <Image
-        src="/brand/crump360-mark.png"
-        alt=""
-        width={128}
-        height={128}
-        className="h-full w-full object-contain"
-        priority={priority}
-      />
-    </span>
+    <Image
+      src="/brand/crump360-mark.png"
+      alt=""
+      width={128}
+      height={128}
+      className={cn("object-contain", className)}
+      priority={priority}
+    />
   );
 }
 
-/**
- * Official CRUMP360 wordmark lockup.
- * Always sits on pure black so charcoal "CRUMP" stays visible (logo design).
- */
+/** Official CRUMP360 wordmark — white CRUMP, blue 360, transparent background. */
 export function Crump360Wordmark({
   className = "h-8 w-auto",
   priority = false,
@@ -37,21 +32,14 @@ export function Crump360Wordmark({
   priority?: boolean;
 }) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center bg-black px-2 py-1",
-        className
-      )}
-    >
-      <Image
-        src="/brand/crump360-wordmark.png"
-        alt="CRUMP360"
-        width={2473}
-        height={330}
-        className="h-full w-auto max-w-full object-contain object-left"
-        priority={priority}
-      />
-    </span>
+    <Image
+      src="/brand/crump360-wordmark.png"
+      alt="CRUMP360"
+      width={2474}
+      height={330}
+      className={cn("object-contain object-left", className)}
+      priority={priority}
+    />
   );
 }
 
