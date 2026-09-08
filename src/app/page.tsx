@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Compass, Map, Sparkles } from "lucide-react";
 import { Crump360Mark } from "@/components/brand/crump360-mark";
 import { EventCard, CourseCard } from "@/components/catalog/cards";
+import { SiteAnnouncement } from "@/components/layout/site-announcement";
 import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
 import { Button } from "@/components/ui/button";
 import { courses, events } from "@/lib/data";
@@ -14,6 +15,7 @@ export default function HomePage() {
   return (
     <div className="aurora-bg min-h-screen">
       <div className="constellation">
+        <SiteAnnouncement />
         <SiteHeader />
 
         <main>

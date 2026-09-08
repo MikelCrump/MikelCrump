@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CompleteLessonButton } from "@/components/actions/learner-actions";
+import { ModuleQuiz } from "@/components/learn/module-quiz";
 import { MediaPlayer } from "@/components/media/media-player";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -107,6 +108,12 @@ export default async function LessonPage({
             <p key={para.slice(0, 24)}>{para}</p>
           ))}
         </div>
+
+        <ModuleQuiz
+          courseId={course.id}
+          moduleId={module.id}
+          lessonId={lesson.id}
+        />
 
         <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6">
           <div className="flex gap-2">

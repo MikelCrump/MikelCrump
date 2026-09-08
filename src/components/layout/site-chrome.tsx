@@ -20,6 +20,7 @@ const appLinks = [
   { href: "/learn", label: "Courses" },
   { href: "/progress", label: "Progress" },
   { href: "/teach", label: "Teach" },
+  { href: "/admin", label: "Admin" },
 ];
 
 export function SiteHeader({ variant = "marketing" }: { variant?: "marketing" | "app" }) {

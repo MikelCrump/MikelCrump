@@ -1,8 +1,10 @@
+import { SiteAnnouncement } from "@/components/layout/site-announcement";
 import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-paper">
+      <SiteAnnouncement />
       <div className="border-b border-line/80 bg-gradient-to-b from-mist/80 to-paper">
         <SiteHeader variant="app" />
       </div>
