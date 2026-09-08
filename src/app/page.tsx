@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/db";
-import { env } from "@/env";
+import { env, hasDatabaseUrl } from "@/env";
 import { createProjectAction } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
@@ -23,22 +22,80 @@ export default async function HomePage({
   searchParams: Promise<{ created?: string }>;
 }) {
   const params = await searchParams;
+
+  if (!hasDatabaseUrl()) {
+    return (
+      <main className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 px-6 py-16 sm:px-10">
+        <p className="text-sm font-medium tracking-[0.18em] text-[var(--accent)] uppercase">
+          Internal production
+        </p>
+        <h1
+          className="text-5xl tracking-tight"
+          style={{ fontFamily: "var(--font-display), serif" }}
+        >
+          Crump Studio
+        </h1>
+        <p className="max-w-xl text-[var(--ink-muted)]">
+          App is deployed. Connect Postgres to unlock projects, wizard, and
+          canvas.
+        </p>
+        <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 text-sm">
+          <p className="font-medium">Required env</p>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-[var(--ink-muted)]">
+            <li>
+              Claim this deployment (or link the GitHub repo in Vercel).
+            </li>
+            <li>
+              Set <code className="rounded bg-black/5 px-1">DATABASE_URL</code>{" "}
+              to a Neon / Vercel Postgres connection string.
+            </li>
+            <li>
+              Run <code className="rounded bg-black/5 px-1">pnpm db:migrate:deploy</code>{" "}
+              and <code className="rounded bg-black/5 px-1">pnpm db:seed</code>.
+            </li>
+          </ol>
+          <p className="mt-4 text-[var(--ink-muted)]">
+            Video provider: <strong className="text-[var(--ink)]">{env.VIDEO_PROVIDER}</strong>
+            {" · "}
+            Audio: <strong className="text-[var(--ink)]">{env.AUDIO_PROVIDER}</strong>
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   if (params.created) {
     redirect(`/projects/${params.created}/wizard`);
   }
 
-  const [projects, characters, modules] = await Promise.all([
-    prisma.videoProject.findMany({
-      orderBy: { updatedAt: "desc" },
-      include: {
-        owner: true,
-        course: { include: { module: true } },
-        _count: { select: { clips: true } },
-      },
-    }),
-    prisma.characterProfile.count(),
-    prisma.lmsModule.count(),
-  ]);
+  const { prisma } = await import("@/lib/db");
+
+  let projects: Awaited<
+    ReturnType<typeof prisma.videoProject.findMany>
+  > = [];
+  let characters = 0;
+  let modules = 0;
+  let dbError: string | null = null;
+
+  try {
+    const loaded = await Promise.all([
+      prisma.videoProject.findMany({
+        orderBy: { updatedAt: "desc" },
+        include: {
+          owner: true,
+          course: { include: { module: true } },
+          _count: { select: { clips: true } },
+        },
+      }),
+      prisma.characterProfile.count(),
+      prisma.lmsModule.count(),
+    ]);
+    projects = loaded[0];
+    characters = loaded[1];
+    modules = loaded[2];
+  } catch (error) {
+    dbError = error instanceof Error ? error.message : "Database unreachable";
+  }
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-6xl flex-col gap-10 px-6 py-10 sm:px-10">
@@ -58,6 +115,12 @@ export default async function HomePage({
             out.
           </p>
         </div>
+
+        {dbError ? (
+          <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-[var(--danger)]">
+            Database error: {dbError}
+          </p>
+        ) : null}
 
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 py-3 backdrop-blur">
@@ -104,49 +167,59 @@ export default async function HomePage({
             </div>
           ) : (
             <ul className="divide-y divide-[var(--line)] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] backdrop-blur">
-              {projects.map((project) => (
-                <li
-                  key={project.id}
-                  className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div>
-                    <Link
-                      href={`/projects/${project.id}/wizard`}
-                      className="font-medium hover:text-[var(--accent)]"
-                    >
-                      {project.title}
-                    </Link>
-                    <p className="mt-1 text-sm text-[var(--ink-muted)]">
-                      {project.course
-                        ? `${project.course.module.code} · ${project.course.title}`
-                        : "No course linked"}
-                      {" · "}
-                      {project.owner.name ?? project.owner.email}
-                      {" · "}
-                      {project._count.clips} clips
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span
-                      className={`rounded-md px-2.5 py-1 text-xs font-medium ${statusTone(project.status)}`}
-                    >
-                      {project.status}
-                    </span>
-                    <Link
-                      href={`/projects/${project.id}/wizard`}
-                      className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm"
-                    >
-                      Wizard
-                    </Link>
-                    <Link
-                      href={`/projects/${project.id}/canvas`}
-                      className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm"
-                    >
-                      Canvas
-                    </Link>
-                  </div>
-                </li>
-              ))}
+              {projects.map((project) => {
+                const row = project as typeof project & {
+                  owner: { name: string | null; email: string };
+                  course: {
+                    title: string;
+                    module: { code: string };
+                  } | null;
+                  _count: { clips: number };
+                };
+                return (
+                  <li
+                    key={row.id}
+                    className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div>
+                      <Link
+                        href={`/projects/${row.id}/wizard`}
+                        className="font-medium hover:text-[var(--accent)]"
+                      >
+                        {row.title}
+                      </Link>
+                      <p className="mt-1 text-sm text-[var(--ink-muted)]">
+                        {row.course
+                          ? `${row.course.module.code} · ${row.course.title}`
+                          : "No course linked"}
+                        {" · "}
+                        {row.owner.name ?? row.owner.email}
+                        {" · "}
+                        {row._count.clips} clips
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className={`rounded-md px-2.5 py-1 text-xs font-medium ${statusTone(row.status)}`}
+                      >
+                        {row.status}
+                      </span>
+                      <Link
+                        href={`/projects/${row.id}/wizard`}
+                        className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm"
+                      >
+                        Wizard
+                      </Link>
+                      <Link
+                        href={`/projects/${row.id}/canvas`}
+                        className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm"
+                      >
+                        Canvas
+                      </Link>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
