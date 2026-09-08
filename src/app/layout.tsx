@@ -1,21 +1,33 @@
 import type { Metadata } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { DM_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-sans",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const fraunces = Fraunces({
-  variable: "--font-display",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Crump Studio",
+  title: {
+    default: "Crump Solutions Group",
+    template: "%s · Crump Solutions Group",
+  },
   description:
-    "Internal AI lecturer video production studio — script in, consistent-face clips out.",
+    "LMS engineering, IT infrastructure, event technology, and event management — more than 40 years of combined professional experience under one trusted group.",
+  openGraph: {
+    title: "Crump Solutions Group",
+    description:
+      "Professional services spanning learning systems, Microsoft & identity infrastructure, Cvent event technology, and end-to-end event management.",
+    siteName: "Crump Solutions Group",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -24,8 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${fraunces.variable} h-full`}>
-      <body className="min-h-full antialiased">{children}</body>
+    <html
+      lang="en"
+      className={`${dmSans.variable} ${spaceGrotesk.variable} h-full antialiased`}
+    >
+      <body className="min-h-full font-sans">{children}</body>
     </html>
   );
 }

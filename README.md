@@ -1,35 +1,21 @@
-# Crump Studio
+# Crump Solutions Group
 
-Internal web app for scaling AI lecturer video production: script in → consistent-face clips + joined audio out.
-
-## Status
-
-Phases **1–7 complete** on mock providers.
-
-## Locked decisions
-
-| Concern | Choice |
-| --- | --- |
-| Auth | **Clerk** (keys later) |
-| Storage | **Vercel Blob** |
-| Video | **mock** default + stubs for **Runway, Kling, Veo, Pika** |
-| Audio | **mock** default + **ElevenLabs** stub |
+Parent company site for LMS & e-learning engineering, IT infrastructure, event technology, and event management — including [CRUMP360](https://crump360.com) and Crump Studio.
 
 ## Stack
 
-Next.js App Router · TypeScript strict · Tailwind · Prisma/Postgres · Zod · Vitest · React Flow · MCP SDK · pnpm
+Next.js App Router · TypeScript · Tailwind · Prisma (Studio) · Vitest · pnpm
 
 ## Quick start
 
 ```bash
 cp .env.example .env
 pnpm install
-pnpm db:migrate:deploy
-pnpm db:seed
 pnpm dev
 ```
 
-MCP (stdio): `pnpm mcp` — see [docs/MCP.md](./docs/MCP.md).
+- Marketing site: `/`
+- Crump Studio (internal production): `/studio` — requires Postgres (`pnpm db:migrate:deploy && pnpm db:seed`)
 
 ## Scripts
 
@@ -37,5 +23,5 @@ MCP (stdio): `pnpm mcp` — see [docs/MCP.md](./docs/MCP.md).
 | --- | --- |
 | `pnpm dev` | Next.js |
 | `pnpm typecheck` / `lint` / `test` / `build` | Quality gates |
-| `pnpm db:seed` | Seed LMS + characters |
+| `pnpm db:seed` | Seed LMS + characters (Studio) |
 | `pnpm mcp` | MCP stdio server |
