@@ -17,6 +17,10 @@ import {
   updateSceneShot,
   upsertSceneCharacter,
 } from "@/lib/wizard-helpers";
+import {
+  WizardProductionSteps,
+  type ClipView,
+} from "@/components/wizard-production-steps";
 
 const STEPS = [
   "LMS",
@@ -24,6 +28,9 @@ const STEPS = [
   "Character",
   "Director",
   "Review",
+  "Generate",
+  "Audio",
+  "Publish",
 ] as const;
 
 type WizardClientProps = {
@@ -36,6 +43,8 @@ type WizardClientProps = {
   initialRawPayload: unknown;
   modules: ModuleOption[];
   characters: CharacterOption[];
+  initialClips: ClipView[];
+  joinedAudioUrl: string | null;
 };
 
 export function WizardClient({
@@ -48,6 +57,8 @@ export function WizardClient({
   initialRawPayload,
   modules,
   characters,
+  initialClips,
+  joinedAudioUrl,
 }: WizardClientProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -192,7 +203,7 @@ export function WizardClient({
         const parsed = JSON.parse(jsonDraft) as SceneScript;
         setScript(parsed);
         await patchProject({ sceneScript: parsed, status: "NORMALIZED" });
-        setStep(4);
+        setStep(5);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Invalid SceneScript JSON");
       }
@@ -540,10 +551,21 @@ export function WizardClient({
               onClick={saveReview}
               className="mt-4 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
             >
-              Save SceneScript
+              Save SceneScript & continue
             </button>
           </div>
         </section>
+      ) : null}
+
+      {step >= 5 ? (
+        <WizardProductionSteps
+          key={`${projectId}-${status}-${initialClips.map((c) => `${c.id}:${c.status}:${c.attempts}`).join("|")}-${joinedAudioUrl ?? ""}`}
+          projectId={projectId}
+          step={step}
+          initialClips={initialClips}
+          joinedAudioUrl={joinedAudioUrl}
+          onError={setError}
+        />
       ) : null}
     </div>
   );

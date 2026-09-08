@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ProjectHeader } from "@/components/project-header";
 import { WizardClient } from "@/components/wizard-client";
+import type { ClipView } from "@/components/wizard-production-steps";
 import {
   getProject,
   listCharacters,
@@ -29,6 +30,24 @@ export default async function WizardPage({ params }: PageProps) {
     listCharacters(),
   ]);
 
+  const initialClips: ClipView[] = project.clips.map((clip) => ({
+    id: clip.id,
+    order: clip.order,
+    dialogue: clip.dialogue,
+    status: clip.status,
+    attempts: clip.attempts,
+    lastError: clip.lastError,
+    outputUrl: clip.outputUrl,
+    audioUrl: clip.audioUrl,
+    videoModel: clip.videoModel,
+    attemptsLog: clip.attemptsLog.map((attempt) => ({
+      id: attempt.id,
+      attempt: attempt.attempt,
+      status: attempt.status,
+      error: attempt.error,
+    })),
+  }));
+
   return (
     <main className="min-h-full">
       <ProjectHeader
@@ -46,6 +65,8 @@ export default async function WizardPage({ params }: PageProps) {
         initialRawPayload={project.rawPayload}
         modules={modules}
         characters={characters}
+        initialClips={initialClips}
+        joinedAudioUrl={project.joinedAudioUrl}
       />
     </main>
   );
