@@ -8,24 +8,27 @@ export function Crump360Mark({
 }: {
   className?: string;
   priority?: boolean;
-  /** @deprecated ignored — mark is the official raster */
   animate?: boolean;
-  /** @deprecated ignored — mark ships on black plate */
   tone?: "light" | "dark";
 }) {
   return (
-    <Image
-      src="/brand/crump360-mark.png"
-      alt=""
-      width={128}
-      height={128}
-      className={cn("object-contain", className)}
-      priority={priority}
-    />
+    <span className={cn("inline-flex bg-black", className)}>
+      <Image
+        src="/brand/crump360-mark.png"
+        alt=""
+        width={128}
+        height={128}
+        className="h-full w-full object-contain"
+        priority={priority}
+      />
+    </span>
   );
 }
 
-/** Official CRUMP360 wordmark lockup. */
+/**
+ * Official CRUMP360 wordmark lockup.
+ * Always sits on pure black so charcoal "CRUMP" stays visible (logo design).
+ */
 export function Crump360Wordmark({
   className = "h-8 w-auto",
   priority = false,
@@ -34,14 +37,21 @@ export function Crump360Wordmark({
   priority?: boolean;
 }) {
   return (
-    <Image
-      src="/brand/crump360-wordmark.png"
-      alt="CRUMP360"
-      width={2473}
-      height={330}
-      className={cn("object-contain object-left", className)}
-      priority={priority}
-    />
+    <span
+      className={cn(
+        "inline-flex items-center bg-black px-2 py-1",
+        className
+      )}
+    >
+      <Image
+        src="/brand/crump360-wordmark.png"
+        alt="CRUMP360"
+        width={2473}
+        height={330}
+        className="h-full w-auto max-w-full object-contain object-left"
+        priority={priority}
+      />
+    </span>
   );
 }
 
