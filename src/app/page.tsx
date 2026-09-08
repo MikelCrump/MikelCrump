@@ -1,7 +1,8 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { env } from "@/env";
 import { createProjectAction } from "@/app/actions";
-import { ModeSwitcher } from "@/components/mode-switcher";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,16 @@ function statusTone(status: string) {
   }
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ created?: string }>;
+}) {
+  const params = await searchParams;
+  if (params.created) {
+    redirect(`/projects/${params.created}/wizard`);
+  }
+
   const [projects, characters, modules] = await Promise.all([
     prisma.videoProject.findMany({
       orderBy: { updatedAt: "desc" },
@@ -33,23 +43,20 @@ export default async function HomePage() {
   return (
     <main className="mx-auto flex min-h-full w-full max-w-6xl flex-col gap-10 px-6 py-10 sm:px-10">
       <header className="flex flex-col gap-6 border-b border-[var(--line)] pb-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-medium tracking-[0.18em] text-[var(--accent)] uppercase">
-              Internal production
-            </p>
-            <h1
-              className="mt-2 text-4xl tracking-tight text-[var(--ink)] sm:text-5xl"
-              style={{ fontFamily: "var(--font-display), serif" }}
-            >
-              Crump Studio
-            </h1>
-            <p className="mt-3 max-w-xl text-[var(--ink-muted)]">
-              Script in. Consistent-face lecturer clips and a joined audio track
-              out. Phase 1 scaffold — providers and adapters arrive next.
-            </p>
-          </div>
-          <ModeSwitcher />
+        <div>
+          <p className="text-sm font-medium tracking-[0.18em] text-[var(--accent)] uppercase">
+            Internal production
+          </p>
+          <h1
+            className="mt-2 text-4xl tracking-tight text-[var(--ink)] sm:text-5xl"
+            style={{ fontFamily: "var(--font-display), serif" }}
+          >
+            Crump Studio
+          </h1>
+          <p className="mt-3 max-w-xl text-[var(--ink-muted)]">
+            Script in. Consistent-face lecturer clips and a joined audio track
+            out.
+          </p>
         </div>
 
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -84,22 +91,16 @@ export default async function HomePage() {
 
       <section className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div>
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2
-              className="text-2xl"
-              style={{ fontFamily: "var(--font-display), serif" }}
-            >
-              Projects
-            </h2>
-          </div>
+          <h2
+            className="mb-4 text-2xl"
+            style={{ fontFamily: "var(--font-display), serif" }}
+          >
+            Projects
+          </h2>
 
           {projects.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--line)] bg-[var(--surface)] px-6 py-12 text-center text-[var(--ink-muted)]">
-              No projects yet. Create one to begin, or run{" "}
-              <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">
-                pnpm db:seed
-              </code>
-              .
+              No projects yet. Create one to begin.
             </div>
           ) : (
             <ul className="divide-y divide-[var(--line)] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] backdrop-blur">
@@ -109,7 +110,12 @@ export default async function HomePage() {
                   className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
-                    <p className="font-medium">{project.title}</p>
+                    <Link
+                      href={`/projects/${project.id}/wizard`}
+                      className="font-medium hover:text-[var(--accent)]"
+                    >
+                      {project.title}
+                    </Link>
                     <p className="mt-1 text-sm text-[var(--ink-muted)]">
                       {project.course
                         ? `${project.course.module.code} · ${project.course.title}`
@@ -120,13 +126,24 @@ export default async function HomePage() {
                       {project._count.clips} clips
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span
                       className={`rounded-md px-2.5 py-1 text-xs font-medium ${statusTone(project.status)}`}
                     >
                       {project.status}
                     </span>
-                    <ModeSwitcher projectId={project.id} />
+                    <Link
+                      href={`/projects/${project.id}/wizard`}
+                      className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm"
+                    >
+                      Wizard
+                    </Link>
+                    <Link
+                      href={`/projects/${project.id}/canvas`}
+                      className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm"
+                    >
+                      Canvas
+                    </Link>
                   </div>
                 </li>
               ))}
@@ -142,8 +159,7 @@ export default async function HomePage() {
             New Project
           </h2>
           <p className="mt-2 text-sm text-[var(--ink-muted)]">
-            Creates a DRAFT VideoProject owned by the seeded team member.
-            Wizard and canvas routes arrive in later phases.
+            Creates a DRAFT VideoProject and opens the Linear Wizard.
           </p>
           <form action={createProjectAction} className="mt-5 flex flex-col gap-3">
             <label className="flex flex-col gap-1.5 text-sm">
