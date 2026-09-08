@@ -1,0 +1,34 @@
+{
+  "projectId": "proj_cursor_demo",
+  "sceneScript": {
+    "version": 1,
+    "projectId": "proj_cursor_demo",
+    "scenes": [
+      {
+        "id": "cursor_1",
+        "order": 0,
+        "lecturerCharacterId": null,
+        "dialogue": "Ship the lesson, then refine the delivery.",
+        "voice": {
+          "provider": "mock",
+          "voiceId": "cursor_studio",
+          "style": "direct"
+        },
+        "shot": {
+          "lens": "35mm",
+          "focalLengthMm": 35,
+          "angle": "eye-level",
+          "movement": "slow push-in",
+          "framing": "MCU",
+          "depthOfField": "medium"
+        },
+        "background": "clean studio",
+        "generation": {
+          "model": "mock-v1",
+          "durationSec": 6,
+          "aspectRatio": "1:1"
+        }
+      }
+    ]
+  }
+}

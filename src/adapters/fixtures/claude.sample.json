@@ -1,0 +1,53 @@
+{
+  "projectId": "proj_claude_demo",
+  "module": "LDR-101",
+  "beats": [
+    {
+      "id": "beat_1",
+      "order": 0,
+      "narration": "Ambiguity is not the enemy of leadership — avoidance is.",
+      "character_id": null,
+      "camera": {
+        "lens": "35mm",
+        "focal_length_mm": 35,
+        "angle": "eye-level",
+        "movement": "slow push-in",
+        "framing": "MCU",
+        "depth_of_field": "shallow"
+      },
+      "voice": {
+        "provider": "mock",
+        "voice_id": "ava_warm",
+        "style": "measured lecture"
+      },
+      "background": "soft charcoal cyclorama",
+      "notes": "Hold eye line to lens",
+      "generation": {
+        "model": "mock-v1",
+        "duration_sec": 6,
+        "aspect_ratio": "16:9",
+        "seed": 11
+      }
+    },
+    {
+      "id": "beat_2",
+      "order": 1,
+      "narration": "Name the uncertainty, then choose the next reversible step.",
+      "camera": {
+        "lens": "50mm",
+        "angle": "eye-level",
+        "movement": "static",
+        "framing": "MS"
+      },
+      "voice": {
+        "provider": "mock",
+        "voice_id": "ava_warm"
+      },
+      "generation": {
+        "model": "mock-v1",
+        "duration_sec": 5,
+        "aspect_ratio": "16:9"
+      }
+    }
+  ]
+}

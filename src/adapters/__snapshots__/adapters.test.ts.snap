@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LlmAdapter.normalize > normalizes ChatGPT scenes into SceneScript 1`] = `"85mm portrait lens, over-the-shoulder angle, orbit, close-up, shallow depth of field, consistent studio lighting"`;

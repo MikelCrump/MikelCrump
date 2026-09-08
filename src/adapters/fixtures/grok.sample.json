@@ -1,0 +1,30 @@
+{
+  "project_id": "proj_grok_demo",
+  "cuts": [
+    {
+      "cut_id": "cut_a",
+      "n": 0,
+      "line": "Speed without clarity is just expensive noise.",
+      "soul": null,
+      "cam": "24mm wide|low-angle|push-in|WS|deep",
+      "bg": "warehouse loft, practical lamps",
+      "note": "Grok cam shorthand uses pipes",
+      "voice": "grok_default",
+      "style": "punchy",
+      "model": "mock-v1",
+      "secs": 4,
+      "ar": "9:16",
+      "seed": 7
+    },
+    {
+      "cut_id": "cut_b",
+      "n": 1,
+      "line": "Slow down the decision, not the learning.",
+      "cam": "35mm|eye-level|static|MCU|shallow",
+      "voice": "grok_default",
+      "model": "mock-v1",
+      "secs": 5,
+      "ar": "9:16"
+    }
+  ]
+}

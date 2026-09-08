@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "projectId": "proj_chatgpt_demo",
+    "title": "Feedback That Lands"
+  },
+  "scenes": [
+    {
+      "sceneId": "gpt_s1",
+      "index": 0,
+      "spokenText": "Feedback is a gift only when the wrapping matches the receiver.",
+      "lecturerId": null,
+      "shotSettings": {
+        "lens": "85mm portrait",
+        "focalLengthMm": 85,
+        "cameraAngle": "over-the-shoulder",
+        "cameraMove": "orbit",
+        "framing": "CU",
+        "dof": "shallow"
+      },
+      "tts": {
+        "engine": "mock",
+        "voice": "marcus_calm",
+        "style": "conversational"
+      },
+      "set": "oak desk, soft key from camera left",
+      "directorNotes": "Keep shoulders open to camera B",
+      "render": {
+        "model": "mock-v1",
+        "seconds": 7,
+        "aspect": "16:9",
+        "seed": 22
+      }
+    }
+  ]
+}
