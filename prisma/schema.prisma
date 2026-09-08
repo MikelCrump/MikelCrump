@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CREATOR
+  REVIEWER
+}
+
+enum ProjectStatus {
+  DRAFT
+  NORMALIZED
+  GENERATING
+  AUDIO
+  REVIEW
+  PUBLISHED
+}
+
+enum ClipStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+model TeamMember {
+  id        String         @id @default(cuid())
+  email     String         @unique
+  name      String?
+  role      Role           @default(CREATOR)
+  projects  VideoProject[]
+  createdAt DateTime       @default(now())
+}
+
+model LmsModule {
+  id      String   @id @default(cuid())
+  name    String
+  code    String   @unique
+  courses Course[]
+}
+
+model Course {
+  id         String         @id @default(cuid())
+  title      String
+  moduleId   String
+  module     LmsModule      @relation(fields: [moduleId], references: [id])
+  needsAssets Boolean       @default(true)
+  projects   VideoProject[]
+}
+
+model CharacterProfile {
+  id              String           @id @default(cuid())
+  name            String
+  soulId          String           @unique
+  description     String?
+  referenceImages ReferenceImage[]
+  loraWeights     LoraWeight[]
+  clips           VideoClip[]
+  createdAt       DateTime         @default(now())
+}
+
+model ReferenceImage {
+  id          String           @id @default(cuid())
+  characterId String
+  character   CharacterProfile @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  url         String
+  kind        String?
+}
+
+model LoraWeight {
+  id          String           @id @default(cuid())
+  characterId String
+  character   CharacterProfile @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  label       String
+  fileUrl     String
+  baseModel   String
+  trigger     String?
+  isActive    Boolean          @default(false)
+}
+
+model VideoProject {
+  id          String        @id @default(cuid())
+  title       String
+  ownerId     String
+  owner       TeamMember    @relation(fields: [ownerId], references: [id])
+  courseId    String?
+  course      Course?       @relation(fields: [courseId], references: [id])
+  status      ProjectStatus @default(DRAFT)
+  sourceLlm   String?
+  rawPayload  Json?
+  sceneScript Json?
+  joinedAudioUrl String?
+  clips       VideoClip[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model VideoClip {
+  id             String             @id @default(cuid())
+  projectId      String
+  project        VideoProject       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  order          Int
+  characterId    String?
+  character      CharacterProfile?  @relation(fields: [characterId], references: [id])
+  dialogue       String
+  promptSettings Json
+  cameraSettings Json
+  videoModel     String
+  jobId          String?
+  outputUrl      String?
+  audioUrl       String?
+  status         ClipStatus         @default(QUEUED)
+  attempts       Int                @default(0)
+  lastError      String?
+  attemptsLog    VideoClipAttempt[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@unique([projectId, order])
+}
+
+model VideoClipAttempt {
+  id        String     @id @default(cuid())
+  clipId    String
+  clip      VideoClip  @relation(fields: [clipId], references: [id], onDelete: Cascade)
+  attempt   Int
+  status    ClipStatus
+  request   Json
+  response  Json?
+  error     String?
+  createdAt DateTime   @default(now())
+}

@@ -1,34 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --bg: #f3efe6;
+  --bg-deep: #e7e0d2;
+  --ink: #1c1914;
+  --ink-muted: #5c564c;
+  --line: #cfc4b2;
+  --accent: #0f6b5c;
+  --accent-soft: #d7ebe5;
+  --surface: rgba(255, 252, 246, 0.82);
+  --danger: #9b2c2c;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
 }
 
 * {
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  box-sizing: border-box;
 }
 
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+html {
+  height: 100%;
 }
 
-*::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 3px;
+body {
+  min-height: 100%;
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #dff2ec 0%, transparent 55%),
+    radial-gradient(900px 420px at 100% 0%, #f6e7d0 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+  font-family: var(--font-sans), ui-sans-serif, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
