@@ -27,7 +27,11 @@ export const metadata: Metadata = {
     url: "https://crump360.com",
   },
   icons: {
-    icon: "/brand/crump360-mark.png",
+    icon: [
+      { url: "/brand/crump360-mark.png", type: "image/png" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: "/brand/crump360-mark.png",
   },
 };
 

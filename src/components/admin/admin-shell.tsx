@@ -10,7 +10,7 @@ import {
   Settings2,
   Shield,
 } from "lucide-react";
-import { Crump360Mark } from "@/components/brand/crump360-mark";
+import { Crump360Wordmark } from "@/components/brand/crump360-mark";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -28,16 +28,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-page">
       <header className="border-b border-line bg-navy text-cloud">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
-          <Link href="/admin" className="flex items-center gap-2.5">
-            <Crump360Mark tone="dark" className="h-8 w-8" />
-            <div>
-              <p className="font-display text-xl tracking-tight">
-                CRUMP<span className="text-blue">360</span>
-              </p>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-orange">
-                Admin portal
-              </p>
-            </div>
+          <Link href="/admin" className="flex items-center gap-3">
+            <Crump360Wordmark className="h-7 w-auto sm:h-8" />
+            <span className="hidden border-l border-white/15 pl-3 text-[11px] font-bold uppercase tracking-[0.14em] text-orange sm:inline">
+              Admin portal
+            </span>
           </Link>
           <div className="flex items-center gap-2">
             <span className="hidden items-center gap-1 rounded-md border border-white/15 bg-white/5 px-2 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-cloud/80 sm:inline-flex">

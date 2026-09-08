@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Crump360Mark } from "@/components/brand/crump360-mark";
+import { Crump360Wordmark } from "@/components/brand/crump360-mark";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -40,18 +40,10 @@ export function SiteHeader({
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 md:px-8">
         <Link
           href="/"
-          className={cn(
-            "group flex items-center gap-2.5",
-            dark ? "text-cloud" : "text-navy"
-          )}
+          className="group flex shrink-0 items-center"
+          aria-label="CRUMP360 home"
         >
-          <Crump360Mark
-            tone={dark ? "dark" : "light"}
-            className="h-8 w-8 transition duration-300 group-hover:scale-[1.04]"
-          />
-          <span className="font-display text-xl tracking-tight sm:text-2xl">
-            CRUMP<span className="text-blue">360</span>
-          </span>
+          <Crump360Wordmark className="h-7 w-auto transition duration-300 group-hover:opacity-90 sm:h-8" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -165,12 +157,7 @@ export function SiteFooter() {
     <footer className="mt-20 border-t border-line bg-navy text-cloud">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-12 md:flex-row md:items-end md:justify-between md:px-8">
         <div>
-          <div className="flex items-center gap-2.5">
-            <Crump360Mark tone="dark" className="h-7 w-7" />
-            <span className="font-display text-xl tracking-tight">
-              CRUMP<span className="text-blue">360</span>
-            </span>
-          </div>
+          <Crump360Wordmark className="h-8 w-auto" />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-cloud/65">
             Events and learning on one path — so gatherings create skill, not
             just memories.

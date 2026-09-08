@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Compass, Map, Sparkles } from "lucide-react";
-import { Crump360WordmarkText } from "@/components/brand/crump360-mark";
+import { Crump360Wordmark } from "@/components/brand/crump360-mark";
 import { EventCard, CourseCard } from "@/components/catalog/cards";
 import { SiteAnnouncement } from "@/components/layout/site-announcement";
 import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
@@ -33,7 +33,10 @@ export default function HomePage() {
           <SiteHeader tone="dark" />
           <section className="mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-12">
             <div className="reveal max-w-3xl">
-              <Crump360WordmarkText size="xl" tone="dark" />
+              <Crump360Wordmark
+                className="h-14 w-auto max-w-full sm:h-16 md:h-20"
+                priority
+              />
               <h1 className="reveal reveal-delay-1 mt-8 max-w-2xl font-display text-3xl leading-[1.1] text-balance sm:text-4xl md:text-5xl">
                 Gatherings that teach. Courses that stick.
               </h1>
