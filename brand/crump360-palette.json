@@ -1,0 +1,43 @@
+{
+  "name": "Crump360",
+  "source": "Sampled from provided logo PNG files (pixel-frequency analysis)",
+  "primary": {
+    "navy": {
+      "hex": "#191A21",
+      "rgb": [
+        25,
+        26,
+        33
+      ],
+      "hsl": "hsl(232, 14%, 11%)",
+      "role": "Primary ink"
+    },
+    "orange": {
+      "hex": "#E68A2C",
+      "rgb": [
+        230,
+        138,
+        44
+      ],
+      "hsl": "hsl(30, 79%, 54%)",
+      "role": "Accent"
+    },
+    "blue": {
+      "hex": "#2E41DE",
+      "rgb": [
+        46,
+        65,
+        222
+      ],
+      "hsl": "hsl(234, 73%, 53%)",
+      "role": "Secondary"
+    }
+  },
+  "neutrals": {
+    "page_bg": "#F5F6F9",
+    "surface": "#FFFFFF",
+    "border": "#DFE2EA",
+    "muted_text": "#64687A",
+    "faint_text": "#8A8DA0"
+  }
+}

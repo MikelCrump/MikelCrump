@@ -1,27 +1,31 @@
-import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "secondary" | "success" | "warning" | "outline";
-}
+export function Badge({
+  children,
+  className,
+  tone = "mist",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  tone?: "mist" | "sea" | "star" | "ink" | "warn";
+}) {
+  const tones = {
+    mist: "bg-mist text-ink-soft border-line",
+    sea: "bg-blue/10 text-blue border-blue/20",
+    star: "bg-orange/15 text-navy border-orange/35",
+    ink: "bg-navy text-cloud border-navy",
+    warn: "bg-orange/10 text-navy border-orange/30",
+  };
 
-function Badge({ className, variant = "default", ...props }: BadgeProps) {
   return (
-    <div
+    <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors",
-        {
-          default: "bg-blue-100 text-blue-800",
-          secondary: "bg-slate-100 text-slate-700",
-          success: "bg-emerald-100 text-emerald-800",
-          warning: "bg-amber-100 text-amber-800",
-          outline: "border border-slate-200 text-slate-600",
-        }[variant],
+        "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em]",
+        tones[tone],
         className
       )}
-      {...props}
-    />
+    >
+      {children}
+    </span>
   );
 }
-
-export { Badge };

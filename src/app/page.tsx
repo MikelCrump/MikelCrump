@@ -1,277 +1,162 @@
-"use client";
-
-import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import {
-  Plus,
-  Database,
-  Table2,
-  FileText,
-  Users,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
-import { useAppStore } from "@/lib/store";
+import { ArrowRight, Compass, Map, Sparkles } from "lucide-react";
+import { Crump360WordmarkText } from "@/components/brand/crump360-mark";
+import { EventCard, CourseCard } from "@/components/catalog/cards";
+import { SiteAnnouncement } from "@/components/layout/site-announcement";
+import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-
-const BASE_COLORS = [
-  "#2563eb",
-  "#7c3aed",
-  "#059669",
-  "#d97706",
-  "#dc2626",
-  "#0891b2",
-  "#be185d",
-];
+import { courses, events } from "@/lib/data";
 
 export default function HomePage() {
-  return (
-    <Suspense fallback={<HomePageFallback />}>
-      <HomePageContent />
-    </Suspense>
-  );
-}
-
-function HomePageFallback() {
-  return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-b border-slate-200 bg-white px-8 py-10">
-        <div className="h-8 w-48 animate-pulse rounded bg-slate-100" />
-        <div className="mt-3 h-4 w-96 animate-pulse rounded bg-slate-100" />
-      </div>
-    </div>
-  );
-}
-
-function HomePageContent() {
-  const searchParams = useSearchParams();
-  const workspace = useAppStore((s) => s.workspace);
-  const bases = useAppStore((s) => s.bases);
-  const tables = useAppStore((s) => s.tables);
-  const records = useAppStore((s) => s.records);
-  const forms = useAppStore((s) => s.forms);
-  const team = useAppStore((s) => s.team);
-  const createBase = useAppStore((s) => s.createBase);
-
-  const [showCreate, setShowCreate] = useState(false);
-  const [newBaseName, setNewBaseName] = useState("");
-  const [selectedColor, setSelectedColor] = useState(BASE_COLORS[0]);
-
-  useEffect(() => {
-    if (searchParams.get("create") === "base") {
-      setShowCreate(true);
-    }
-  }, [searchParams]);
-
-  const handleCreateBase = () => {
-    if (!newBaseName.trim()) return;
-    const base = createBase(newBaseName.trim(), selectedColor);
-    setNewBaseName("");
-    setShowCreate(false);
-    window.location.href = `/base/${base.id}`;
-  };
-
-  const stats = [
-    { label: "Bases", value: bases.length, icon: Database },
-    { label: "Tables", value: tables.length, icon: Table2 },
-    { label: "Records", value: records.length, icon: FileText },
-    { label: "Team", value: team.length, icon: Users },
-  ];
+  const featuredEvents = events.slice(0, 3);
+  const featuredCourses = courses.slice(0, 3);
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-8 py-10">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-blue-600">
-                {workspace.name}
-              </p>
-              <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
-                Welcome back, Mikel
+    <div className="min-h-screen bg-page">
+      <SiteAnnouncement />
+      <div className="relative overflow-hidden bg-navy text-cloud">
+        <Image
+          src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=2000&q=80"
+          alt=""
+          fill
+          priority
+          className="object-cover opacity-35"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/55" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-navy/40" />
+        <div className="drift absolute -right-20 top-10 h-72 w-72 rounded-full bg-blue/25 blur-3xl" />
+        <div className="drift absolute bottom-0 left-1/4 h-56 w-56 rounded-full bg-orange/20 blur-3xl" />
+
+        <div className="relative z-10">
+          <SiteHeader tone="dark" />
+          <section className="mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-5 pb-20 pt-8 md:px-8 md:pb-28 md:pt-12">
+            <div className="reveal max-w-3xl">
+              <Crump360WordmarkText size="xl" tone="dark" />
+              <h1 className="reveal reveal-delay-1 mt-8 max-w-2xl font-display text-3xl leading-[1.1] text-balance sm:text-4xl md:text-5xl">
+                Gatherings that teach. Courses that stick.
               </h1>
-              <p className="mt-2 max-w-xl text-slate-500">
-                Manage your data, build embeddable forms, and collaborate with
-                your team — all in one place.
+              <p className="reveal reveal-delay-2 mt-5 max-w-lg text-base leading-relaxed text-cloud/70 sm:text-lg">
+                Events management and learning on one path — so every summit,
+                clinic, and cohort points the same direction.
+              </p>
+              <div className="reveal reveal-delay-3 mt-9 flex flex-wrap items-center gap-3">
+                <Button asChild size="lg" variant="star">
+                  <Link href="/dashboard">
+                    Enter platform <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="secondary"
+                  className="border-white/20 bg-white/10 text-cloud hover:bg-white/15"
+                >
+                  <Link href="/events">Browse events</Link>
+                </Button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <main className="brand-bg">
+        <div className="brand-grid">
+          <section id="method" className="mx-auto max-w-6xl px-5 py-20 md:px-8">
+            <div className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue">
+                The CRUMP360 method
+              </p>
+              <h2 className="mt-3 font-display text-3xl text-navy md:text-4xl">
+                Events create energy. Courses lock it in.
+              </h2>
+              <p className="mt-4 text-muted">
+                Most tools split gatherings from learning. CRUMP360 keeps
+                registration, curriculum, and progress on one map.
               </p>
             </div>
-            <Button onClick={() => setShowCreate(true)}>
-              <Plus className="h-4 w-4" />
-              New base
-            </Button>
-          </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <div
-                  key={stat.label}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
-                >
-                  <div className="flex items-center gap-2 text-slate-500">
-                    <Icon className="h-4 w-4" />
-                    <span className="text-xs font-medium uppercase tracking-wide">
-                      {stat.label}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-2xl font-bold text-slate-900">
-                    {stat.value}
+            <div className="mt-12 grid gap-8 md:grid-cols-3">
+              {[
+                {
+                  icon: Compass,
+                  title: "Orient",
+                  copy: "Set outcomes before agendas. Every event and course shares a true-north statement.",
+                },
+                {
+                  icon: Map,
+                  title: "Path",
+                  copy: "Connect live sessions to modules and practice. Learners always know the next step.",
+                },
+                {
+                  icon: Sparkles,
+                  title: "Signal",
+                  copy: "Track activation and transfer — not vanity enrollments — so sponsors see real movement.",
+                },
+              ].map((item) => (
+                <div key={item.title} className="border-t-2 border-blue/25 pt-6">
+                  <item.icon className="h-6 w-6 text-orange" strokeWidth={1.5} />
+                  <h3 className="mt-4 font-display text-2xl text-navy">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {item.copy}
                   </p>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-6xl px-8 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Your bases</h2>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {bases.map((base) => {
-            const baseTables = tables.filter((t) => t.baseId === base.id);
-            const baseRecords = records.filter((r) =>
-              baseTables.some((t) => t.id === r.tableId)
-            );
-            const baseForms = forms.filter((f) => f.baseId === base.id);
-
-            return (
-              <Link
-                key={base.id}
-                href={`/base/${base.id}`}
-                className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-200 hover:shadow-md"
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-lg"
-                    style={{
-                      backgroundColor: `${base.color}15`,
-                      color: base.color,
-                    }}
-                  >
-                    {base.icon || base.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-slate-900 group-hover:text-blue-700">
-                      {base.name}
-                    </h3>
-                    {base.description && (
-                      <p className="mt-0.5 line-clamp-2 text-sm text-slate-500">
-                        {base.description}
-                      </p>
-                    )}
-                    <div className="mt-3 flex gap-3 text-xs text-slate-400">
-                      <span>{baseTables.length} tables</span>
-                      <span>{baseRecords.length} records</span>
-                      <span>{baseForms.length} forms</span>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-500" />
-                </div>
-              </Link>
-            );
-          })}
-
-          <button
-            onClick={() => setShowCreate(true)}
-            className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 p-8 text-slate-400 transition-colors hover:border-blue-300 hover:bg-blue-50/30 hover:text-blue-600"
-          >
-            <Plus className="mb-2 h-6 w-6" />
-            <span className="text-sm font-medium">Create new base</span>
-          </button>
-        </div>
-
-        <div className="mt-10 rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-blue-600 p-2.5 text-white">
-              <Sparkles className="h-5 w-5" />
+              ))}
             </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                Embed forms on your website
-              </h3>
-              <p className="mt-1 text-sm text-slate-600">
-                Build forms like your Pastor Partnership page and embed them
-                anywhere with a simple iframe snippet. Check out the demo form
-                in Pastor Partnerships.
-              </p>
-              <Button variant="outline" size="sm" className="mt-3" asChild>
-                <Link href="/base/base-pastors/table/tbl-pastors/form/form-pastors">
-                  Open form builder
-                  <ArrowRight className="h-3.5 w-3.5" />
+          </section>
+
+          <section className="mx-auto max-w-6xl px-5 py-8 md:px-8">
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue">
+                  Upcoming
+                </p>
+                <h2 className="mt-2 font-display text-3xl text-navy">
+                  Events on the horizon
+                </h2>
+              </div>
+              <Button asChild variant="ghost">
+                <Link href="/events">
+                  All events <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>
-          </div>
-        </div>
-      </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {featuredEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          </section>
 
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create a new base</DialogTitle>
-            <DialogDescription>
-              A base is a collection of related tables — like a project or
-              department.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div>
-              <label className="text-sm font-medium text-slate-700">
-                Base name
-              </label>
-              <Input
-                value={newBaseName}
-                onChange={(e) => setNewBaseName(e.target.value)}
-                placeholder="e.g. Volunteer Sign-ups"
-                className="mt-1.5"
-                onKeyDown={(e) => e.key === "Enter" && handleCreateBase()}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-700">
-                Color
-              </label>
-              <div className="mt-2 flex gap-2">
-                {BASE_COLORS.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => setSelectedColor(color)}
-                    className="h-8 w-8 rounded-full transition-transform hover:scale-110"
-                    style={{
-                      backgroundColor: color,
-                      outline:
-                        selectedColor === color
-                          ? `2px solid ${color}`
-                          : "none",
-                      outlineOffset: "2px",
-                    }}
-                  />
-                ))}
+          <section className="mx-auto max-w-6xl px-5 py-16 md:px-8">
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue">
+                  Curriculum
+                </p>
+                <h2 className="mt-2 font-display text-3xl text-navy">
+                  Learning that follows through
+                </h2>
               </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowCreate(false)}>
-                Cancel
+              <Button asChild variant="ghost">
+                <Link href="/learn">
+                  All courses <ArrowRight className="h-4 w-4" />
+                </Link>
               </Button>
-              <Button onClick={handleCreateBase}>Create base</Button>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+            <div className="grid gap-6 md:grid-cols-3">
+              {featuredCourses.map((course) => (
+                <CourseCard key={course.id} course={course} />
+              ))}
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <SiteFooter />
     </div>
   );
 }
