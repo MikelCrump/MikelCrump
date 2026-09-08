@@ -122,24 +122,24 @@ export function MediaPlayer({
     <div
       ref={shellRef}
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-line bg-ink text-cloud shadow-[0_20px_50px_-28px_rgba(19,42,62,0.55)]",
+        "group relative overflow-hidden rounded-xl border border-navy/40 bg-navy text-cloud shadow-[0_20px_50px_-28px_rgba(25,26,33,0.65)]",
         className
       )}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(playing ? false : true)}
     >
       {isAudio ? (
-        <div className="relative flex min-h-[240px] flex-col justify-end bg-gradient-to-br from-ink via-[#1a3a4d] to-sea p-6 md:p-8">
+        <div className="relative flex min-h-[240px] flex-col justify-end bg-gradient-to-br from-navy via-[#1a1f3a] to-blue p-6 md:p-8">
           <audio ref={audioRef} src={src} preload="metadata" />
-          <p className="relative z-10 text-xs uppercase tracking-[0.16em] text-star-soft">
+          <p className="relative z-10 text-xs font-bold uppercase tracking-[0.16em] text-orange">
             Audio lesson · CRUMP360
           </p>
           <p className="relative z-10 mt-2 max-w-xl font-display text-2xl leading-snug md:text-3xl">
             {title}
           </p>
           <div className="pointer-events-none absolute inset-0 opacity-40">
-            <div className="absolute -right-8 top-6 h-40 w-40 rounded-full bg-star/30 blur-2xl" />
-            <div className="absolute bottom-4 left-10 h-28 w-28 rounded-full bg-sea-bright/40 blur-2xl" />
+            <div className="absolute -right-8 top-6 h-40 w-40 rounded-full bg-orange/35 blur-2xl" />
+            <div className="absolute bottom-4 left-10 h-28 w-28 rounded-full bg-blue/50 blur-2xl" />
           </div>
         </div>
       ) : (
@@ -175,7 +175,7 @@ export function MediaPlayer({
 
       <div
         className={cn(
-          "absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink via-ink/90 to-transparent px-3 pb-3 pt-12 transition-opacity duration-300",
+          "absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy via-navy/90 to-transparent px-3 pb-3 pt-12 transition-opacity duration-300",
           hovering || !playing || isAudio
             ? "opacity-100"
             : "opacity-0 group-hover:opacity-100"
@@ -191,7 +191,7 @@ export function MediaPlayer({
           aria-label="Seek"
           className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/20"
           style={{
-            background: `linear-gradient(to right, var(--star) ${progress}%, rgba(255,255,255,0.2) ${progress}%)`,
+            background: `linear-gradient(to right, var(--orange) ${progress}%, rgba(255,255,255,0.2) ${progress}%)`,
           }}
         />
 

@@ -36,10 +36,10 @@ export function EventCard({ event }: { event: PlatformEvent }) {
       </div>
       <div className="space-y-3 p-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-sea">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue">
             {event.category} · {event.city}
           </p>
-          <h3 className="mt-1 font-display text-xl leading-snug text-ink group-hover:text-sea">
+          <h3 className="mt-1 font-display text-xl leading-snug text-navy group-hover:text-blue">
             {event.title}
           </h3>
           <p className="mt-1 text-sm text-ink-soft">{event.subtitle}</p>
@@ -77,10 +77,10 @@ export function CourseCard({ course }: { course: Course }) {
       </div>
       <div className="space-y-3 p-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-sea">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue">
             {course.category} · {course.durationHours}h
           </p>
-          <h3 className="mt-1 font-display text-xl leading-snug text-ink group-hover:text-sea">
+          <h3 className="mt-1 font-display text-xl leading-snug text-navy group-hover:text-blue">
             {course.title}
           </h3>
           <p className="mt-1 text-sm text-ink-soft">{course.subtitle}</p>

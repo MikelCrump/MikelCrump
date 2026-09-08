@@ -14,7 +14,7 @@ export function SiteAnnouncement() {
 
   if (maintenanceMode) {
     return (
-      <div className="border-b border-amber-200 bg-amber-50 px-5 py-2 text-center text-sm text-amber-950">
+      <div className="border-b border-orange/30 bg-orange/15 px-5 py-2 text-center text-sm font-medium text-navy">
         Maintenance mode is on — public visitors may see limited content.
       </div>
     );
@@ -23,7 +23,7 @@ export function SiteAnnouncement() {
   if (!announcement) return null;
 
   return (
-    <div className="border-b border-sea/20 bg-sea/10 px-5 py-2 text-center text-sm text-ink">
+    <div className="border-b border-blue/20 bg-blue/10 px-5 py-2 text-center text-sm font-medium text-navy">
       {announcement}
     </div>
   );

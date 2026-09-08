@@ -4,18 +4,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold tracking-tight transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sea-bright/40 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold tracking-tight transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue/35 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          "bg-ink text-cloud hover:bg-ink-soft shadow-[0_1px_0_rgba(255,255,255,0.12)_inset]",
-        sea: "bg-sea-bright text-white hover:bg-sea",
+          "bg-navy text-cloud hover:bg-[#242632] shadow-[0_1px_0_rgba(255,255,255,0.08)_inset]",
+        sea: "bg-blue text-white hover:bg-sea-bright",
         secondary:
-          "bg-cloud text-ink border border-line hover:border-ink/30 hover:bg-mist/60",
-        ghost: "text-ink-soft hover:bg-mist hover:text-ink",
-        star: "bg-star text-ink hover:bg-star-soft",
-        link: "text-sea underline-offset-4 hover:underline",
+          "bg-cloud text-navy border border-line hover:border-navy/25 hover:bg-mist",
+        ghost: "text-ink-soft hover:bg-mist hover:text-navy",
+        star: "bg-orange text-navy hover:bg-star-soft",
+        link: "text-blue underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

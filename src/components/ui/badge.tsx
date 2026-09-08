@@ -11,16 +11,16 @@ export function Badge({
 }) {
   const tones = {
     mist: "bg-mist text-ink-soft border-line",
-    sea: "bg-sea/10 text-sea border-sea/20",
-    star: "bg-star/20 text-ink border-star/40",
-    ink: "bg-ink text-cloud border-ink",
-    warn: "bg-amber-50 text-amber-900 border-amber-200",
+    sea: "bg-blue/10 text-blue border-blue/20",
+    star: "bg-orange/15 text-navy border-orange/35",
+    ink: "bg-navy text-cloud border-navy",
+    warn: "bg-orange/10 text-navy border-orange/30",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em]",
+        "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em]",
         tones[tone],
         className
       )}

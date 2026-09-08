@@ -48,9 +48,9 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10">
-      <section className="grid gap-6 overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-ink via-[#1a3a4d] to-sea p-6 text-cloud md:grid-cols-[1.3fr_0.7fr] md:p-8">
+      <section className="grid gap-6 overflow-hidden rounded-2xl border border-navy/20 bg-gradient-to-br from-navy via-[#1a1f3a] to-blue p-6 text-cloud md:grid-cols-[1.3fr_0.7fr] md:p-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-star-soft">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-orange">
             Learner home
           </p>
           <h1 className="mt-2 font-display text-3xl md:text-4xl">

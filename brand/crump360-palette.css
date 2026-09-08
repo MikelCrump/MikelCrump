@@ -1,0 +1,13 @@
+:root {
+  /* Primary — sampled from source logo files */
+  --navy: #191A21;  /* Primary ink */
+  --orange: #E68A2C;  /* Accent */
+  --blue: #2E41DE;  /* Secondary */
+
+  /* Suggested neutrals */
+  --page-bg: #F5F6F9;
+  --surface: #FFFFFF;
+  --border: #DFE2EA;
+  --muted-text: #64687A;
+  --faint-text: #8A8DA0;
+}
