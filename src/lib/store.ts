@@ -135,7 +135,7 @@ export const useArrivalStore = create<ArrivalState>((set, get) => ({
       guestType: input.guestType,
       status: "checked-in",
       confirmationCode,
-      qrPayload: `northstar://${event?.slug ?? input.eventId}/checkin/${confirmationCode}`,
+      qrPayload: `crump360://${event?.slug ?? input.eventId}/checkin/${confirmationCode}`,
       checkedInAt: new Date().toISOString(),
       sessionIds: event?.sessions[0] ? [event.sessions[0].id] : [],
       badgeName: `${input.firstName} ${input.lastName.charAt(0)}.`,

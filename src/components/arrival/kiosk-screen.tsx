@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { NorthstarMark } from "@/components/brand/northstar-mark";
+import { Crump360Wordmark } from "@/components/brand/crump360-mark";
 import { QrBadge } from "@/components/arrival/qr-badge";
 import { useArrivalStore, useEventAttendees } from "@/lib/store";
 import type { ArrivalEvent, Attendee } from "@/lib/types";
@@ -61,24 +61,26 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
   };
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-ink text-cloud">
+    <div className="relative min-h-dvh overflow-hidden bg-navy text-cloud">
       <div className="pointer-events-none absolute inset-0 opacity-40">
-        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-sea-bright/40 blur-3xl" />
-        <div className="absolute -right-16 bottom-10 h-80 w-80 rounded-full bg-star/25 blur-3xl" />
+        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-blue/40 blur-3xl" />
+        <div className="absolute -right-16 bottom-10 h-80 w-80 rounded-full bg-orange/25 blur-3xl" />
       </div>
 
       <header className="relative z-10 flex items-center justify-between px-6 py-5 md:px-10">
-        <div className="flex items-center gap-3">
-          <NorthstarMark className="h-10 w-10" animate />
-          <div>
-            <p className="font-display text-2xl">Northstar</p>
-            <p className="text-sm text-cloud/70">{event.title}</p>
-          </div>
+        <div>
+          <Crump360Wordmark
+            tone="light"
+            animate
+            markClassName="h-10 w-10"
+            textClassName="text-2xl"
+          />
+          <p className="mt-1 pl-[3.25rem] text-sm text-cloud/70">{event.title}</p>
         </div>
         <button
           type="button"
           onClick={() => setPinOpen(true)}
-          className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-cloud/80 hover:bg-white/10"
+          className="inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-cloud/80 hover:bg-white/10"
         >
           <Lock className="h-4 w-4" /> Admin
         </button>
@@ -87,10 +89,10 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
       <main className="relative z-10 mx-auto flex min-h-[calc(100dvh-88px)] max-w-5xl flex-col px-6 pb-10 md:px-10">
         {view === "home" && (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <p className="reveal text-sm font-semibold uppercase tracking-[0.18em] text-star-soft">
+            <p className="reveal text-sm font-semibold uppercase tracking-[0.18em] text-orange">
               Welcome · self check-in
             </p>
-            <h1 className="reveal reveal-delay-1 mt-4 max-w-2xl font-display text-4xl leading-tight md:text-6xl">
+            <h1 className="reveal reveal-delay-1 mt-4 max-w-2xl font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
               Find your name or scan your QR pass
             </h1>
             <p className="reveal reveal-delay-2 mt-4 max-w-lg text-base text-cloud/75 md:text-lg">
@@ -109,7 +111,7 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
               )}
               <Button
                 size="xl"
-                variant="secondary"
+                variant="ghost"
                 className={cn(
                   "h-24 border-0 bg-white/10 text-xl text-cloud hover:bg-white/15",
                   event.kioskMode === "hands-free" && "sm:col-span-2"
@@ -120,7 +122,7 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
               </Button>
             </div>
             {event.kioskMode === "standard" && (
-              <Button asChild variant="ghost" className="mt-8 text-cloud/80">
+              <Button asChild variant="ghost" className="mt-8 text-cloud/80 hover:bg-white/10 hover:text-cloud">
                 <Link href={`/register/${event.id}`}>
                   <UserPlus className="h-4 w-4" /> New registration
                 </Link>
@@ -151,7 +153,7 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
                   key={a.id}
                   type="button"
                   onClick={() => complete(a, "search")}
-                  className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left hover:bg-white/10"
+                  className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-5 py-4 text-left hover:bg-white/10"
                 >
                   <div>
                     <p className="text-lg font-semibold">
@@ -180,16 +182,16 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
             >
               ← Back
             </button>
-            <div className="relative flex h-72 w-72 items-center justify-center rounded-[2rem] border-2 border-star/80 bg-white/5">
-              <QrCode className={cn("h-20 w-20 text-star", scanPulse && "animate-pulse")} />
+            <div className="relative flex h-72 w-72 items-center justify-center rounded-2xl border-2 border-orange/80 bg-white/5">
+              <QrCode className={cn("h-20 w-20 text-orange", scanPulse && "animate-pulse")} />
               <div
                 className={cn(
-                  "scan-beam absolute inset-x-6 top-8 h-0.5 bg-gradient-to-r from-transparent via-star to-transparent",
+                  "scan-beam absolute inset-x-6 top-8 h-0.5 bg-gradient-to-r from-transparent via-orange to-transparent",
                   scanPulse && "scanning"
                 )}
               />
             </div>
-            <p className="mt-8 font-display text-3xl">Hold your pass here</p>
+            <p className="mt-8 font-display text-3xl font-bold">Hold your pass here</p>
             <Button
               className="mt-8"
               size="lg"
@@ -204,14 +206,14 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
         {view === "success" && success && (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <CheckCircle2 className="h-16 w-16 text-emerald-300" />
-            <h2 className="mt-4 font-display text-4xl md:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-bold md:text-5xl">
               You&apos;re checked in
             </h2>
             <p className="mt-2 text-cloud/75">
               Welcome, {success.firstName}. Collect your badge below.
             </p>
             <QrBadge
-              className="mt-8 w-full max-w-md text-left text-ink"
+              className="mt-8 w-full max-w-md text-left text-navy"
               attendee={success}
               eventTitle={event.title}
             />
@@ -232,15 +234,15 @@ export function KioskScreen({ event }: { event: ArrivalEvent }) {
       </main>
 
       {pinOpen && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-ink/80 p-6 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-3xl bg-cloud p-6 text-ink">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-navy/80 p-6 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl bg-cloud p-6 text-navy">
             <div className="flex items-center justify-between">
-              <p className="font-display text-xl">Exit kiosk</p>
+              <p className="font-display text-xl font-bold">Exit kiosk</p>
               <button type="button" onClick={() => setPinOpen(false)}>
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <p className="mt-2 text-sm text-ink-soft">Enter staff PIN (demo: 1234)</p>
+            <p className="mt-2 text-sm text-muted">Enter staff PIN (demo: 1234)</p>
             <Input
               className="mt-4"
               type="password"

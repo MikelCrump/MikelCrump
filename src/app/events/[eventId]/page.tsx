@@ -34,7 +34,7 @@ export default function EventWorkspacePage({
         <div>
           <Link
             href="/events"
-            className="text-sm font-medium text-sea hover:underline"
+            className="text-sm font-medium text-blue hover:underline"
           >
             ← All events
           </Link>

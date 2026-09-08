@@ -14,7 +14,7 @@ export default function EventsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sea">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue">
             Event management
           </p>
           <h1 className="mt-1 font-display text-4xl text-ink">Events</h1>
@@ -37,7 +37,7 @@ export default function EventsPage() {
             <Link
               key={event.id}
               href={`/events/${event.id}`}
-              className="grid gap-4 rounded-[1.5rem] border border-line/80 bg-cloud p-4 transition-colors hover:border-sea/40 md:grid-cols-[220px_1fr_auto] md:p-5"
+              className="grid gap-4 rounded-[1.5rem] border border-line/80 bg-cloud p-4 transition-colors hover:border-blue/40 md:grid-cols-[220px_1fr_auto] md:p-5"
             >
               <div
                 className="h-36 rounded-2xl bg-cover bg-center md:h-full md:min-h-[140px]"
@@ -72,7 +72,7 @@ export default function EventsPage() {
                 </p>
               </div>
               <div className="flex items-center md:justify-end">
-                <span className="rounded-xl bg-mist px-4 py-2 text-sm font-semibold text-sea">
+                <span className="rounded-xl bg-mist px-4 py-2 text-sm font-semibold text-blue">
                   Open workspace
                 </span>
               </div>

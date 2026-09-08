@@ -4,7 +4,7 @@ export async function GET() {
   return NextResponse.json(
     {
       status: "ok",
-      app: "northstar-arrival",
+      app: "crump360-arrival",
       timestamp: new Date().toISOString(),
     },
     { headers: { "Cache-Control": "no-store" } }

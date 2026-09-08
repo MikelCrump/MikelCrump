@@ -22,9 +22,9 @@ export function QrBadge({
         className
       )}
     >
-      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-sea via-sea-bright to-star" />
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sea">
-        {eventTitle ?? "Northstar"}
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue via-sea-bright to-orange" />
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-blue">
+        {eventTitle ?? "CRUMP360"}
       </p>
       <p className="mt-2 font-display text-2xl leading-tight text-ink">
         {attendee.firstName} {attendee.lastName}
@@ -47,7 +47,7 @@ export function QrBadge({
             value={attendee.qrPayload}
             size={size}
             bgColor="transparent"
-            fgColor="#132a3e"
+            fgColor="#191a21"
             level="M"
           />
         </div>

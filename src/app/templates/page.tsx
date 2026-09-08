@@ -12,7 +12,7 @@ export default function TemplatesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sea">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue">
           Check-in kit
         </p>
         <h1 className="mt-1 font-display text-4xl text-ink">Templates</h1>

@@ -20,7 +20,7 @@ export default function RegisterPage({
       <div>
         <Link
           href={`/events/${event.id}`}
-          className="text-sm font-medium text-sea hover:underline"
+          className="text-sm font-medium text-blue hover:underline"
         >
           ← Back to {event.title}
         </Link>

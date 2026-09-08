@@ -12,16 +12,16 @@ export const templates: CheckInTemplate[] = [
     name: "Summit Badge",
     kind: "badge",
     description: "Large name + company with session QR on the reverse.",
-    accent: "#1b6b6e",
+    accent: "#2e41de",
     fields: ["Full name", "Company", "Guest type", "QR"],
-    previewLabel: "Northstar Summit",
+    previewLabel: "CRUMP360 Summit",
   },
   {
     id: "tpl-kiosk-welcome",
     name: "Kiosk Welcome",
     kind: "kiosk",
     description: "Self-serve welcome with search, QR, and walk-in register.",
-    accent: "#d4a84b",
+    accent: "#e68a2c",
     fields: ["Event logo", "Search", "Scan CTA", "Register"],
     previewLabel: "Self check-in",
   },
@@ -30,7 +30,7 @@ export const templates: CheckInTemplate[] = [
     name: "Confirmation QR",
     kind: "email-qr",
     description: "Email-ready QR pass attendees can scan at the door.",
-    accent: "#132a3e",
+    accent: "#191a21",
     fields: ["Confirmation", "QR", "Event date"],
     previewLabel: "Email pass",
   },
@@ -39,7 +39,7 @@ export const templates: CheckInTemplate[] = [
     name: "Session Gate",
     kind: "session-checkin",
     description: "Room-door check-in for breakouts with capacity meter.",
-    accent: "#1f8a7c",
+    accent: "#3b4ef0",
     fields: ["Session title", "Capacity", "QR / search"],
     previewLabel: "Breakout gate",
   },
@@ -48,8 +48,8 @@ export const templates: CheckInTemplate[] = [
 export const seedEvents: ArrivalEvent[] = [
   {
     id: "evt-summit-26",
-    slug: "northstar-summit-2026",
-    title: "Northstar Summit 2026",
+    slug: "crump360-summit-2027",
+    title: "CRUMP360 Summit 2027",
     subtitle: "Three days to recalibrate how teams learn and gather.",
     venue: "Colorado Convention Center",
     city: "Denver, CO",
@@ -247,7 +247,7 @@ const lastNames = [
 
 const companies = [
   "Reawaken USA",
-  "Northstar Cohort",
+  "CRUMP360 Cohort",
   "Fieldline Ops",
   "Bright Harbor",
   "Summit Forge",
@@ -296,7 +296,7 @@ export function buildSeedAttendees(): Attendee[] {
         guestType: guestTypes[i % guestTypes.length],
         status: checkedIn ? "checked-in" : "registered",
         confirmationCode,
-        qrPayload: `northstar://${event.slug}/checkin/${confirmationCode}`,
+        qrPayload: `crump360://${event.slug}/checkin/${confirmationCode}`,
         checkedInAt: checkedIn
           ? new Date(Date.now() - (count - i) * 90_000).toISOString()
           : undefined,

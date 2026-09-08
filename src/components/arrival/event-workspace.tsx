@@ -38,7 +38,7 @@ export function EventOverviewTab({ event }: { event: ArrivalEvent }) {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/25 to-transparent" />
             <div className="absolute bottom-0 p-6 text-cloud">
-              <Badge variant="star" className="mb-2 bg-star/90 text-ink">
+              <Badge variant="star" className="mb-2 bg-orange text-navy">
                 {event.status}
               </Badge>
               <h2 className="font-display text-3xl md:text-4xl">{event.title}</h2>
@@ -74,13 +74,13 @@ export function EventOverviewTab({ event }: { event: ArrivalEvent }) {
                         {session.location}
                       </p>
                     </div>
-                    <p className="text-sm font-semibold text-sea">
+                    <p className="text-sm font-semibold text-blue">
                       {session.checkedIn}/{session.capacity}
                     </p>
                   </div>
                   <div className="mt-3 h-2 overflow-hidden rounded-full bg-mist">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-sea to-sea-bright transition-all duration-700"
+                      className="h-full rounded-full bg-gradient-to-r from-blue to-sea-bright transition-all duration-700"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -132,8 +132,8 @@ export function EventOverviewTab({ event }: { event: ArrivalEvent }) {
                 className={cn(
                   "rounded-xl border px-4 py-3 text-left text-sm font-medium transition-colors",
                   event.kioskMode === mode
-                    ? "border-sea bg-sea/10 text-ink"
-                    : "border-line bg-paper text-ink-soft hover:border-sea/40"
+                    ? "border-blue bg-blue/10 text-ink"
+                    : "border-line bg-paper text-ink-soft hover:border-blue/40"
                 )}
               >
                 {label}
@@ -153,7 +153,7 @@ export function EventOverviewTab({ event }: { event: ArrivalEvent }) {
           </div>
         </div>
 
-        <div className="rounded-[1.5rem] border border-line/80 bg-gradient-to-br from-ink to-sea p-5 text-cloud">
+        <div className="rounded-[1.5rem] border border-line/80 bg-gradient-to-br from-navy to-blue p-5 text-cloud">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-star-soft">
             Live pulse
           </p>
@@ -188,7 +188,7 @@ function Stat({
       <p
         className={cn(
           "mt-1 font-display text-3xl",
-          accent ? "text-sea" : "text-ink"
+          accent ? "text-blue" : "text-ink"
         )}
       >
         {value}
@@ -296,7 +296,7 @@ export function ScanTab({ event }: { event: ArrivalEvent }) {
                 key={a.id}
                 type="button"
                 onClick={() => checkIn(a.id, "qr")}
-                className="flex w-full items-center justify-between rounded-xl border border-line/70 bg-paper px-3 py-2.5 text-left hover:border-sea/40"
+                className="flex w-full items-center justify-between rounded-xl border border-line/70 bg-paper px-3 py-2.5 text-left hover:border-blue/40"
               >
                 <span className="text-sm font-medium text-ink">
                   {a.firstName} {a.lastName}
@@ -363,7 +363,7 @@ export function AttendeesTab({ event }: { event: ArrivalEvent }) {
                 className={cn(
                   "rounded-xl px-3 py-2 text-xs font-semibold capitalize",
                   filter === f
-                    ? "bg-sea text-white"
+                    ? "bg-blue text-white"
                     : "bg-mist text-ink-soft hover:text-ink"
                 )}
               >
@@ -382,11 +382,11 @@ export function AttendeesTab({ event }: { event: ArrivalEvent }) {
               className={cn(
                 "flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors",
                 selected?.id === a.id
-                  ? "border-sea bg-sea/8"
-                  : "border-line/70 bg-paper hover:border-sea/35"
+                  ? "border-blue bg-blue/8"
+                  : "border-line/70 bg-paper hover:border-blue/35"
               )}
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-mist font-semibold text-sea">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-mist font-semibold text-blue">
                 {a.firstName[0]}
                 {a.lastName[0]}
               </div>
@@ -504,7 +504,7 @@ export function StatsTab({ event }: { event: ArrivalEvent }) {
           {byHour.map((b) => (
             <div key={b.label} className="flex flex-1 flex-col items-center gap-2">
               <div
-                className="w-full rounded-t-lg bg-gradient-to-t from-sea to-sea-bright transition-all duration-700"
+                className="w-full rounded-t-lg bg-gradient-to-t from-blue to-sea-bright transition-all duration-700"
                 style={{ height: `${(b.count / max) * 100}%`, minHeight: b.count ? 8 : 2 }}
               />
               <span className="text-[10px] font-medium text-ink-soft">{b.label}</span>
@@ -531,7 +531,7 @@ export function StatsTab({ event }: { event: ArrivalEvent }) {
               <div key={type}>
                 <div className="mb-1 flex justify-between text-sm">
                   <span className="capitalize text-ink">{type}</span>
-                  <span className="font-semibold text-sea">{count}</span>
+                  <span className="font-semibold text-blue">{count}</span>
                 </div>
                 <div className="h-2 rounded-full bg-mist">
                   <div
