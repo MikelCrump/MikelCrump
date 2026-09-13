@@ -2,14 +2,20 @@
 
 Events management and LMS — gatherings and courses on one learning path.
 
-**Brand:** [CRUMP360.com](https://crump360.com)
+## Sites
+
+| URL | Purpose |
+|-----|---------|
+| **[crump360.com](https://crump360.com)** | Product — plans, seats, and the app (`/start`, `/dashboard`, …) |
+| **[crumpusa.org/crump360](https://crumpusa.org/crump360)** | Marketing — brand story, events, and course catalog |
 
 ## Features
 
+- **Start** — plan tiers + seat picker (placeholder pricing)
 - **Events** — summits, workshops, clinics with registration and capacity
 - **Learn** — course catalog, modules, lesson player, progress
 - **Dashboard** — learner home with continue path
-- **Teach** — instructor console for fill rates and catalog health
+- **Teach / Admin** — instructor and operator consoles
 
 ## Stack
 
@@ -24,8 +30,9 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+- Marketing: [http://localhost:3000/crump360](http://localhost:3000/crump360)
+- Product start: [http://localhost:3000/start](http://localhost:3000/start)
 
 ## Deploy
 
-Production project: `crump360` on Vercel, aliased to **CRUMP360.com**.
+See [DEPLOY.md](./DEPLOY.md). Production project: `crump360` on Vercel.
