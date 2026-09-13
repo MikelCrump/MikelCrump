@@ -63,13 +63,13 @@ export default function DashboardPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             {nextLesson ? (
               <Button asChild variant="star" size="lg">
-                <Link href={`/learn/${continueCourse.slug}/${nextLesson.id}`}>
+                <Link href={`/crump360/learn/${continueCourse.slug}/${nextLesson.id}`}>
                   Continue {continueCourse.title} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             ) : null}
             <Button asChild variant="secondary" size="lg" className="border-transparent">
-              <Link href="/events">Find an event</Link>
+              <Link href="/crump360/events">Find an event</Link>
             </Button>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
                   {event.city} · {event.format}
                 </p>
                 <Link
-                  href={`/events/${event.slug}`}
+                  href={`/crump360/events/${event.slug}`}
                   className="mt-1 block font-display text-xl text-ink hover:text-sea"
                 >
                   {event.title}
@@ -151,7 +151,7 @@ export default function DashboardPage() {
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-display text-2xl text-ink">Recommended next</h2>
           <Button asChild variant="ghost" size="sm">
-            <Link href="/events">View all</Link>
+            <Link href="/crump360/events">View all</Link>
           </Button>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
@@ -165,7 +165,7 @@ export default function DashboardPage() {
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-display text-2xl text-ink">Your courses</h2>
           <Button asChild variant="ghost" size="sm">
-            <Link href="/learn">Catalog</Link>
+            <Link href="/crump360/learn">Catalog</Link>
           </Button>
         </div>
         <div className="grid gap-6 md:grid-cols-3">

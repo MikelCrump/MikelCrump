@@ -41,7 +41,7 @@ export default async function CourseDetailPage({
             <EnrollButton courseId={course.id} />
             {firstLesson ? (
               <Button asChild variant="secondary" size="lg">
-                <Link href={`/learn/${course.slug}/${firstLesson.id}`}>
+                <Link href={`/crump360/learn/${course.slug}/${firstLesson.id}`}>
                   Start learning
                 </Link>
               </Button>
@@ -86,7 +86,7 @@ export default async function CourseDetailPage({
                   {mod.lessons.map((lesson) => (
                     <li key={lesson.id}>
                       <Link
-                        href={`/learn/${course.slug}/${lesson.id}`}
+                        href={`/crump360/learn/${course.slug}/${lesson.id}`}
                         className="flex items-center justify-between gap-3 py-3 text-sm transition-colors hover:text-sea"
                       >
                         <span>

@@ -50,7 +50,7 @@ export default function ProgressPage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <Link
-                    href={`/learn/${course.slug}`}
+                    href={`/crump360/learn/${course.slug}`}
                     className="font-display text-xl text-ink hover:text-sea"
                   >
                     {course.title}
@@ -81,7 +81,7 @@ export default function ProgressPage() {
           >
             <div>
               <Link
-                href={`/events/${event.slug}`}
+                href={`/crump360/events/${event.slug}`}
                 className="font-display text-xl text-ink hover:text-sea"
               >
                 {event.title}

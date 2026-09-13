@@ -17,7 +17,7 @@ export function EventCard({ event }: { event: PlatformEvent }) {
 
   return (
     <Link
-      href={`/events/${event.slug}`}
+      href={`/crump360/events/${event.slug}`}
       className="group lift block overflow-hidden rounded-xl border border-line bg-cloud shadow-[0_1px_0_rgba(19,42,62,0.04)]"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
@@ -60,7 +60,7 @@ export function EventCard({ event }: { event: PlatformEvent }) {
 export function CourseCard({ course }: { course: Course }) {
   return (
     <Link
-      href={`/learn/${course.slug}`}
+      href={`/crump360/learn/${course.slug}`}
       className="group lift block overflow-hidden rounded-xl border border-line bg-cloud"
     >
       <div className="relative aspect-[16/10] overflow-hidden">

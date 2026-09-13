@@ -112,7 +112,7 @@ export default async function EventDetailPage({
             className="mt-6 w-full"
           />
           <Link
-            href="/learn"
+            href="/crump360/learn"
             className="mt-4 block text-center text-sm font-medium text-sea hover:underline"
           >
             Pair with a course →

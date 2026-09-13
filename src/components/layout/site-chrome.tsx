@@ -6,18 +6,19 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Crump360Wordmark } from "@/components/brand/crump360-mark";
 import { Button } from "@/components/ui/button";
+import { marketingPath, productStartUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const marketingLinks = [
-  { href: "/events", label: "Events" },
-  { href: "/learn", label: "Learn" },
-  { href: "/#method", label: "Method" },
+  { href: marketingPath("/events"), label: "Events" },
+  { href: marketingPath("/learn"), label: "Learn" },
+  { href: `${marketingPath()}/#method`, label: "Method" },
 ];
 
 const appLinks = [
   { href: "/dashboard", label: "Home" },
-  { href: "/events", label: "Events" },
-  { href: "/learn", label: "Courses" },
+  { href: marketingPath("/events"), label: "Events" },
+  { href: marketingPath("/learn"), label: "Courses" },
   { href: "/progress", label: "Progress" },
   { href: "/teach", label: "Teach" },
   { href: "/admin", label: "Admin" },
@@ -34,12 +35,13 @@ export function SiteHeader({
   const [open, setOpen] = useState(false);
   const links = variant === "app" ? appLinks : marketingLinks;
   const dark = tone === "dark";
+  const homeHref = variant === "app" ? "/dashboard" : marketingPath();
 
   return (
     <header className="relative z-40">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 md:px-8">
         <Link
-          href="/"
+          href={homeHref}
           className="group flex shrink-0 items-center"
           aria-label="CRUMP360 home"
         >
@@ -48,8 +50,9 @@ export function SiteHeader({
 
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((link) => {
+            const methodHref = `${marketingPath()}/#method`;
             const active =
-              link.href !== "/#method" &&
+              link.href !== methodHref &&
               (pathname === link.href || pathname.startsWith(`${link.href}/`));
             return (
               <Link
@@ -87,12 +90,12 @@ export function SiteHeader({
                 <Link href="/dashboard">Sign in</Link>
               </Button>
               <Button asChild variant={dark ? "star" : "default"}>
-                <Link href="/dashboard">Enter platform</Link>
+                <a href={productStartUrl()}>Get started</a>
               </Button>
             </>
           ) : (
             <Button asChild variant="secondary" size="sm">
-              <Link href="/">Marketing site</Link>
+              <Link href={marketingPath()}>Marketing site</Link>
             </Button>
           )}
         </div>
@@ -135,16 +138,16 @@ export function SiteHeader({
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/dashboard"
+            <a
+              href={productStartUrl()}
               onClick={() => setOpen(false)}
               className={cn(
                 "mt-2 rounded-md px-3 py-2.5 text-center text-sm font-semibold",
                 dark ? "bg-orange text-navy" : "bg-navy text-cloud"
               )}
             >
-              Enter platform
-            </Link>
+              Get started
+            </a>
           </div>
         </div>
       ) : null}
@@ -163,22 +166,22 @@ export function SiteFooter() {
             just memories.
           </p>
           <a
-            href="https://crump360.com"
+            href={productStartUrl()}
             className="mt-4 inline-block text-sm font-bold tracking-wide text-orange hover:underline"
           >
-            CRUMP360.com
+            Start on CRUMP360.com
           </a>
         </div>
         <div className="flex flex-wrap gap-5 text-sm font-semibold text-cloud/70">
-          <Link href="/events" className="hover:text-orange">
+          <Link href={marketingPath("/events")} className="hover:text-orange">
             Events
           </Link>
-          <Link href="/learn" className="hover:text-orange">
+          <Link href={marketingPath("/learn")} className="hover:text-orange">
             Learn
           </Link>
-          <Link href="/admin" className="hover:text-orange">
-            Admin
-          </Link>
+          <a href={productStartUrl()} className="hover:text-orange">
+            Get started
+          </a>
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-cloud/45">
             © {new Date().getFullYear()}
           </p>

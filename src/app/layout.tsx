@@ -17,11 +17,11 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL("https://crump360.com"),
   title: {
-    default: "CRUMP360 — Events & Learning",
+    default: "CRUMP360 — Start",
     template: "%s · CRUMP360",
   },
   description:
-    "CRUMP360 is an events management and LMS platform that keeps gatherings and courses on one learning path.",
+    "CRUMP360 is the events + learning platform. Choose a plan and seats to get started.",
   openGraph: {
     siteName: "CRUMP360",
     url: "https://crump360.com",

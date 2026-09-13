@@ -31,7 +31,7 @@ export default async function LessonPage({
     <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
       <aside className="h-fit rounded-xl border border-line bg-cloud p-4 lg:sticky lg:top-6">
         <Link
-          href={`/learn/${course.slug}`}
+          href={`/crump360/learn/${course.slug}`}
           className="text-xs font-semibold uppercase tracking-[0.12em] text-sea hover:underline"
         >
           ← {course.title}
@@ -46,7 +46,7 @@ export default async function LessonPage({
                 {mod.lessons.map((item) => (
                   <li key={item.id}>
                     <Link
-                      href={`/learn/${course.slug}/${item.id}`}
+                      href={`/crump360/learn/${course.slug}/${item.id}`}
                       className={`block rounded-md px-2 py-1.5 text-sm ${
                         item.id === lessonId
                           ? "bg-mist font-semibold text-ink"
@@ -102,14 +102,14 @@ export default async function LessonPage({
           <div className="flex gap-2">
             {prev ? (
               <Button asChild variant="secondary">
-                <Link href={`/learn/${course.slug}/${prev.id}`}>Previous</Link>
+                <Link href={`/crump360/learn/${course.slug}/${prev.id}`}>Previous</Link>
               </Button>
             ) : (
               <span />
             )}
             {next ? (
               <Button asChild variant="ghost">
-                <Link href={`/learn/${course.slug}/${next.id}`}>Next lesson</Link>
+                <Link href={`/crump360/learn/${course.slug}/${next.id}`}>Next lesson</Link>
               </Button>
             ) : null}
           </div>
