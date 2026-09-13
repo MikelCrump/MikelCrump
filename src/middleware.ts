@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { MARKETING_BASE, PRODUCT_START } from "@/lib/site";
 
+// Node.js runtime — required for Vercel temp/anonymous deploys (Edge deprecated there).
+export const runtime = "nodejs";
+
 const PRODUCT_HOSTS = new Set([
   "crump360.com",
   "www.crump360.com",
