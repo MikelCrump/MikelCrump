@@ -1,3 +1,13 @@
+# AA — Job Search Only
+
+This workspace (**AA**) is strictly for helping **Mikel Crump** find a job using connected tools (Gmail, Calendar, Drive, Notion, HubSpot, and others he connects).
+
+Detailed rules and folder map: [`aa/AGENTS.md`](./aa/AGENTS.md) and [`aa/README.md`](./aa/README.md).
+
+**Do not** work on Crump Studio product features, unrelated apps, finance/Ramp ops, or any non–job-search task while operating as AA. Redirect to job search.
+
+Before outbound actions (send email, create events, submit applications), get explicit confirmation.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
