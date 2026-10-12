@@ -43,14 +43,17 @@ export function getIntegrationStatus(): IntegrationStatus[] {
       name: "Tesla",
       ready: "live_ready",
       configured: Boolean(
-        cfg.teslaVehicleId && (cfg.teslaAccessToken || cfg.teslaRefreshToken),
+        cfg.teslaAccessToken ||
+          cfg.teslaRefreshToken ||
+          (cfg.teslaClientId && cfg.teslaClientSecret),
       ),
       needs: [
-        "TESLA_VEHICLE_ID",
-        "TESLA_ACCESS_TOKEN or TESLA_REFRESH_TOKEN + TESLA_CLIENT_ID",
-        "TESLA_COMMAND_PROXY_URL (for signed commands)",
+        "TESLA_CLIENT_ID + TESLA_CLIENT_SECRET (OAuth via /life/tesla)",
+        "or TESLA_ACCESS_TOKEN / TESLA_REFRESH_TOKEN",
+        "TESLA_VIN (or auto-pick first vehicle)",
+        "TESLA_COMMAND_PROXY_URL for signed commands on newer cars",
       ],
-      note: "Fleet vehicle_data live with token. Commands need virtual key / proxy.",
+      note: "Read: Fleet API. Commands: wake-then-send; proxy recommended for virtual-key vehicles.",
     },
     {
       id: "renpho",

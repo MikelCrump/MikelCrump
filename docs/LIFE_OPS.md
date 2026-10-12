@@ -22,10 +22,10 @@ Set `LIFE_FORCE_MOCK=0` (default in `.env.example`) so keys are used.
 
 | Integration | What you add | Live? |
 | --- | --- | --- |
-| Govee | `GOVEE_API_KEY` | Yes — list + power/brightness |
+| Govee | `GOVEE_API_KEY` | Yes — list, live state, power / brightness / color |
 | Weather | OpenWeather key + lat/lon | Yes |
 | Plaid | client/secret + access token | Yes — balances + 30d transactions |
-| Tesla | vehicle id + access **or** refresh+client id | Yes — vehicle_data; commands need proxy/virtual key |
+| Tesla | OAuth (client id/secret) or tokens + VIN | Yes — read when online; commands wake-then-send (proxy for virtual key) |
 | Renpho | Health app email + password | Yes — unofficial `cloud.renpho.com` API |
 | Commute | Maps key + origin/destination | Yes — Distance Matrix |
 | Calendar | Google OAuth access token | Yes — today’s events |
@@ -34,6 +34,27 @@ Set `LIFE_FORCE_MOCK=0` (default in `.env.example`) so keys are used.
 | Resideo / Apple TV / batteries | Home Assistant URL + token + entity ids | Yes — via HA REST |
 | AI credits | Claude Admin / Cursor Admin / xAI key and/or `LIFE_AI_CREDITS_JSON` | Partial — API/org live; Claude.ai/GrokBot chat quotas via JSON |
 | Automations | nothing required | Yes — persisted in `.data/`; optional HA webhook on Run |
+
+## Govee (read + command)
+
+1. In the Govee Home app: Profile → About Us → Apply for API Key  
+2. Set `GOVEE_API_KEY=...` and `LIFE_FORCE_MOCK=0`  
+3. Open `/life/home` or hit `GET /api/life/govee`  
+4. Board controls call `POST /api/life/control` with `target: "govee"` and `power` / `brightness` / `color`
+
+## Tesla (read + command)
+
+1. Create a Tesla developer app (authorization code + refresh). Redirect URI must match  
+   `TESLA_REDIRECT_URI` or `{origin}/api/life/tesla/callback`  
+2. Set `TESLA_CLIENT_ID`, `TESLA_CLIENT_SECRET`, `LIFE_FORCE_MOCK=0`  
+3. Open `/life/tesla` → **Connect Tesla account** (tokens saved under `.data/tesla-tokens.json`)  
+4. Set `TESLA_VIN=...` from the callback query (or first vehicle is auto-used)  
+5. **Reads:** cheap vehicle state when asleep; full `vehicle_data` only when online  
+6. **Commands:** wake → wait online → send. For 2024+ cars, run  
+   [`tesla-http-proxy`](https://github.com/teslamotors/vehicle-command) and set  
+   `TESLA_COMMAND_PROXY_URL=https://127.0.0.1:4443` (pair virtual key in the Tesla app)
+
+Diagnostics: `GET /api/life/tesla`
 
 ## Plaid Link helper
 

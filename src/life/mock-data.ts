@@ -46,10 +46,12 @@ export const MOCK_TESLA: TeslaSnapshot = {
   locationLabel: "Home",
   state: "asleep",
   mode: "mock",
+  lastError: null,
 };
 
 export const MOCK_GOVEE: GoveeSnapshot = {
   mode: "mock",
+  lastError: null,
   devices: [
     {
       id: "living-strip",

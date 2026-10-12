@@ -60,6 +60,7 @@ export interface TeslaSnapshot {
   locationLabel: string;
   state: "online" | "asleep" | "offline" | "unknown";
   mode: ConnectionMode;
+  lastError?: string | null;
 }
 
 export interface GoveeDevice {
@@ -75,6 +76,7 @@ export interface GoveeDevice {
 export interface GoveeSnapshot {
   devices: GoveeDevice[];
   mode: ConnectionMode;
+  lastError?: string | null;
 }
 
 export interface FinanceAccount {

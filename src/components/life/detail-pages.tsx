@@ -1,6 +1,7 @@
 "use client";
 
 import { MonitorPlay } from "lucide-react";
+import { useState } from "react";
 import { ControlToast } from "@/components/life/control-toast";
 import { DetailHeader } from "@/components/life/detail-header";
 import { ModeBadge } from "@/components/life/mode-badge";
@@ -150,15 +151,45 @@ export function DayDetail({ data }: { data: LifeOverview }) {
   );
 }
 
-export function TeslaDetail({ data }: { data: LifeOverview }) {
+export function TeslaDetail({
+  data,
+  authNotice,
+}: {
+  data: LifeOverview;
+  authNotice?: string | null;
+}) {
   const section = getSection("tesla");
   const { control, pending, toast } = useLifeControl();
+  const [authMsg, setAuthMsg] = useState<string | null>(authNotice ?? null);
   const t = data.tesla;
+
+  async function startTeslaAuth() {
+    const res = await fetch("/api/life/tesla/auth");
+    const json = (await res.json()) as { ok: boolean; url?: string; detail?: string };
+    if (!json.ok || !json.url) {
+      setAuthMsg(json.detail ?? "Could not build Tesla auth URL");
+      return;
+    }
+    window.location.href = json.url;
+  }
 
   return (
     <div>
       <DetailHeader section={section} />
       <ControlToast message={toast} />
+      {authMsg || t.lastError ? (
+        <p className="mb-4 rounded-xl border border-[var(--life-line)] bg-white/50 px-3 py-2 text-sm text-[var(--life-muted)]">
+          {authMsg ?? t.lastError}
+        </p>
+      ) : null}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <button type="button" className="life-btn life-btn-on" onClick={startTeslaAuth}>
+          Connect Tesla account
+        </button>
+        <a href="/api/life/tesla" className="life-btn">
+          Diagnostics JSON
+        </a>
+      </div>
       <div className="grid gap-4 lg:grid-cols-12">
         <Panel
           title={t.name}
@@ -252,10 +283,19 @@ export function HomeDetail({ data }: { data: LifeOverview }) {
       <div className="grid gap-4 lg:grid-cols-12">
         <Panel
           title="Govee devices"
-          subtitle={`${data.govee.devices.filter((d) => d.power).length} powered on`}
+          subtitle={
+            data.govee.lastError
+              ? data.govee.lastError
+              : `${data.govee.devices.filter((d) => d.power).length} powered on`
+          }
           mode={data.govee.mode}
           className="lg:col-span-7"
         >
+          <div className="mb-3">
+            <a href="/api/life/govee" className="life-btn">
+              Diagnostics JSON
+            </a>
+          </div>
           <ul className="space-y-3">
             {data.govee.devices.map((d) => (
               <li
@@ -274,7 +314,7 @@ export function HomeDetail({ data }: { data: LifeOverview }) {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
                     disabled={pending}
@@ -319,6 +359,21 @@ export function HomeDetail({ data }: { data: LifeOverview }) {
                     className="life-btn"
                   >
                     Full
+                  </button>
+                  <button
+                    type="button"
+                    disabled={pending}
+                    onClick={() =>
+                      control({
+                        target: "govee",
+                        action: "color",
+                        deviceId: d.id,
+                        value: "#89CFF0",
+                      })
+                    }
+                    className="life-btn"
+                  >
+                    Baby blue
                   </button>
                 </div>
               </li>

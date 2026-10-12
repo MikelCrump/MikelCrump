@@ -128,7 +128,11 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
 
         <Panel
           title="Tesla"
-          subtitle={`${data.tesla.model} · ${data.tesla.state}`}
+          subtitle={
+            data.tesla.lastError
+              ? data.tesla.lastError
+              : `${data.tesla.model} · ${data.tesla.state}`
+          }
           mode={data.tesla.mode}
           href="/life/tesla"
           className="lg:col-span-4"
@@ -175,7 +179,11 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
 
         <Panel
           title="Govee"
-          subtitle={`${data.govee.devices.filter((d) => d.power).length} on`}
+          subtitle={
+            data.govee.lastError
+              ? data.govee.lastError
+              : `${data.govee.devices.filter((d) => d.power).length} on`
+          }
           mode={data.govee.mode}
           href="/life/home"
           className="lg:col-span-5"
