@@ -4,7 +4,16 @@ const emptyToUndefined = (value: unknown) =>
   value === "" || value === undefined || value === null ? undefined : value;
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  // Optional so Life Ops can deploy without a studio Postgres.
+  // Prisma generate accepts a placeholder; studio routes need a real URL at runtime.
+  DATABASE_URL: z.preprocess(
+    emptyToUndefined,
+    z
+      .string()
+      .default(
+        "postgresql://postgres:postgres@127.0.0.1:5432/crump_studio?schema=public",
+      ),
+  ),
 
   // Locked Phase 2 decisions
   AUTH_PROVIDER: z.enum(["clerk"]).default("clerk"),
