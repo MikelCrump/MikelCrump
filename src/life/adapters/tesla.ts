@@ -177,6 +177,84 @@ async function waitUntilOnline(id: string, attempts = 8) {
   return finalState?.state === "online";
 }
 
+export type TeslaParkState = {
+  online: boolean;
+  parked: boolean;
+  shiftState: string | null;
+  speed: number | null;
+  latitude: number | null;
+  longitude: number | null;
+};
+
+/** Live drive_state for arrival / parked automations. */
+export async function getTeslaParkState(): Promise<TeslaParkState> {
+  const cfg = lifeEnv();
+  if (cfg.forceMock) {
+    return {
+      online: true,
+      parked: true,
+      shiftState: "P",
+      speed: 0,
+      latitude: cfg.homeLat ? Number(cfg.homeLat) : null,
+      longitude: cfg.homeLon ? Number(cfg.homeLon) : null,
+    };
+  }
+
+  let pathId = vehiclePathId();
+  if (!pathId) {
+    const vehicles = await listTeslaVehicles();
+    pathId = vehicles[0]?.vin ?? String(vehicles[0]?.id ?? "");
+  }
+  if (!pathId) {
+    throw new Error("No Tesla vehicle id/VIN configured");
+  }
+
+  const online = await waitUntilOnline(pathId, 6);
+  if (!online) {
+    return {
+      online: false,
+      parked: false,
+      shiftState: null,
+      speed: null,
+      latitude: null,
+      longitude: null,
+    };
+  }
+
+  const res = await teslaFetch(
+    `/api/1/vehicles/${pathId}/vehicle_data?endpoints=${encodeURIComponent("drive_state")}`,
+  );
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`drive_state ${res.status}: ${text.slice(0, 160)}`);
+  }
+  const json = (await res.json()) as {
+    response?: {
+      drive_state?: {
+        shift_state?: string | null;
+        speed?: number | null;
+        latitude?: number;
+        longitude?: number;
+      };
+    };
+  };
+  const drive = json.response?.drive_state ?? {};
+  const shift = drive.shift_state ?? null;
+  const speed = drive.speed ?? null;
+  const parked =
+    (shift == null || shift === "" || shift === "P") &&
+    (speed == null || speed === 0);
+
+  return {
+    online: true,
+    parked,
+    shiftState: shift,
+    speed,
+    latitude: drive.latitude ?? null,
+    longitude: drive.longitude ?? null,
+  };
+}
+
 function mapVehicleData(r: {
   display_name?: string;
   vehicle_config?: { car_type?: string };

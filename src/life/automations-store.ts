@@ -1,3 +1,7 @@
+import {
+  ARRIVE_HOME_CHARGE_AUTOMATION_ID,
+  runArriveHomeOpenChargePort,
+} from "@/life/arrive-home-charge";
 import { lifeEnv } from "@/life/config";
 import { MOCK_AUTOMATIONS } from "@/life/mock-data";
 import { readJsonFile, writeJsonFile } from "@/life/token-store";
@@ -8,6 +12,15 @@ const DATA_FILE = "life-automations.json";
 let memory: AutomationRule[] | null = null;
 let testMode = false;
 
+function ensureSeeded(list: AutomationRule[]) {
+  const seed = MOCK_AUTOMATIONS.find(
+    (a) => a.id === ARRIVE_HOME_CHARGE_AUTOMATION_ID,
+  );
+  if (!seed) return list;
+  if (list.some((a) => a.id === ARRIVE_HOME_CHARGE_AUTOMATION_ID)) return list;
+  return [seed, ...list];
+}
+
 function ensureLoaded() {
   if (memory) return memory;
   if (testMode) {
@@ -17,7 +30,8 @@ function ensureLoaded() {
   try {
     const parsed = readJsonFile<AutomationRule[]>(DATA_FILE);
     if (Array.isArray(parsed) && parsed.length) {
-      memory = parsed;
+      memory = ensureSeeded(parsed);
+      if (memory.length !== parsed.length) persist();
       return memory;
     }
   } catch {
@@ -68,10 +82,36 @@ export function createAutomation(input: {
   return rule;
 }
 
+export function markAutomationRan(id: string) {
+  memory = ensureLoaded().map((a) =>
+    a.id === id
+      ? {
+          ...a,
+          lastRun: new Date().toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          }),
+        }
+      : a,
+  );
+  persist();
+}
+
 export async function runAutomation(id: string) {
   const rule = ensureLoaded().find((a) => a.id === id);
   if (!rule) return { ok: false, detail: "Automation not found" };
   if (!rule.enabled) return { ok: false, detail: "Automation disabled" };
+
+  if (id === ARRIVE_HOME_CHARGE_AUTOMATION_ID) {
+    const result = await runArriveHomeOpenChargePort({
+      assumeHome: true,
+      force: true,
+    });
+    if (result.ok) markAutomationRan(id);
+    return result;
+  }
 
   const cfg = lifeEnv();
   let detail = `Ran locally: ${rule.action}`;
@@ -105,20 +145,7 @@ export async function runAutomation(id: string) {
     }
   }
 
-  memory = ensureLoaded().map((a) =>
-    a.id === id
-      ? {
-          ...a,
-          lastRun: new Date().toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-          }),
-        }
-      : a,
-  );
-  persist();
+  markAutomationRan(id);
   return { ok: true, detail };
 }
 

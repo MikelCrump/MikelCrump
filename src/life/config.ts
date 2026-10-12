@@ -37,6 +37,11 @@ export function lifeEnv() {
     weatherLat: present(process.env.WEATHER_LAT),
     weatherLon: present(process.env.WEATHER_LON),
     weatherLocationLabel: present(process.env.WEATHER_LOCATION_LABEL) ?? "Home area",
+    /** Home geofence for iPhone arrival automations (defaults to weather lat/lon). */
+    homeLat: present(process.env.HOME_LAT) ?? present(process.env.WEATHER_LAT),
+    homeLon: present(process.env.HOME_LON) ?? present(process.env.WEATHER_LON),
+    homeRadiusM: Number(present(process.env.HOME_RADIUS_M) ?? "120") || 120,
+    locationWebhookSecret: present(process.env.LIFE_LOCATION_WEBHOOK_SECRET),
     commuteOrigin: present(process.env.COMMUTE_ORIGIN),
     commuteDestination: present(process.env.COMMUTE_DESTINATION) ?? "Work",
     googleMapsApiKey: present(process.env.GOOGLE_MAPS_API_KEY),

@@ -148,7 +148,7 @@ export function getIntegrationStatus(): IntegrationStatus[] {
       ready: "built_in",
       configured: true,
       needs: ["HA_AUTOMATION_WEBHOOK_ID (optional execute bridge)"],
-      note: "Persisted under .data/life-automations.json; optional HA webhook on run.",
+      note: "iPhone arrive → charge port via /api/life/location; optional HA webhook on other rules.",
     },
   ];
 }

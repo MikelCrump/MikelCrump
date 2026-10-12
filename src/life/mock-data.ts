@@ -405,6 +405,14 @@ export const MOCK_COMMUTE: CommuteSnapshot = {
 
 export const MOCK_AUTOMATIONS: AutomationRule[] = [
   {
+    id: "auto-arrive-charge-port",
+    name: "Open charge port on arrive home",
+    enabled: true,
+    trigger: "iPhone arrives Home + Tesla parked ≥10s",
+    action: "Open Tesla charge port",
+    lastRun: null,
+  },
+  {
     id: "auto-arrive-home",
     name: "Arrive home lights",
     enabled: true,
