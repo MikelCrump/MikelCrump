@@ -1,11 +1,9 @@
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
-import path from "node:path";
 import { lifeEnv } from "@/life/config";
 import { MOCK_AUTOMATIONS } from "@/life/mock-data";
+import { readJsonFile, writeJsonFile } from "@/life/token-store";
 import type { AutomationRule } from "@/life/types";
 
-const DATA_DIR = path.join(process.cwd(), ".data");
-const DATA_FILE = path.join(DATA_DIR, "life-automations.json");
+const DATA_FILE = "life-automations.json";
 
 let memory: AutomationRule[] | null = null;
 let testMode = false;
@@ -17,12 +15,10 @@ function ensureLoaded() {
     return memory;
   }
   try {
-    if (existsSync(DATA_FILE)) {
-      const parsed = JSON.parse(readFileSync(DATA_FILE, "utf8")) as AutomationRule[];
-      if (Array.isArray(parsed) && parsed.length) {
-        memory = parsed;
-        return memory;
-      }
+    const parsed = readJsonFile<AutomationRule[]>(DATA_FILE);
+    if (Array.isArray(parsed) && parsed.length) {
+      memory = parsed;
+      return memory;
     }
   } catch {
     /* seed defaults */
@@ -34,8 +30,11 @@ function ensureLoaded() {
 
 function persist() {
   if (!memory || testMode) return;
-  mkdirSync(DATA_DIR, { recursive: true });
-  writeFileSync(DATA_FILE, JSON.stringify(memory, null, 2));
+  try {
+    writeJsonFile(DATA_FILE, memory);
+  } catch {
+    /* Vercel filesystem may be unavailable; keep in-memory copy */
+  }
 }
 
 export function listAutomations() {
