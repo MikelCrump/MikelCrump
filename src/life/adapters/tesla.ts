@@ -1,6 +1,11 @@
 import { lifeEnv } from "@/life/config";
 import { MOCK_TESLA } from "@/life/mock-data";
 import {
+  actionForControl,
+  hasTeslaPrivateKey,
+  sendSignedVehicleAction,
+} from "@/life/tesla-command/signed";
+import {
   loadTeslaTokens,
   saveTeslaTokens,
   type TeslaStoredTokens,
@@ -279,17 +284,60 @@ export async function getTesla(): Promise<TeslaSnapshot> {
   }
 }
 
-async function sendCommand(pathId: string, path: string) {
+async function sendSignedCommand(action: string, vin: string) {
   const cfg = lifeEnv();
+  const vehicleAction = actionForControl(action);
+  if (!vehicleAction) return false;
+  if (!hasTeslaPrivateKey(cfg.teslaPrivateKeyPem)) {
+    throw new Error(
+      "TESLA_PRIVATE_KEY_PEM missing — cannot sign Vehicle Command Protocol",
+    );
+  }
+  const token = await resolveAccessToken();
+  if (!token) throw new Error("Tesla token missing");
+  await sendSignedVehicleAction({
+    fleetBase: fleetBase(),
+    accessToken: token,
+    vin,
+    privateKeyPem: cfg.teslaPrivateKeyPem!,
+    action: vehicleAction,
+  });
+  return true;
+}
+
+async function sendCommand(pathId: string, path: string, action: string) {
+  const cfg = lifeEnv();
+  const token = await resolveAccessToken();
+  if (!token) throw new Error("Tesla token missing");
+
+  // Prefer in-app signed commands (required for modern cars / climate start).
+  if (actionForControl(action)) {
+    try {
+      await sendSignedCommand(action, pathId);
+      return;
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "signed failed";
+      // Fall through to proxy/fleet only if signing infra isn't set up.
+      if (!hasTeslaPrivateKey(cfg.teslaPrivateKeyPem)) {
+        /* continue */
+      } else if (/pair virtual key|key_not_paired|not paired/i.test(detail)) {
+        throw new Error(
+          `${detail}. Pair the virtual key first: https://tesla.com/_ak/${cfg.teslaPartnerDomain ?? "mikelcrump.com"}`,
+        );
+      } else {
+        // Still try proxy as secondary path
+        lastError = detail;
+      }
+    }
+  }
+
   const bases = [
     cfg.teslaCommandProxyUrl?.replace(/\/$/, ""),
     fleetBase(),
   ].filter(Boolean) as string[];
 
-  let lastFail = "Command failed";
+  let lastFail = lastError ?? "Command failed";
   for (const base of bases) {
-    const token = await resolveAccessToken();
-    if (!token) throw new Error("Tesla token missing");
     const res = await fetch(`${base}${path}`, {
       method: "POST",
       headers: {
@@ -300,6 +348,9 @@ async function sendCommand(pathId: string, path: string) {
     if (res.ok) return;
     const text = await res.text();
     lastFail = `${base.includes("127.0.0.1") || base.includes("localhost") ? "proxy" : "fleet"} ${res.status}: ${text.slice(0, 160)}`;
+    if (/Vehicle Command Protocol required/i.test(text)) {
+      lastFail = `Needs signed commands. Pair virtual key at https://tesla.com/_ak/${cfg.teslaPartnerDomain ?? "mikelcrump.com"} then retry. (${lastFail})`;
+    }
   }
   throw new Error(lastFail);
 }
@@ -349,7 +400,7 @@ export async function controlTesla(
       };
     }
 
-    await sendCommand(pathId, path);
+    await sendCommand(pathId, path, action);
     return { ok: true, detail: `Tesla ${action} sent` };
   } catch (error) {
     return {

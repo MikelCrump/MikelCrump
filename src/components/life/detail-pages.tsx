@@ -208,6 +208,14 @@ export function TeslaDetail({
         <button type="button" className="life-btn life-btn-on" onClick={startTeslaAuth}>
           Connect Tesla account
         </button>
+        <a
+          className="life-btn life-btn-on"
+          href="https://tesla.com/_ak/mikelcrump.com"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Pair virtual key
+        </a>
         <button type="button" className="life-btn" onClick={registerPartner}>
           Register Fleet partner
         </button>
@@ -215,6 +223,10 @@ export function TeslaDetail({
           Diagnostics JSON
         </a>
       </div>
+      <p className="mb-4 text-xs text-[var(--life-muted)]">
+        Climate start / charge / most commands need the virtual key paired in the Tesla app
+        (Pair virtual key), then signed commands from this site.
+      </p>
       <div className="grid gap-4 lg:grid-cols-12">
         <Panel
           title={t.name}
