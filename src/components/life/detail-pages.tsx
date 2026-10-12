@@ -173,6 +173,28 @@ export function TeslaDetail({
     window.location.href = json.url;
   }
 
+  async function registerPartner() {
+    setAuthMsg("Registering Tesla partner account…");
+    const res = await fetch("/api/life/tesla/register", { method: "POST" });
+    const json = (await res.json()) as {
+      ok: boolean;
+      detail?: string;
+      domain?: string;
+      results?: Array<{ region: string; ok: boolean; detail: string }>;
+    };
+    if (!json.ok) {
+      setAuthMsg(
+        json.detail ??
+          json.results?.map((r) => `${r.region}: ${r.detail}`).join(" · ") ??
+          "Partner register failed",
+      );
+      return;
+    }
+    setAuthMsg(
+      `Partner registered for ${json.domain}. Now click Connect Tesla account again.`,
+    );
+  }
+
   return (
     <div>
       <DetailHeader section={section} />
@@ -185,6 +207,9 @@ export function TeslaDetail({
       <div className="mb-4 flex flex-wrap gap-2">
         <button type="button" className="life-btn life-btn-on" onClick={startTeslaAuth}>
           Connect Tesla account
+        </button>
+        <button type="button" className="life-btn" onClick={registerPartner}>
+          Register Fleet partner
         </button>
         <a href="/api/life/tesla" className="life-btn">
           Diagnostics JSON

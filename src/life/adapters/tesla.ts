@@ -359,6 +359,72 @@ export async function controlTesla(
   }
 }
 
+const FLEET_REGIONS = [
+  "https://fleet-api.prd.na.vn.cloud.tesla.com",
+  "https://fleet-api.prd.eu.vn.cloud.tesla.com",
+];
+
+async function partnerAccessToken(audience: string) {
+  const cfg = lifeEnv();
+  if (!cfg.teslaClientId || !cfg.teslaClientSecret) {
+    throw new Error("TESLA_CLIENT_ID and TESLA_CLIENT_SECRET required");
+  }
+  const res = await fetch(`${AUTH_BASE}/oauth2/v3/token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: cfg.teslaClientId,
+      client_secret: cfg.teslaClientSecret,
+      audience,
+      scope: "openid vehicle_device_data vehicle_cmds vehicle_charging_cmds offline_access",
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Partner token ${res.status}: ${text.slice(0, 180)}`);
+  }
+  const json = (await res.json()) as { access_token: string };
+  return json.access_token;
+}
+
+/** Register Fleet API partner account for the app domain (fixes HTTP 412). */
+export async function registerTeslaPartner(domains?: string[]) {
+  const cfg = lifeEnv();
+  const domain = cfg.teslaPartnerDomain ?? "mikelcrump.com";
+  const bases = domains?.length ? domains : [fleetBase(), ...FLEET_REGIONS];
+  const unique = [...new Set(bases)];
+  const results: Array<{ region: string; ok: boolean; detail: string }> = [];
+
+  for (const base of unique) {
+    try {
+      const token = await partnerAccessToken(base);
+      const res = await fetch(`${base}/api/1/partner_accounts`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ domain }),
+      });
+      const text = await res.text();
+      results.push({
+        region: base,
+        ok: res.ok,
+        detail: text.slice(0, 240) || `HTTP ${res.status}`,
+      });
+    } catch (error) {
+      results.push({
+        region: base,
+        ok: false,
+        detail: error instanceof Error ? error.message : "register failed",
+      });
+    }
+  }
+  return { domain, results };
+}
+
 export function getTeslaAuthUrl(origin: string) {
   const cfg = lifeEnv();
   if (!cfg.teslaClientId) {
@@ -411,14 +477,40 @@ export async function exchangeTeslaAuthCode(code: string, origin: string) {
     expires_in?: number;
   };
   const payload = await persistTeslaTokens(json);
-  const vehicles = await listTeslaVehicles();
-  return {
-    vehicles: vehicles.map((v) => ({
+
+  // 412 means partner account not registered for the Fleet region yet.
+  let registration: Awaited<ReturnType<typeof registerTeslaPartner>> | null = null;
+  try {
+    registration = await registerTeslaPartner();
+  } catch {
+    registration = null;
+  }
+
+  let vehicles: Array<{
+    vin?: string;
+    id?: number | string;
+    name?: string;
+    state?: string;
+  }> = [];
+  let vehiclesError: string | null = null;
+  try {
+    const listed = await listTeslaVehicles();
+    vehicles = listed.map((v) => ({
       vin: v.vin,
       id: v.id,
       name: v.display_name,
       state: v.state,
-    })),
+    }));
+  } catch (error) {
+    vehiclesError =
+      error instanceof Error ? error.message : "Tesla vehicles list failed";
+    // Tokens are already saved — don't fail the whole OAuth callback on 412.
+  }
+
+  return {
+    vehicles,
+    vehiclesError,
+    registration,
     saved: true,
     tokens: payload,
   };

@@ -16,6 +16,10 @@ export default async function TeslaPage({
     authNotice = params.vin
       ? `Tesla connected. Set TESLA_VIN=${params.vin} if not already configured.`
       : "Tesla tokens saved.";
+  } else if (params.auth === "partial") {
+    authNotice = params.detail
+      ? `Tokens saved, but vehicle list failed: ${params.detail}. Try Register partner (below) then reconnect.`
+      : "Tokens saved, but vehicle list failed. Register the Fleet partner account, then reconnect.";
   } else if (params.auth === "error") {
     authNotice = params.detail ?? "Tesla auth failed";
   }
