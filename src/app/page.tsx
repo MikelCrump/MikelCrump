@@ -57,6 +57,14 @@ export default async function HomePage({
             Script in. Consistent-face lecturer clips and a joined audio track
             out.
           </p>
+          <p className="mt-4">
+            <Link
+              href="/life"
+              className="inline-flex items-center rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--accent)] hover:border-[var(--accent)]"
+            >
+              Open Life Ops · Mikel Crump →
+            </Link>
+          </p>
         </div>
 
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">

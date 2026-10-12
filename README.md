@@ -31,6 +31,16 @@ pnpm dev
 
 MCP (stdio): `pnpm mcp` — see [docs/MCP.md](./docs/MCP.md).
 
+## Life Ops (Mikel Crump)
+
+Personal dashboard at **`/life`**: Tesla, Govee, Plaid, Renpho, Resideo AC, RustDesk, AI credits (Claude ×2, GrokBot ×2, Cursor, Grok), Apple TV / Roku, batteries, weather, commute suggestions, and simple automations.
+
+- Setup + env keys: [docs/LIFE_OPS.md](./docs/LIFE_OPS.md)
+- Connections UI: `/life/connections`
+- Automations UI: `/life/automations`
+
+Set keys in `.env` with `LIFE_FORCE_MOCK=0`. See [docs/LIFE_OPS.md](./docs/LIFE_OPS.md) for what each backend needs.
+
 ## Scripts
 
 | Script | Purpose |

@@ -1,0 +1,100 @@
+.life-root {
+  --life-bg: #e7eef4;
+  --life-bg-deep: #d5e2ec;
+  --life-ink: #102433;
+  --life-muted: #5a6f7f;
+  --life-line: #b7c7d4;
+  /* Baby blue accent (readable on light surfaces) */
+  --life-accent: #6eb4e8;
+  --life-accent-soft: rgba(137, 207, 240, 0.32);
+  --life-surface: rgba(244, 249, 252, 0.82);
+  min-height: 100%;
+  color: var(--life-ink);
+  background:
+    radial-gradient(900px 420px at 8% -8%, rgba(137, 207, 240, 0.35) 0%, transparent 55%),
+    radial-gradient(700px 380px at 100% 0%, rgba(186, 225, 247, 0.45) 0%, transparent 50%),
+    linear-gradient(165deg, var(--life-bg) 0%, var(--life-bg-deep) 100%);
+  font-family: var(--font-life-sans), ui-sans-serif, sans-serif;
+}
+
+.life-atmosphere {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(16, 36, 51, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 36, 51, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 20%, black 20%, transparent 75%);
+}
+
+.life-panel {
+  border: 1px solid color-mix(in oklab, var(--life-line) 85%, white);
+  border-radius: 1.25rem;
+  background: var(--life-surface);
+  padding: 1.1rem 1.15rem;
+  box-shadow: 0 10px 30px rgba(16, 36, 51, 0.04);
+  backdrop-filter: blur(10px);
+}
+
+.life-rise {
+  animation: life-rise 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes life-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.life-btn {
+  border: 1px solid var(--life-line);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--life-ink);
+  transition:
+    background 160ms ease,
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.life-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, var(--life-accent) 45%, var(--life-line));
+  background: white;
+  transform: translateY(-1px);
+}
+
+.life-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.life-btn-on {
+  background: var(--life-ink);
+  border-color: var(--life-ink);
+  color: white;
+}
+
+.life-input {
+  width: 100%;
+  border: 1px solid var(--life-line);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.65rem 0.8rem;
+  font-size: 0.875rem;
+  color: var(--life-ink);
+}
+
+.life-input:focus {
+  outline: 2px solid color-mix(in oklab, var(--life-accent) 45%, white);
+  outline-offset: 1px;
+}
