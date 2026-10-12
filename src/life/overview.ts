@@ -1,0 +1,60 @@
+import { getAiCredits } from "@/life/adapters/ai-credits";
+import { getBatteries } from "@/life/adapters/batteries";
+import { getCommute } from "@/life/adapters/commute";
+import { getGovee } from "@/life/adapters/govee";
+import { getMedia } from "@/life/adapters/media";
+import { getFinance } from "@/life/adapters/plaid";
+import { getRenpho } from "@/life/adapters/renpho";
+import { getRideo } from "@/life/adapters/rideo";
+import { getRustDesk } from "@/life/adapters/rustdesk";
+import { getTesla } from "@/life/adapters/tesla";
+import { getWeather } from "@/life/adapters/weather";
+import { listAutomations } from "@/life/automations-store";
+import { MOCK_CALENDAR, OWNER } from "@/life/mock-data";
+import type { LifeOverview } from "@/life/types";
+
+export async function getLifeOverview(): Promise<LifeOverview> {
+  const [
+    weather,
+    tesla,
+    govee,
+    finance,
+    renpho,
+    rideo,
+    rustdesk,
+    aiCredits,
+    media,
+    batteries,
+    commute,
+  ] = await Promise.all([
+    getWeather(),
+    getTesla(),
+    getGovee(),
+    getFinance(),
+    getRenpho(),
+    getRideo(),
+    getRustDesk(),
+    getAiCredits(),
+    getMedia(),
+    getBatteries(),
+    getCommute(),
+  ]);
+
+  return {
+    owner: { name: OWNER.name, email: OWNER.email },
+    generatedAt: new Date().toISOString(),
+    weather,
+    tesla,
+    govee,
+    finance,
+    renpho,
+    rideo,
+    rustdesk,
+    aiCredits,
+    media,
+    batteries,
+    commute,
+    automations: listAutomations(),
+    calendar: MOCK_CALENDAR,
+  };
+}
