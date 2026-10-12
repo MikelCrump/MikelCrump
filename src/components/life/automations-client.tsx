@@ -73,7 +73,7 @@ export function AutomationsClient({ initial }: { initial: AutomationRule[] }) {
             className="life-input"
             value={action}
             onChange={(e) => setAction(e.target.value)}
-            placeholder="Rideo cool 70° + Tesla climate"
+            placeholder="Resideo cool 70° + Tesla climate"
             required
           />
         </label>

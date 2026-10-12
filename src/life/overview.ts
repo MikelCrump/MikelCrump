@@ -5,7 +5,7 @@ import { getGovee } from "@/life/adapters/govee";
 import { getMedia } from "@/life/adapters/media";
 import { getFinance } from "@/life/adapters/plaid";
 import { getRenpho } from "@/life/adapters/renpho";
-import { getRideo } from "@/life/adapters/rideo";
+import { getResideo } from "@/life/adapters/resideo";
 import { getRustDesk } from "@/life/adapters/rustdesk";
 import { getTesla } from "@/life/adapters/tesla";
 import { getWeather } from "@/life/adapters/weather";
@@ -20,7 +20,7 @@ export async function getLifeOverview(): Promise<LifeOverview> {
     govee,
     finance,
     renpho,
-    rideo,
+    resideo,
     rustdesk,
     aiCredits,
     media,
@@ -32,7 +32,7 @@ export async function getLifeOverview(): Promise<LifeOverview> {
     getGovee(),
     getFinance(),
     getRenpho(),
-    getRideo(),
+    getResideo(),
     getRustDesk(),
     getAiCredits(),
     getMedia(),
@@ -48,7 +48,7 @@ export async function getLifeOverview(): Promise<LifeOverview> {
     govee,
     finance,
     renpho,
-    rideo,
+    resideo,
     rustdesk,
     aiCredits,
     media,

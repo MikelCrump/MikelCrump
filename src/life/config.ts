@@ -17,7 +17,7 @@ export function lifeEnv() {
     renphoPassword: present(process.env.RENPHO_PASSWORD),
     homeAssistantUrl: present(process.env.HOME_ASSISTANT_URL)?.replace(/\/$/, ""),
     homeAssistantToken: present(process.env.HOME_ASSISTANT_TOKEN),
-    rideoEntityId: present(process.env.RIDEO_ENTITY_ID),
+    resideoEntityId: present(process.env.RESIDEO_ENTITY_ID),
     appleTvEntityId: present(process.env.APPLE_TV_ENTITY_ID),
     rokuHost: present(process.env.ROKU_HOST),
     rustdeskApiUrl: present(process.env.RUSTDESK_API_URL)?.replace(/\/$/, ""),

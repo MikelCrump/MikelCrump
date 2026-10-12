@@ -5,7 +5,7 @@ export type IntegrationId =
   | "govee"
   | "plaid"
   | "renpho"
-  | "rideo"
+  | "resideo"
   | "rustdesk"
   | "ai_credits"
   | "apple_tv"
@@ -115,7 +115,7 @@ export interface RenphoSnapshot {
   mode: ConnectionMode;
 }
 
-export interface RideoSnapshot {
+export interface ResideoSnapshot {
   name: string;
   power: boolean;
   mode: "cool" | "heat" | "fan" | "dry" | "auto";
@@ -231,7 +231,7 @@ export interface LifeOverview {
   govee: GoveeSnapshot;
   finance: FinanceSnapshot;
   renpho: RenphoSnapshot;
-  rideo: RideoSnapshot;
+  resideo: ResideoSnapshot;
   rustdesk: RustDeskSnapshot;
   aiCredits: AiCreditsSnapshot;
   media: MediaSnapshot;
@@ -244,7 +244,7 @@ export interface LifeOverview {
 export type ControlTarget =
   | "govee"
   | "tesla"
-  | "rideo"
+  | "resideo"
   | "apple_tv"
   | "roku"
   | "automation";

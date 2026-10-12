@@ -5,7 +5,7 @@ import { runControl } from "@/life/control";
 export const dynamic = "force-dynamic";
 
 const bodySchema = z.object({
-  target: z.enum(["govee", "tesla", "rideo", "apple_tv", "roku", "automation"]),
+  target: z.enum(["govee", "tesla", "resideo", "apple_tv", "roku", "automation"]),
   action: z.string().min(1),
   deviceId: z.string().optional(),
   value: z.union([z.string(), z.number(), z.boolean()]).optional(),

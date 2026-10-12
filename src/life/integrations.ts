@@ -35,13 +35,13 @@ export const INTEGRATIONS: IntegrationMeta[] = [
     docsHint: "No stable public API — adapter supports mock + manual JSON ingest for now.",
   },
   {
-    id: "rideo",
-    name: "Rideo AC",
+    id: "resideo",
+    name: "Resideo AC",
     category: "home",
     description: "Thermostat set point, mode, and fan via Home Assistant bridge.",
-    envKeys: ["HOME_ASSISTANT_URL", "HOME_ASSISTANT_TOKEN", "RIDEO_ENTITY_ID"],
+    envKeys: ["HOME_ASSISTANT_URL", "HOME_ASSISTANT_TOKEN", "RESIDEO_ENTITY_ID"],
     docsHint:
-      "Rideo/Hisense-class units usually go through ConnectLife or HA climate entities — we bridge HA REST.",
+      "Resideo / Honeywell Home climate via Home Assistant entity (cloud or local). Set RESIDEO_ENTITY_ID.",
   },
   {
     id: "rustdesk",

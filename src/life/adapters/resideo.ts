@@ -1,21 +1,21 @@
 import { haCallService, haGetState } from "@/life/adapters/home-assistant";
 import { lifeEnv } from "@/life/config";
-import { MOCK_RIDEO } from "@/life/mock-data";
-import type { RideoSnapshot } from "@/life/types";
+import { MOCK_RESIDEO } from "@/life/mock-data";
+import type { ResideoSnapshot } from "@/life/types";
 
-let mock = { ...MOCK_RIDEO };
+let mock = { ...MOCK_RESIDEO };
 
-export async function getRideo(): Promise<RideoSnapshot> {
+export async function getResideo(): Promise<ResideoSnapshot> {
   const cfg = lifeEnv();
-  if (cfg.forceMock || !cfg.homeAssistantUrl || !cfg.rideoEntityId) {
+  if (cfg.forceMock || !cfg.homeAssistantUrl || !cfg.resideoEntityId) {
     return {
       ...mock,
-      connection: cfg.homeAssistantUrl && cfg.rideoEntityId ? "mock" : "unconfigured",
+      connection: cfg.homeAssistantUrl && cfg.resideoEntityId ? "mock" : "unconfigured",
     };
   }
 
   try {
-    const state = await haGetState(cfg.rideoEntityId);
+    const state = await haGetState(cfg.resideoEntityId);
     if (!state) throw new Error("missing state");
     const attrs = (state.attributes ?? {}) as Record<string, unknown>;
     const haMode = String(attrs.hvac_mode ?? attrs.mode ?? mock.mode);
@@ -24,10 +24,10 @@ export async function getRideo(): Promise<RideoSnapshot> {
       power: state.state !== "off",
       mode: (["cool", "heat", "fan", "dry", "auto"].includes(haMode)
         ? haMode
-        : "cool") as RideoSnapshot["mode"],
+        : "cool") as ResideoSnapshot["mode"],
       targetF: Number(attrs.temperature ?? mock.targetF),
       currentF: Number(attrs.current_temperature ?? mock.currentF),
-      fan: (String(attrs.fan_mode ?? "auto").toLowerCase() as RideoSnapshot["fan"]) || "auto",
+      fan: (String(attrs.fan_mode ?? "auto").toLowerCase() as ResideoSnapshot["fan"]) || "auto",
       connection: "live",
     };
   } catch {
@@ -35,7 +35,7 @@ export async function getRideo(): Promise<RideoSnapshot> {
   }
 }
 
-export async function controlRideo(
+export async function controlResideo(
   action: string,
   value?: string | number | boolean,
 ): Promise<{ ok: boolean; detail: string }> {
@@ -48,28 +48,28 @@ export async function controlRideo(
   } else if (action === "mode" && typeof value === "string") {
     mock = {
       ...mock,
-      mode: value as RideoSnapshot["mode"],
+      mode: value as ResideoSnapshot["mode"],
       power: value !== "off",
     };
   }
 
-  if (cfg.forceMock || !cfg.rideoEntityId) {
-    return { ok: true, detail: `Mock Rideo ${action}` };
+  if (cfg.forceMock || !cfg.resideoEntityId) {
+    return { ok: true, detail: `Mock Resideo ${action}` };
   }
 
   if (action === "power") {
     const ok = await haCallService(
       "climate",
       value ? "turn_on" : "turn_off",
-      cfg.rideoEntityId,
+      cfg.resideoEntityId,
     );
-    return { ok, detail: ok ? "Rideo power updated" : "HA climate call failed" };
+    return { ok, detail: ok ? "Resideo power updated" : "HA climate call failed" };
   }
   if (action === "temp" && typeof value === "number") {
-    const ok = await haCallService("climate", "set_temperature", cfg.rideoEntityId, {
+    const ok = await haCallService("climate", "set_temperature", cfg.resideoEntityId, {
       temperature: value,
     });
-    return { ok, detail: ok ? `Rideo set to ${value}°F` : "HA set_temperature failed" };
+    return { ok, detail: ok ? `Resideo set to ${value}°F` : "HA set_temperature failed" };
   }
-  return { ok: true, detail: `Rideo ${action} acknowledged` };
+  return { ok: true, detail: `Resideo ${action} acknowledged` };
 }

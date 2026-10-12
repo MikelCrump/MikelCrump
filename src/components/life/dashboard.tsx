@@ -234,9 +234,9 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
         </Panel>
 
         <Panel
-          title="Rideo AC"
-          subtitle={data.rideo.name}
-          mode={data.rideo.connection}
+          title="Resideo AC"
+          subtitle={data.resideo.name}
+          mode={data.resideo.connection}
           className="lg:col-span-3"
           delay={200}
           action={<Snowflake className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -245,10 +245,10 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             className="text-4xl tabular-nums"
             style={{ fontFamily: "var(--font-life-display), sans-serif" }}
           >
-            {data.rideo.targetF}°
+            {data.resideo.targetF}°
           </p>
           <p className="mt-1 text-sm text-[var(--life-muted)]">
-            Now {data.rideo.currentF}° · {data.rideo.mode} · fan {data.rideo.fan}
+            Now {data.resideo.currentF}° · {data.resideo.mode} · fan {data.resideo.fan}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
@@ -256,23 +256,23 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
               disabled={pending}
               onClick={() =>
                 control({
-                  target: "rideo",
+                  target: "resideo",
                   action: "power",
-                  value: !data.rideo.power,
+                  value: !data.resideo.power,
                 })
               }
               className="life-btn"
             >
-              {data.rideo.power ? "Turn off" : "Turn on"}
+              {data.resideo.power ? "Turn off" : "Turn on"}
             </button>
             <button
               type="button"
               disabled={pending}
               onClick={() =>
                 control({
-                  target: "rideo",
+                  target: "resideo",
                   action: "temp",
-                  value: data.rideo.targetF - 1,
+                  value: data.resideo.targetF - 1,
                 })
               }
               className="life-btn"
@@ -284,9 +284,9 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
               disabled={pending}
               onClick={() =>
                 control({
-                  target: "rideo",
+                  target: "resideo",
                   action: "temp",
-                  value: data.rideo.targetF + 1,
+                  value: data.resideo.targetF + 1,
                 })
               }
               className="life-btn"

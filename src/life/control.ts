@@ -1,6 +1,6 @@
 import { controlGovee } from "@/life/adapters/govee";
 import { controlMedia } from "@/life/adapters/media";
-import { controlRideo } from "@/life/adapters/rideo";
+import { controlResideo } from "@/life/adapters/resideo";
 import { controlTesla } from "@/life/adapters/tesla";
 import { toggleAutomation } from "@/life/automations-store";
 import type { ControlRequest } from "@/life/types";
@@ -12,8 +12,8 @@ export async function runControl(req: ControlRequest) {
       return controlGovee(req.deviceId, req.action, req.value);
     case "tesla":
       return controlTesla(req.action);
-    case "rideo":
-      return controlRideo(req.action, req.value);
+    case "resideo":
+      return controlResideo(req.action, req.value);
     case "apple_tv":
       return controlMedia("apple_tv", req.action, req.deviceId);
     case "roku":

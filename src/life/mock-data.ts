@@ -9,7 +9,7 @@ import type {
   GoveeSnapshot,
   MediaSnapshot,
   RenphoSnapshot,
-  RideoSnapshot,
+  ResideoSnapshot,
   RustDeskSnapshot,
   TeslaSnapshot,
   WeatherSnapshot,
@@ -180,7 +180,7 @@ export const MOCK_RENPHO: RenphoSnapshot = {
   ),
 };
 
-export const MOCK_RIDEO: RideoSnapshot = {
+export const MOCK_RESIDEO: ResideoSnapshot = {
   name: "Living room AC",
   power: true,
   mode: "cool",

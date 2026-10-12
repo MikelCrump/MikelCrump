@@ -1,6 +1,6 @@
 # Life Ops · Mikel Crump
 
-Personal operations board at [`/life`](/life): home lights, Tesla, Plaid finance, Renpho trends, Rideo AC, Govee IoT, RustDesk servers, AI credit meters, Apple TV / Roku, device batteries, weather, commute suggestions, and simple automations.
+Personal operations board at [`/life`](/life): home lights, Tesla, Plaid finance, Renpho trends, Resideo AC, Govee IoT, RustDesk servers, AI credit meters, Apple TV / Roku, device batteries, weather, commute suggestions, and simple automations.
 
 ## Design notes
 
@@ -38,7 +38,7 @@ See `.env.example` under **Life Ops**. Highlights:
 | Govee | `GOVEE_API_KEY` |
 | Plaid | `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV`, `PLAID_ACCESS_TOKEN` |
 | Renpho | `RENPHO_EMAIL`, `RENPHO_PASSWORD` (marks ready; public API still unstable) |
-| Home bridge | `HOME_ASSISTANT_URL`, `HOME_ASSISTANT_TOKEN`, `RIDEO_ENTITY_ID`, `APPLE_TV_ENTITY_ID` |
+| Home bridge | `HOME_ASSISTANT_URL`, `HOME_ASSISTANT_TOKEN`, `RESIDEO_ENTITY_ID`, `APPLE_TV_ENTITY_ID` |
 | Roku | `ROKU_HOST` (ECP on LAN) |
 | RustDesk | `RUSTDESK_API_URL`, `RUSTDESK_API_TOKEN` |
 | Weather | `OPENWEATHER_API_KEY`, `WEATHER_LAT`, `WEATHER_LON` |
@@ -59,7 +59,7 @@ Paste a `LIFE_AI_CREDITS_JSON` blob matching `AiCreditsSnapshot` when you have l
 ## Honest limits
 
 - **Renpho**: no stable public API — preview history + credential placeholder.
-- **Rideo**: best via Home Assistant climate entity (ConnectLife/Hisense-class units rarely expose a clean public API).
+- **Resideo**: best via Home Assistant climate entity (ConnectLife/Hisense-class units rarely expose a clean public API).
 - **RustDesk**: depends on your self-hosted API shape; adapter expects `/api/peers`.
 - **AI vendors**: usage endpoints change often — JSON snapshot is the reliable path today.
 - **Automations**: in-memory for this process; persist to DB/HA next.

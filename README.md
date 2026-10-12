@@ -33,7 +33,7 @@ MCP (stdio): `pnpm mcp` — see [docs/MCP.md](./docs/MCP.md).
 
 ## Life Ops (Mikel Crump)
 
-Personal dashboard at **`/life`**: Tesla, Govee, Plaid, Renpho, Rideo AC, RustDesk, AI credits (Claude ×2, GrokBot ×2, Cursor, Grok), Apple TV / Roku, batteries, weather, commute suggestions, and simple automations.
+Personal dashboard at **`/life`**: Tesla, Govee, Plaid, Renpho, Resideo AC, RustDesk, AI credits (Claude ×2, GrokBot ×2, Cursor, Grok), Apple TV / Roku, batteries, weather, commute suggestions, and simple automations.
 
 - Setup + env keys: [docs/LIFE_OPS.md](./docs/LIFE_OPS.md)
 - Connections UI: `/life/connections`
