@@ -1,10 +1,15 @@
 import { lifeEnv } from "@/life/config";
 import { MOCK_TESLA } from "@/life/mock-data";
 import {
-  actionForControl,
   hasTeslaPrivateKey,
+  resolveSignedControl,
+  sendSignedVcsecMessage,
   sendSignedVehicleAction,
 } from "@/life/tesla-command/signed";
+import {
+  buildTeslaCommandBody,
+  getTeslaCommand,
+} from "@/life/tesla-commands";
 import {
   loadTeslaTokens,
   saveTeslaTokens,
@@ -284,10 +289,14 @@ export async function getTesla(): Promise<TeslaSnapshot> {
   }
 }
 
-async function sendSignedCommand(action: string, vin: string) {
+async function sendSignedCommand(
+  action: string,
+  vin: string,
+  value?: string | number | boolean,
+) {
   const cfg = lifeEnv();
-  const vehicleAction = actionForControl(action);
-  if (!vehicleAction) return false;
+  const plan = resolveSignedControl(action, value);
+  if (!plan) return false;
   if (!hasTeslaPrivateKey(cfg.teslaPrivateKeyPem)) {
     throw new Error(
       "TESLA_PRIVATE_KEY_PEM missing — cannot sign Vehicle Command Protocol",
@@ -295,29 +304,44 @@ async function sendSignedCommand(action: string, vin: string) {
   }
   const token = await resolveAccessToken();
   if (!token) throw new Error("Tesla token missing");
-  await sendSignedVehicleAction({
-    fleetBase: fleetBase(),
-    accessToken: token,
-    vin,
-    privateKeyPem: cfg.teslaPrivateKeyPem!,
-    action: vehicleAction,
-  });
+  if (plan.domain === "vehicle_security") {
+    await sendSignedVcsecMessage({
+      fleetBase: fleetBase(),
+      accessToken: token,
+      vin,
+      privateKeyPem: cfg.teslaPrivateKeyPem!,
+      unsigned: plan.unsigned,
+    });
+  } else {
+    await sendSignedVehicleAction({
+      fleetBase: fleetBase(),
+      accessToken: token,
+      vin,
+      privateKeyPem: cfg.teslaPrivateKeyPem!,
+      action: plan.action,
+    });
+  }
   return true;
 }
 
-async function sendCommand(pathId: string, path: string, action: string) {
+async function sendCommand(
+  pathId: string,
+  path: string,
+  action: string,
+  value?: string | number | boolean,
+) {
   const cfg = lifeEnv();
   const token = await resolveAccessToken();
   if (!token) throw new Error("Tesla token missing");
+  const body = buildTeslaCommandBody(action, value);
 
-  // Prefer in-app signed commands (required for modern cars / climate start).
-  if (actionForControl(action)) {
+  // Prefer in-app signed commands (required for modern cars).
+  if (resolveSignedControl(action, value)) {
     try {
-      await sendSignedCommand(action, pathId);
+      await sendSignedCommand(action, pathId, value);
       return;
     } catch (error) {
       const detail = error instanceof Error ? error.message : "signed failed";
-      // Fall through to proxy/fleet only if signing infra isn't set up.
       if (!hasTeslaPrivateKey(cfg.teslaPrivateKeyPem)) {
         /* continue */
       } else if (/pair virtual key|key_not_paired|not paired/i.test(detail)) {
@@ -325,7 +349,6 @@ async function sendCommand(pathId: string, path: string, action: string) {
           `${detail}. Pair the virtual key first: https://tesla.com/_ak/${cfg.teslaPartnerDomain ?? "mikelcrump.com"}`,
         );
       } else {
-        // Still try proxy as secondary path
         lastError = detail;
       }
     }
@@ -344,6 +367,7 @@ async function sendCommand(pathId: string, path: string, action: string) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: body ? JSON.stringify(body) : undefined,
     });
     if (res.ok) return;
     const text = await res.text();
@@ -357,6 +381,7 @@ async function sendCommand(pathId: string, path: string, action: string) {
 
 export async function controlTesla(
   action: string,
+  value?: string | number | boolean,
 ): Promise<{ ok: boolean; detail: string }> {
   const cfg = lifeEnv();
   if (cfg.forceMock) {
@@ -371,19 +396,15 @@ export async function controlTesla(
     }
     if (!pathId) return { ok: false, detail: "No Tesla vehicle id/VIN configured" };
 
-    const pathByAction: Record<string, string> = {
-      wake: `/api/1/vehicles/${pathId}/wake_up`,
-      climate_on: `/api/1/vehicles/${pathId}/command/auto_conditioning_start`,
-      climate_off: `/api/1/vehicles/${pathId}/command/auto_conditioning_stop`,
-      charge_start: `/api/1/vehicles/${pathId}/command/charge_start`,
-      charge_stop: `/api/1/vehicles/${pathId}/command/charge_stop`,
-      lock: `/api/1/vehicles/${pathId}/command/door_lock`,
-      unlock: `/api/1/vehicles/${pathId}/command/door_unlock`,
-    };
-    const path = pathByAction[action];
-    if (!path) return { ok: false, detail: `Unknown Tesla action: ${action}` };
+    const def = getTeslaCommand(action);
+    if (!def) return { ok: false, detail: `Unknown Tesla action: ${action}` };
 
-    if (action === "wake") {
+    const path =
+      def.endpoint === "wake_up"
+        ? `/api/1/vehicles/${pathId}/wake_up`
+        : `/api/1/vehicles/${pathId}/command/${def.endpoint}`;
+
+    if (action === "wake" || def.endpoint === "wake_up") {
       await wakeVehicle(pathId);
       const online = await waitUntilOnline(pathId, 6);
       return {
@@ -392,15 +413,17 @@ export async function controlTesla(
       };
     }
 
-    const online = await waitUntilOnline(pathId, 8);
-    if (!online) {
-      return {
-        ok: false,
-        detail: "Vehicle did not come online after wake — try again in a minute",
-      };
+    if (def.wakeFirst !== false) {
+      const online = await waitUntilOnline(pathId, 8);
+      if (!online) {
+        return {
+          ok: false,
+          detail: "Vehicle did not come online after wake — try again in a minute",
+        };
+      }
     }
 
-    await sendCommand(pathId, path, action);
+    await sendCommand(pathId, path, action, value);
     return { ok: true, detail: `Tesla ${action} sent` };
   } catch (error) {
     return {

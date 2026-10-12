@@ -6,9 +6,11 @@ import { ControlToast } from "@/components/life/control-toast";
 import { DetailHeader } from "@/components/life/detail-header";
 import { ModeBadge } from "@/components/life/mode-badge";
 import { Panel } from "@/components/life/panel";
+import { TeslaCommandsPanel } from "@/components/life/tesla-commands";
 import { useLifeControl } from "@/components/life/use-life-control";
 import { money, moneyExact } from "@/life/format";
 import { getSection } from "@/life/sections";
+import { TESLA_COMMANDS } from "@/life/tesla-commands";
 import type { LifeOverview } from "@/life/types";
 
 export function DayDetail({ data }: { data: LifeOverview }) {
@@ -278,31 +280,12 @@ export function TeslaDetail({
           </dl>
         </Panel>
 
-        <Panel title="Commands" subtitle="Fleet API / command proxy" className="lg:col-span-7">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {(
-              [
-                ["wake", "Wake vehicle", "Bring the car online from sleep"],
-                ["climate_on", "Start climate", "Precondition cabin"],
-                ["climate_off", "Stop climate", "Turn HVAC off"],
-                ["charge_start", "Start charge", "Begin charging if plugged in"],
-                ["charge_stop", "Stop charge", "Pause charging"],
-                ["lock", "Lock", "Lock doors"],
-                ["unlock", "Unlock", "Unlock doors"],
-              ] as const
-            ).map(([action, label, hint]) => (
-              <button
-                key={action}
-                type="button"
-                disabled={pending}
-                onClick={() => control({ target: "tesla", action })}
-                className="rounded-xl border border-[var(--life-line)] bg-white/50 px-4 py-3 text-left transition hover:border-[var(--life-accent)]/40"
-              >
-                <p className="text-sm font-semibold">{label}</p>
-                <p className="mt-1 text-xs text-[var(--life-muted)]">{hint}</p>
-              </button>
-            ))}
-          </div>
+        <Panel
+          title="Commands"
+          subtitle={`${TESLA_COMMANDS.length} Fleet controls · signed when possible`}
+          className="lg:col-span-7"
+        >
+          <TeslaCommandsPanel pending={pending} control={control} />
         </Panel>
       </div>
     </div>
