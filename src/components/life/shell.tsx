@@ -1,11 +1,12 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { OWNER } from "@/life/owner";
+import { LIFE_SECTIONS, type LifeSectionId } from "@/life/sections";
 
-const NAV = [
-  { href: "/life", label: "Board" },
-  { href: "/life/connections", label: "Connections" },
-  { href: "/life/automations", label: "Automations" },
+const PRIMARY_NAV = [
+  { href: "/life", label: "Board", id: "board" as const },
+  { href: "/life/connections", label: "Connections", id: "connections" as const },
+  { href: "/life/automations", label: "Automations", id: "automations" as const },
 ];
 
 export function LifeShell({
@@ -13,8 +14,10 @@ export function LifeShell({
   active,
 }: {
   children: ReactNode;
-  active: "board" | "connections" | "automations";
+  active: LifeSectionId;
 }) {
+  const strip = LIFE_SECTIONS.filter((s) => s.inStrip);
+
   return (
     <div className="life-root min-h-full">
       <div className="life-atmosphere" aria-hidden />
@@ -34,11 +37,8 @@ export function LifeShell({
             </Link>
           </div>
           <nav className="flex flex-wrap items-center gap-1">
-            {NAV.map((item) => {
-              const isActive =
-                (active === "board" && item.href === "/life") ||
-                (active === "connections" && item.href === "/life/connections") ||
-                (active === "automations" && item.href === "/life/automations");
+            {PRIMARY_NAV.map((item) => {
+              const isActive = active === item.id;
               return (
                 <Link
                   key={item.href}
@@ -60,6 +60,29 @@ export function LifeShell({
               Studio
             </Link>
           </nav>
+        </div>
+        <div className="mx-auto max-w-7xl overflow-x-auto px-4 pb-3 sm:px-6 lg:px-8">
+          <div className="flex min-w-max items-center gap-1">
+            <span className="mr-1 text-[10px] font-semibold tracking-[0.16em] text-[var(--life-muted)] uppercase">
+              Areas
+            </span>
+            {strip.map((item) => {
+              const isActive = active === item.id;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                    isActive
+                      ? "bg-[var(--life-accent)] text-white"
+                      : "bg-black/[0.04] text-[var(--life-muted)] hover:bg-black/[0.07] hover:text-[var(--life-ink)]"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </header>
       <main className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">

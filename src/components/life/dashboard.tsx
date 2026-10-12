@@ -14,25 +14,12 @@ import {
   Sparkles,
   Tv,
 } from "lucide-react";
+import { ControlToast } from "@/components/life/control-toast";
 import { Panel } from "@/components/life/panel";
 import { useLifeControl } from "@/components/life/use-life-control";
+import { money, moneyExact } from "@/life/format";
 import { greetingForHour } from "@/life/mock-data";
 import type { LifeOverview } from "@/life/types";
-
-function money(n: number) {
-  return n.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
-}
-
-function moneyExact(n: number) {
-  return n.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
-}
 
 export function LifeDashboard({ data }: { data: LifeOverview }) {
   const { control, pending, toast } = useLifeControl();
@@ -40,6 +27,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
   const weights = data.renpho.history.map((p) => p.weightLbs);
   const minW = Math.min(...weights);
   const maxW = Math.max(...weights);
+  const aiPreview = data.aiCredits.accounts.slice(0, 4);
 
   return (
     <div className="space-y-6">
@@ -58,23 +46,19 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           {greetingForHour()}, {data.owner.name.split(" ")[0]}
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--life-muted)]">
-          One board for home, Tesla, money, health, AI credits, media, and the
-          servers that keep it all running. Preview data is live until you drop
-          API keys in Connections.
+          Widget home for the day — tap any card title or Open to dig into Tesla,
+          home, money, health, AI credits, media, and servers.
         </p>
       </header>
 
-      {toast ? (
-        <div className="fixed right-4 bottom-4 z-50 rounded-xl bg-[var(--life-ink)] px-4 py-3 text-sm text-white shadow-lg">
-          {toast}
-        </div>
-      ) : null}
+      <ControlToast message={toast} />
 
       <div className="grid gap-4 lg:grid-cols-12">
         <Panel
           title="Weather"
           subtitle={data.weather.location}
           mode={data.weather.mode}
+          href="/life/day"
           className="lg:col-span-4"
           delay={40}
           action={<CloudSun className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -107,6 +91,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="Head to work"
           subtitle={`Typical leave ${data.commute.typicalLeave}`}
           mode={data.commute.mode}
+          href="/life/day"
           className="lg:col-span-8"
           delay={80}
           action={<Route className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -145,6 +130,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="Tesla"
           subtitle={`${data.tesla.model} · ${data.tesla.state}`}
           mode={data.tesla.mode}
+          href="/life/tesla"
           className="lg:col-span-4"
           delay={120}
           action={<Car className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -191,6 +177,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="Govee"
           subtitle={`${data.govee.devices.filter((d) => d.power).length} on`}
           mode={data.govee.mode}
+          href="/life/home"
           className="lg:col-span-5"
           delay={160}
           action={<Lightbulb className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -237,6 +224,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="Resideo AC"
           subtitle={data.resideo.name}
           mode={data.resideo.connection}
+          href="/life/home"
           className="lg:col-span-3"
           delay={200}
           action={<Snowflake className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -248,7 +236,8 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             {data.resideo.targetF}°
           </p>
           <p className="mt-1 text-sm text-[var(--life-muted)]">
-            Now {data.resideo.currentF}° · {data.resideo.mode} · fan {data.resideo.fan}
+            Now {data.resideo.currentF}° · {data.resideo.mode} · fan{" "}
+            {data.resideo.fan}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
@@ -300,6 +289,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="Plaid · money"
           subtitle={`Spend this month ${moneyExact(data.finance.spendThisMonth)}`}
           mode={data.finance.mode}
+          href="/life/money"
           className="lg:col-span-4"
           delay={240}
           action={<Landmark className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -327,6 +317,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="Renpho"
           subtitle={`7d ${data.renpho.trendLbs7d > 0 ? "+" : ""}${data.renpho.trendLbs7d} lb`}
           mode={data.renpho.mode}
+          href="/life/health"
           className="lg:col-span-4"
           delay={280}
           action={<Scale className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -342,7 +333,10 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             Body fat {data.renpho.latest.bodyFatPct}% · muscle{" "}
             {data.renpho.latest.muscleLbs} lb
           </p>
-          <svg viewBox="0 0 140 36" className="mt-4 h-12 w-full text-[var(--life-accent)]">
+          <svg
+            viewBox="0 0 140 36"
+            className="mt-4 h-12 w-full text-[var(--life-accent)]"
+          >
             <polyline
               fill="none"
               stroke="currentColor"
@@ -361,6 +355,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
         <Panel
           title="Up next"
           subtitle="Calendar"
+          href="/life/day"
           className="lg:col-span-4"
           delay={320}
         >
@@ -386,14 +381,15 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
 
         <Panel
           title="AI credits"
-          subtitle="Claude ×2 · GrokBot ×2 · Cursor · Grok"
+          subtitle={`${data.aiCredits.accounts.length} accounts · Claude / Grok / Cursor`}
           mode={data.aiCredits.mode}
+          href="/life/ai"
           className="lg:col-span-7"
           delay={360}
           action={<Sparkles className="h-4 w-4 text-[var(--life-accent)]" />}
         >
           <div className="grid gap-3 sm:grid-cols-2">
-            {data.aiCredits.accounts.map((a) => (
+            {aiPreview.map((a) => (
               <div
                 key={a.id}
                 className="rounded-xl border border-[var(--life-line)] bg-white/40 px-3 py-3"
@@ -402,7 +398,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
                   <div>
                     <p className="text-sm font-medium">{a.label}</p>
                     <p className="text-[11px] text-[var(--life-muted)]">
-                      {a.plan} · {a.note}
+                      {a.plan}
                     </p>
                   </div>
                   <span className="text-xs tabular-nums font-semibold">
@@ -415,13 +411,6 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
                     style={{ width: `${a.percentUsed}%` }}
                   />
                 </div>
-                <p className="mt-2 text-[11px] text-[var(--life-muted)]">
-                  {a.creditsRemaining != null
-                    ? `${a.creditsRemaining}/${a.creditsTotal} left`
-                    : "Allowance meter"}
-                  {a.resetsAt ? ` · resets ${a.resetsAt}` : ""}
-                  {a.expiresAt ? ` · expires ${a.expiresAt}` : ""}
-                </p>
               </div>
             ))}
           </div>
@@ -435,6 +424,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
               : "All healthy"
           }
           mode={data.batteries.mode}
+          href="/life/day"
           className="lg:col-span-5"
           delay={400}
           action={<Battery className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -463,6 +453,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="Media"
           subtitle="Apple TV · Roku"
           mode={data.media.mode}
+          href="/life/media"
           className="lg:col-span-5"
           delay={440}
           action={<Tv className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -521,6 +512,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
           title="RustDesk servers"
           subtitle={`${data.rustdesk.hosts.filter((h) => h.online).length} online`}
           mode={data.rustdesk.mode}
+          href="/life/servers"
           className="lg:col-span-7"
           delay={480}
           action={<Cpu className="h-4 w-4 text-[var(--life-accent)]" />}
@@ -553,6 +545,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
         <Panel
           title="Automations"
           subtitle="Toggle simple rules"
+          href="/life/automations"
           className="lg:col-span-12"
           delay={520}
         >

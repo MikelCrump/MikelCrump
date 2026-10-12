@@ -1,6 +1,20 @@
 # Life Ops · Mikel Crump
 
-Personal operations board at [`/life`](/life): home lights, Tesla, Plaid finance, Renpho trends, Resideo AC, Govee IoT, RustDesk servers, AI credit meters, Apple TV / Roku, device batteries, weather, commute suggestions, and simple automations.
+Personal operations board at [`/life`](/life): widget home plus deeper area pages.
+
+| Route | Purpose |
+| --- | --- |
+| `/life` | Widget home (quick controls + Open links) |
+| `/life/day` | Weather, commute, calendar, batteries |
+| `/life/tesla` | Full Tesla stats + commands |
+| `/life/home` | Govee devices + Resideo climate |
+| `/life/money` | Plaid accounts + recent spend |
+| `/life/health` | Renpho history table + trend |
+| `/life/ai` | All AI credit accounts |
+| `/life/media` | Apple TV + Roku |
+| `/life/servers` | RustDesk hosts |
+| `/life/automations` | Create / toggle rules |
+| `/life/connections` | Env key checklist |
 
 ## Design notes
 
