@@ -11,7 +11,7 @@ export async function runControl(req: ControlRequest) {
       if (!req.deviceId) return { ok: false, detail: "deviceId required" };
       return controlGovee(req.deviceId, req.action, req.value);
     case "tesla":
-      return controlTesla(req.action);
+      return controlTesla(req.action, req.value);
     case "resideo":
       return controlResideo(req.action, req.value);
     case "apple_tv":
