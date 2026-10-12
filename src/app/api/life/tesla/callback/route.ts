@@ -26,10 +26,13 @@ export async function GET(request: Request) {
     const result = await exchangeTeslaAuthCode(code, url.origin);
     const firstVin = result.vehicles[0]?.vin;
     const qs = new URLSearchParams({
-      auth: "ok",
+      auth: result.vehiclesError && !result.vehicles.length ? "partial" : "ok",
       vehicles: String(result.vehicles.length),
     });
     if (firstVin) qs.set("vin", firstVin);
+    if (result.vehiclesError) {
+      qs.set("detail", result.vehiclesError.slice(0, 180));
+    }
     const response = NextResponse.redirect(new URL(`/life/tesla?${qs}`, url.origin));
     if (result.tokens) {
       response.cookies.set(

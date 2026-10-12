@@ -15,6 +15,11 @@ export function lifeEnv() {
     teslaCommandProxyUrl: present(process.env.TESLA_COMMAND_PROXY_URL),
     teslaFleetBase: present(process.env.TESLA_FLEET_BASE),
     teslaRedirectUri: present(process.env.TESLA_REDIRECT_URI),
+    teslaPartnerDomain: present(process.env.TESLA_PARTNER_DOMAIN) ?? "mikelcrump.com",
+    teslaPrivateKeyPem: present(process.env.TESLA_PRIVATE_KEY_PEM)?.replace(
+      /\\n/g,
+      "\n",
+    ),
     plaidClientId: present(process.env.PLAID_CLIENT_ID),
     plaidSecret: present(process.env.PLAID_SECRET),
     plaidEnv: present(process.env.PLAID_ENV) ?? "sandbox",
