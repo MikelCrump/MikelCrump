@@ -1,6 +1,36 @@
 import { lifeEnv } from "@/life/config";
 import { MOCK_RUSTDESK } from "@/life/mock-data";
-import type { RustDeskSnapshot } from "@/life/types";
+import type { RustDeskHost, RustDeskSnapshot } from "@/life/types";
+
+function normalizeHosts(payload: unknown): RustDeskHost[] {
+  const rows = Array.isArray(payload)
+    ? payload
+    : Array.isArray((payload as { data?: unknown[] })?.data)
+      ? ((payload as { data: unknown[] }).data ?? [])
+      : Array.isArray((payload as { peers?: unknown[] })?.peers)
+        ? ((payload as { peers: unknown[] }).peers ?? [])
+        : [];
+
+  return rows.map((row, i) => {
+    const h = row as Record<string, unknown>;
+    const id = String(h.id ?? h.uid ?? h.uuid ?? `host-${i}`);
+    const name = String(h.alias ?? h.hostname ?? h.name ?? id);
+    const online = Boolean(
+      h.online ?? h.is_online ?? (h.status === "online" || h.status === 1),
+    );
+    return {
+      id,
+      name,
+      online,
+      cpuPct: Number(h.cpu ?? h.cpuPct ?? MOCK_RUSTDESK.hosts[i]?.cpuPct ?? 0),
+      memPct: Number(h.mem ?? h.memory ?? h.memPct ?? MOCK_RUSTDESK.hosts[i]?.memPct ?? 0),
+      diskPct: Number(h.disk ?? h.diskPct ?? MOCK_RUSTDESK.hosts[i]?.diskPct ?? 0),
+      lastSeen: online
+        ? "Just now"
+        : String(h.last_online ?? h.lastSeen ?? "Unknown"),
+    };
+  });
+}
 
 export async function getRustDesk(): Promise<RustDeskSnapshot> {
   const cfg = lifeEnv();
@@ -11,33 +41,29 @@ export async function getRustDesk(): Promise<RustDeskSnapshot> {
     };
   }
 
-  try {
-    const res = await fetch(`${cfg.rustdeskApiUrl}/api/peers`, {
-      headers: cfg.rustdeskApiToken
-        ? { Authorization: `Bearer ${cfg.rustdeskApiToken}` }
-        : undefined,
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error(`RustDesk ${res.status}`);
-    const json = (await res.json()) as {
-      data?: Array<{
-        id: string;
-        hostname?: string;
-        alias?: string;
-        online?: boolean;
-      }>;
-    };
-    const hosts = (json.data ?? []).map((h, i) => ({
-      id: h.id,
-      name: h.alias ?? h.hostname ?? h.id,
-      online: Boolean(h.online),
-      cpuPct: MOCK_RUSTDESK.hosts[i]?.cpuPct ?? 0,
-      memPct: MOCK_RUSTDESK.hosts[i]?.memPct ?? 0,
-      diskPct: MOCK_RUSTDESK.hosts[i]?.diskPct ?? 0,
-      lastSeen: h.online ? "Just now" : "Unknown",
-    }));
-    return { hosts: hosts.length ? hosts : MOCK_RUSTDESK.hosts, mode: "live" };
-  } catch {
-    return { ...MOCK_RUSTDESK, mode: "mock" };
+  const headers: HeadersInit = cfg.rustdeskApiToken
+    ? {
+        Authorization: `Bearer ${cfg.rustdeskApiToken}`,
+        "Content-Type": "application/json",
+      }
+    : { "Content-Type": "application/json" };
+
+  const paths = ["/api/peers", "/api/ab", "/api/users", "/peers", "/ab"];
+
+  for (const path of paths) {
+    try {
+      const res = await fetch(`${cfg.rustdeskApiUrl}${path}`, {
+        headers,
+        cache: "no-store",
+      });
+      if (!res.ok) continue;
+      const json = (await res.json()) as unknown;
+      const hosts = normalizeHosts(json);
+      if (hosts.length) return { hosts, mode: "live" };
+    } catch {
+      /* try next path */
+    }
   }
+
+  return { ...MOCK_RUSTDESK, mode: "mock" };
 }

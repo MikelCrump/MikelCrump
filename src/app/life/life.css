@@ -4,8 +4,9 @@
   --life-ink: #102433;
   --life-muted: #5a6f7f;
   --life-line: #b7c7d4;
-  --life-accent: #89cff0;
-  --life-accent-soft: rgba(137, 207, 240, 0.28);
+  /* Baby blue accent (readable on light surfaces) */
+  --life-accent: #6eb4e8;
+  --life-accent-soft: rgba(137, 207, 240, 0.32);
   --life-surface: rgba(244, 249, 252, 0.82);
   min-height: 100%;
   color: var(--life-ink);

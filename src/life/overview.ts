@@ -1,5 +1,6 @@
 import { getAiCredits } from "@/life/adapters/ai-credits";
 import { getBatteries } from "@/life/adapters/batteries";
+import { getCalendar } from "@/life/adapters/calendar";
 import { getCommute } from "@/life/adapters/commute";
 import { getGovee } from "@/life/adapters/govee";
 import { getMedia } from "@/life/adapters/media";
@@ -10,7 +11,7 @@ import { getRustDesk } from "@/life/adapters/rustdesk";
 import { getTesla } from "@/life/adapters/tesla";
 import { getWeather } from "@/life/adapters/weather";
 import { listAutomations } from "@/life/automations-store";
-import { MOCK_CALENDAR, OWNER } from "@/life/mock-data";
+import { OWNER } from "@/life/mock-data";
 import type { LifeOverview } from "@/life/types";
 
 export async function getLifeOverview(): Promise<LifeOverview> {
@@ -26,6 +27,7 @@ export async function getLifeOverview(): Promise<LifeOverview> {
     media,
     batteries,
     commute,
+    calendar,
   ] = await Promise.all([
     getWeather(),
     getTesla(),
@@ -38,6 +40,7 @@ export async function getLifeOverview(): Promise<LifeOverview> {
     getMedia(),
     getBatteries(),
     getCommute(),
+    getCalendar(),
   ]);
 
   return {
@@ -55,6 +58,6 @@ export async function getLifeOverview(): Promise<LifeOverview> {
     batteries,
     commute,
     automations: listAutomations(),
-    calendar: MOCK_CALENDAR,
+    calendar: calendar.events,
   };
 }

@@ -6,9 +6,15 @@ export const INTEGRATIONS: IntegrationMeta[] = [
     name: "Tesla",
     category: "vehicle",
     description: "Battery, range, climate, lock, and charge controls via Fleet API.",
-    envKeys: ["TESLA_ACCESS_TOKEN", "TESLA_VEHICLE_ID", "TESLA_COMMAND_PROXY_URL"],
+    envKeys: [
+      "TESLA_VEHICLE_ID",
+      "TESLA_ACCESS_TOKEN",
+      "TESLA_REFRESH_TOKEN",
+      "TESLA_CLIENT_ID",
+      "TESLA_COMMAND_PROXY_URL",
+    ],
     docsHint:
-      "Inspired by TeslaMate + TeslaSync patterns. Needs Fleet API OAuth + optional command proxy for writes.",
+      "Fleet vehicle_data with access or refresh token. Commands need virtual key / command proxy.",
   },
   {
     id: "govee",
@@ -32,7 +38,7 @@ export const INTEGRATIONS: IntegrationMeta[] = [
     category: "health",
     description: "Weight and body-comp history with 7-day trend.",
     envKeys: ["RENPHO_EMAIL", "RENPHO_PASSWORD"],
-    docsHint: "No stable public API — adapter supports mock + manual JSON ingest for now.",
+    docsHint: "Unofficial Renpho Health cloud API (email/password) → weight history.",
   },
   {
     id: "resideo",
@@ -57,13 +63,14 @@ export const INTEGRATIONS: IntegrationMeta[] = [
     category: "ai",
     description: "Claude ×2, Grok/GrokBot ×2, Cursor — remaining usage and reset/expiry.",
     envKeys: [
-      "CLAUDE_USAGE_TOKEN_1",
-      "CLAUDE_USAGE_TOKEN_2",
-      "GROK_USAGE_TOKEN_1",
-      "GROK_USAGE_TOKEN_2",
-      "CURSOR_USAGE_TOKEN",
+      "CLAUDE_ADMIN_API_KEY_1",
+      "CLAUDE_ADMIN_API_KEY_2",
+      "CURSOR_ADMIN_API_KEY",
+      "XAI_API_KEY",
+      "LIFE_AI_CREDITS_JSON",
     ],
-    docsHint: "Manual/snapshot tokens until each vendor exposes a stable usage API.",
+    docsHint:
+      "Admin/API keys go live; Claude.ai/GrokBot chat quotas merge via LIFE_AI_CREDITS_JSON.",
   },
   {
     id: "apple_tv",
@@ -118,8 +125,8 @@ export const INTEGRATIONS: IntegrationMeta[] = [
     name: "Calendar",
     category: "ops",
     description: "What’s next today — Google Calendar when MCP/OAuth is wired.",
-    envKeys: ["GOOGLE_CALENDAR_ACCESS_TOKEN"],
-    docsHint: "Uses Google Calendar MCP in Cursor today; API token for the board next.",
+    envKeys: ["GOOGLE_CALENDAR_ACCESS_TOKEN", "GOOGLE_CALENDAR_ID"],
+    docsHint: "Google Calendar API — today's events with an OAuth access token.",
   },
 ];
 

@@ -2,7 +2,7 @@ import { controlGovee } from "@/life/adapters/govee";
 import { controlMedia } from "@/life/adapters/media";
 import { controlResideo } from "@/life/adapters/resideo";
 import { controlTesla } from "@/life/adapters/tesla";
-import { toggleAutomation } from "@/life/automations-store";
+import { runAutomation, toggleAutomation } from "@/life/automations-store";
 import type { ControlRequest } from "@/life/types";
 
 export async function runControl(req: ControlRequest) {
@@ -20,6 +20,7 @@ export async function runControl(req: ControlRequest) {
       return controlMedia("roku", req.action, req.deviceId);
     case "automation": {
       if (!req.deviceId) return { ok: false, detail: "automation id required" };
+      if (req.action === "run") return runAutomation(req.deviceId);
       const updated = toggleAutomation(
         req.deviceId,
         typeof req.value === "boolean" ? req.value : undefined,

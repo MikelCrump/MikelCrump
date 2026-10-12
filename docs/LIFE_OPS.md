@@ -13,67 +13,66 @@ Personal operations board at [`/life`](/life): widget home plus deeper area page
 | `/life/ai` | All AI credit accounts |
 | `/life/media` | Apple TV + Roku |
 | `/life/servers` | RustDesk hosts |
-| `/life/automations` | Create / toggle rules |
-| `/life/connections` | Env key checklist |
+| `/life/automations` | Create / toggle / run rules |
+| `/life/connections` | Live readiness + env checklist |
 
-## Design notes
+## Backend readiness
 
-- Runs beside Crump Studio in the same Next.js app.
-- Every integration has a **live adapter** plus **preview/mock** fallback so the board is usable before keys land.
-- Patterns drawn from [PersonalOS](https://github.com/socialloopai/PersonalOS) (Plaid), [TeslaMate](https://github.com/teslamate-org/teslamate) / Fleet API, [Homarr](https://github.com/homarr-labs/homarr) / [Homepage](https://github.com/gethomepage/homepage)-style service hubs, and Home Assistant bridges for AC/media/batteries.
+Set `LIFE_FORCE_MOCK=0` (default in `.env.example`) so keys are used.
 
-## Quick start
+| Integration | What you add | Live? |
+| --- | --- | --- |
+| Govee | `GOVEE_API_KEY` | Yes — list + power/brightness |
+| Weather | OpenWeather key + lat/lon | Yes |
+| Plaid | client/secret + access token | Yes — balances + 30d transactions |
+| Tesla | vehicle id + access **or** refresh+client id | Yes — vehicle_data; commands need proxy/virtual key |
+| Renpho | Health app email + password | Yes — unofficial `cloud.renpho.com` API |
+| Commute | Maps key + origin/destination | Yes — Distance Matrix |
+| Calendar | Google OAuth access token | Yes — today’s events |
+| Roku | `ROKU_HOST` on LAN/VPN | Yes — ECP |
+| RustDesk | API base URL (+ token) | Yes — probes common peer endpoints |
+| Resideo / Apple TV / batteries | Home Assistant URL + token + entity ids | Yes — via HA REST |
+| AI credits | Claude Admin / Cursor Admin / xAI key and/or `LIFE_AI_CREDITS_JSON` | Partial — API/org live; Claude.ai/GrokBot chat quotas via JSON |
+| Automations | nothing required | Yes — persisted in `.data/`; optional HA webhook on Run |
+
+## Plaid Link helper
 
 ```bash
-cp .env.example .env
-# optional: force mocks even when keys exist
-echo 'LIFE_FORCE_MOCK=1' >> .env
-pnpm install
-pnpm dev
+# 1) Create a link token (needs PLAID_CLIENT_ID + PLAID_SECRET)
+curl -X POST http://localhost:3000/api/life/plaid/link-token
+
+# 2) After Plaid Link in a browser, exchange the public_token:
+curl -X POST http://localhost:3000/api/life/plaid/exchange \
+  -H 'content-type: application/json' \
+  -d '{"public_token":"..."}'
+
+# 3) Put returned access_token into PLAID_ACCESS_TOKEN and restart
 ```
 
-Open [http://localhost:3000/life](http://localhost:3000/life).
+## AI credits
+
+- `CLAUDE_ADMIN_API_KEY_1/2` → Anthropic Admin cost report (API orgs)
+- `CURSOR_ADMIN_API_KEY` → Cursor org pooled usage
+- `XAI_API_KEY` → validates Grok API access
+- `LIFE_AI_CREDITS_JSON` → merge/override account meters (needed for consumer Claude.ai / GrokBot chat quotas)
 
 ## API routes
 
 | Route | Purpose |
 | --- | --- |
 | `GET /api/life/overview` | Aggregated board payload |
-| `POST /api/life/control` | Device / automation commands |
+| `GET /api/life/status` | Per-integration readiness |
+| `POST /api/life/control` | Device / automation commands (`action: "run"` supported) |
 | `GET/POST /api/life/automations` | List / create rules |
+| `POST /api/life/plaid/link-token` | Create Plaid Link token |
+| `POST /api/life/plaid/exchange` | Exchange public_token → access_token |
 
-## Environment keys
+## Quick start
 
-See `.env.example` under **Life Ops**. Highlights:
+```bash
+cp .env.example .env
+pnpm install
+pnpm dev
+```
 
-| Area | Keys |
-| --- | --- |
-| Tesla | `TESLA_ACCESS_TOKEN`, `TESLA_VEHICLE_ID`, optional `TESLA_COMMAND_PROXY_URL` |
-| Govee | `GOVEE_API_KEY` |
-| Plaid | `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV`, `PLAID_ACCESS_TOKEN` |
-| Renpho | `RENPHO_EMAIL`, `RENPHO_PASSWORD` (marks ready; public API still unstable) |
-| Home bridge | `HOME_ASSISTANT_URL`, `HOME_ASSISTANT_TOKEN`, `RESIDEO_ENTITY_ID`, `APPLE_TV_ENTITY_ID` |
-| Roku | `ROKU_HOST` (ECP on LAN) |
-| RustDesk | `RUSTDESK_API_URL`, `RUSTDESK_API_TOKEN` |
-| Weather | `OPENWEATHER_API_KEY`, `WEATHER_LAT`, `WEATHER_LON` |
-| Commute | `COMMUTE_ORIGIN`, `COMMUTE_DESTINATION`, `GOOGLE_MAPS_API_KEY` |
-| AI credits | `LIFE_AI_CREDITS_JSON` (JSON snapshot of account meters) |
-
-## AI credit accounts tracked
-
-1. Claude · primary  
-2. Claude · secondary  
-3. GrokBot · personal  
-4. GrokBot · via Cursor  
-5. Cursor  
-6. Grok (xAI) — often overlaps GrokBot access  
-
-Paste a `LIFE_AI_CREDITS_JSON` blob matching `AiCreditsSnapshot` when you have live usage numbers.
-
-## Honest limits
-
-- **Renpho**: no stable public API — preview history + credential placeholder.
-- **Resideo**: best via Home Assistant climate entity for Honeywell Home / Resideo thermostats.
-- **RustDesk**: depends on your self-hosted API shape; adapter expects `/api/peers`.
-- **AI vendors**: usage endpoints change often — JSON snapshot is the reliable path today.
-- **Automations**: in-memory for this process; persist to DB/HA next.
+Open [http://localhost:3000/life](http://localhost:3000/life) and `/life/connections`.

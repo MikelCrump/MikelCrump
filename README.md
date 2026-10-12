@@ -39,7 +39,7 @@ Personal dashboard at **`/life`**: Tesla, Govee, Plaid, Renpho, Resideo AC, Rust
 - Connections UI: `/life/connections`
 - Automations UI: `/life/automations`
 
-Preview/mock data is on by default (`LIFE_FORCE_MOCK=1`) until you add API keys.
+Set keys in `.env` with `LIFE_FORCE_MOCK=0`. See [docs/LIFE_OPS.md](./docs/LIFE_OPS.md) for what each backend needs.
 
 ## Scripts
 

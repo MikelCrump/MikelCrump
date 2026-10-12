@@ -7,6 +7,8 @@ export function lifeEnv() {
   return {
     goveeApiKey: present(process.env.GOVEE_API_KEY),
     teslaAccessToken: present(process.env.TESLA_ACCESS_TOKEN),
+    teslaRefreshToken: present(process.env.TESLA_REFRESH_TOKEN),
+    teslaClientId: present(process.env.TESLA_CLIENT_ID),
     teslaVehicleId: present(process.env.TESLA_VEHICLE_ID),
     teslaCommandProxyUrl: present(process.env.TESLA_COMMAND_PROXY_URL),
     plaidClientId: present(process.env.PLAID_CLIENT_ID),
@@ -29,8 +31,22 @@ export function lifeEnv() {
     commuteOrigin: present(process.env.COMMUTE_ORIGIN),
     commuteDestination: present(process.env.COMMUTE_DESTINATION) ?? "Work",
     googleMapsApiKey: present(process.env.GOOGLE_MAPS_API_KEY),
+    googleCalendarAccessToken: present(process.env.GOOGLE_CALENDAR_ACCESS_TOKEN),
+    googleCalendarId: present(process.env.GOOGLE_CALENDAR_ID) ?? "primary",
+    claudeAdminKey1: present(process.env.CLAUDE_ADMIN_API_KEY_1),
+    claudeAdminKey2: present(process.env.CLAUDE_ADMIN_API_KEY_2),
+    cursorAdminApiKey: present(process.env.CURSOR_ADMIN_API_KEY),
+    xaiApiKey: present(process.env.XAI_API_KEY),
+    lifeAiCreditsJson: present(process.env.LIFE_AI_CREDITS_JSON),
+    haWebhookId: present(process.env.HA_AUTOMATION_WEBHOOK_ID),
     forceMock: process.env.LIFE_FORCE_MOCK === "1",
   };
 }
 
 export type LifeEnv = ReturnType<typeof lifeEnv>;
+
+export function plaidHost(env: string) {
+  if (env === "production") return "https://production.plaid.com";
+  if (env === "development") return "https://development.plaid.com";
+  return "https://sandbox.plaid.com";
+}

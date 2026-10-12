@@ -41,6 +41,21 @@ export function AutomationsClient({ initial }: { initial: AutomationRule[] }) {
     startTransition(() => router.refresh());
   }
 
+  async function run(id: string) {
+    const res = await fetch("/api/life/control", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        target: "automation",
+        action: "run",
+        deviceId: id,
+      }),
+    });
+    const json = (await res.json()) as { detail?: string };
+    setMessage(json.detail ?? "Ran");
+    startTransition(() => router.refresh());
+  }
+
   return (
     <div className="mt-8 grid gap-6 lg:grid-cols-5">
       <form onSubmit={onCreate} className="life-panel life-rise lg:col-span-2 space-y-3">
@@ -99,14 +114,24 @@ export function AutomationsClient({ initial }: { initial: AutomationRule[] }) {
                   Last run: {a.lastRun ?? "Never"}
                 </p>
               </div>
-              <button
-                type="button"
-                disabled={pending}
-                onClick={() => toggle(a.id, a.enabled)}
-                className={`life-btn ${a.enabled ? "life-btn-on" : ""}`}
-              >
-                {a.enabled ? "Enabled" : "Disabled"}
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => toggle(a.id, a.enabled)}
+                  className={`life-btn ${a.enabled ? "life-btn-on" : ""}`}
+                >
+                  {a.enabled ? "Enabled" : "Disabled"}
+                </button>
+                <button
+                  type="button"
+                  disabled={pending || !a.enabled}
+                  onClick={() => run(a.id)}
+                  className="life-btn"
+                >
+                  Run now
+                </button>
+              </div>
             </div>
           </li>
         ))}
