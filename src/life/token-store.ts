@@ -1,10 +1,18 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
-const DATA_DIR = path.join(process.cwd(), ".data");
+/** Prefer a writable dir on Vercel (/var/task is read-only). */
+function dataDir() {
+  if (process.env.LIFE_DATA_DIR) return process.env.LIFE_DATA_DIR;
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return path.join(tmpdir(), "life-ops");
+  }
+  return path.join(process.cwd(), ".data");
+}
 
 function fileFor(name: string) {
-  return path.join(DATA_DIR, name);
+  return path.join(dataDir(), name);
 }
 
 export function readJsonFile<T>(name: string): T | null {
@@ -18,6 +26,7 @@ export function readJsonFile<T>(name: string): T | null {
 }
 
 export function writeJsonFile(name: string, value: unknown) {
-  mkdirSync(DATA_DIR, { recursive: true });
+  const dir = dataDir();
+  mkdirSync(dir, { recursive: true });
   writeFileSync(fileFor(name), JSON.stringify(value, null, 2));
 }

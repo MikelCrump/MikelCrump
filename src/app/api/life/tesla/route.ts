@@ -8,7 +8,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const diagnostics = getTeslaDiagnostics();
+  const diagnostics = await getTeslaDiagnostics();
   let vehicles: unknown[] = [];
   let vehiclesError: string | null = null;
   if (diagnostics.configured && !diagnostics.forceMock) {

@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { exchangeTeslaAuthCode } from "@/life/adapters/tesla";
+import {
+  TESLA_TOKEN_COOKIE,
+  serializeTeslaTokenCookie,
+  teslaCookieOptions,
+} from "@/life/tesla-tokens";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +30,15 @@ export async function GET(request: Request) {
       vehicles: String(result.vehicles.length),
     });
     if (firstVin) qs.set("vin", firstVin);
-    return NextResponse.redirect(new URL(`/life/tesla?${qs}`, url.origin));
+    const response = NextResponse.redirect(new URL(`/life/tesla?${qs}`, url.origin));
+    if (result.tokens) {
+      response.cookies.set(
+        TESLA_TOKEN_COOKIE,
+        serializeTeslaTokenCookie(result.tokens),
+        teslaCookieOptions(),
+      );
+    }
+    return response;
   } catch (err) {
     const detail = err instanceof Error ? err.message : "exchange_failed";
     return NextResponse.redirect(
