@@ -59,7 +59,7 @@ Paste a `LIFE_AI_CREDITS_JSON` blob matching `AiCreditsSnapshot` when you have l
 ## Honest limits
 
 - **Renpho**: no stable public API — preview history + credential placeholder.
-- **Resideo**: best via Home Assistant climate entity (ConnectLife/Hisense-class units rarely expose a clean public API).
+- **Resideo**: best via Home Assistant climate entity for Honeywell Home / Resideo thermostats.
 - **RustDesk**: depends on your self-hosted API shape; adapter expects `/api/peers`.
 - **AI vendors**: usage endpoints change often — JSON snapshot is the reliable path today.
 - **Automations**: in-memory for this process; persist to DB/HA next.
