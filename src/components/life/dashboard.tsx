@@ -527,7 +527,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
                   <p className="text-sm font-medium">{h.name}</p>
                   <span
                     className={`h-2 w-2 rounded-full ${
-                      h.online ? "bg-emerald-500" : "bg-slate-300"
+                      h.online ? "bg-sky-400" : "bg-slate-300"
                     }`}
                   />
                 </div>

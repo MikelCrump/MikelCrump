@@ -686,7 +686,7 @@ export function ServersDetail({ data }: { data: LifeOverview }) {
               <span
                 className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
                   h.online
-                    ? "bg-emerald-500/15 text-emerald-800"
+                    ? "bg-sky-400/20 text-sky-800"
                     : "bg-slate-200 text-slate-600"
                 }`}
               >

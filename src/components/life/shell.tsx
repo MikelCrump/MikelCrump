@@ -74,7 +74,7 @@ export function LifeShell({
                   href={item.href}
                   className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                     isActive
-                      ? "bg-[var(--life-accent)] text-white"
+                      ? "bg-[var(--life-accent)] text-[var(--life-ink)]"
                       : "bg-black/[0.04] text-[var(--life-muted)] hover:bg-black/[0.07] hover:text-[var(--life-ink)]"
                   }`}
                 >

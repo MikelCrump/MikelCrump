@@ -5,7 +5,7 @@ export function ModeBadge({ mode }: { mode: ConnectionMode }) {
     mode === "live" ? "Live" : mode === "mock" ? "Preview" : "Connect";
   const tone =
     mode === "live"
-      ? "bg-emerald-500/15 text-emerald-800 ring-emerald-600/20"
+      ? "bg-sky-400/20 text-sky-800 ring-sky-500/25"
       : mode === "mock"
         ? "bg-sky-500/12 text-sky-900 ring-sky-600/15"
         : "bg-amber-500/15 text-amber-900 ring-amber-600/20";
