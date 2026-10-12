@@ -1,18 +1,14 @@
 import { lifeEnv } from "@/life/config";
 import { MOCK_TESLA } from "@/life/mock-data";
-import { readJsonFile, writeJsonFile } from "@/life/token-store";
+import {
+  loadTeslaTokens,
+  saveTeslaTokens,
+  type TeslaStoredTokens,
+} from "@/life/tesla-tokens";
 import type { TeslaSnapshot } from "@/life/types";
 
 const DEFAULT_FLEET = "https://fleet-api.prd.na.vn.cloud.tesla.com";
 const AUTH_BASE = "https://fleet-auth.prd.vn.cloud.tesla.com";
-const TOKEN_FILE = "tesla-tokens.json";
-
-type StoredTokens = {
-  access_token: string;
-  refresh_token?: string;
-  expires_at?: number;
-  updated_at: string;
-};
 
 type VehicleListItem = {
   id?: number | string;
@@ -23,7 +19,9 @@ type VehicleListItem = {
 };
 
 let memoryAccess: string | null = null;
+let memoryRefresh: string | null = null;
 let lastError: string | null = null;
+let lastPayload: TeslaStoredTokens | null = null;
 
 function fleetBase() {
   return lifeEnv().teslaFleetBase ?? DEFAULT_FLEET;
@@ -34,25 +32,16 @@ function vehiclePathId() {
   return cfg.teslaVin ?? cfg.teslaVehicleId ?? null;
 }
 
-function loadStoredTokens(): StoredTokens | null {
-  return readJsonFile<StoredTokens>(TOKEN_FILE);
-}
-
-export function saveTeslaTokens(tokens: {
+export async function persistTeslaTokens(tokens: {
   access_token: string;
   refresh_token?: string;
   expires_in?: number;
 }) {
-  const payload: StoredTokens = {
-    access_token: tokens.access_token,
-    refresh_token: tokens.refresh_token ?? loadStoredTokens()?.refresh_token,
-    expires_at: tokens.expires_in
-      ? Date.now() + tokens.expires_in * 1000
-      : undefined,
-    updated_at: new Date().toISOString(),
-  };
-  writeJsonFile(TOKEN_FILE, payload);
+  const payload = await saveTeslaTokens(tokens);
   memoryAccess = payload.access_token;
+  memoryRefresh = payload.refresh_token ?? memoryRefresh;
+  lastPayload = payload;
+  return payload;
 }
 
 async function refreshAccessToken(refreshToken: string, clientId: string) {
@@ -79,7 +68,7 @@ async function refreshAccessToken(refreshToken: string, clientId: string) {
     refresh_token?: string;
     expires_in?: number;
   };
-  saveTeslaTokens(json);
+  await persistTeslaTokens(json);
   return json.access_token;
 }
 
@@ -87,12 +76,14 @@ async function resolveAccessToken() {
   const cfg = lifeEnv();
   if (memoryAccess) return memoryAccess;
 
-  const stored = loadStoredTokens();
+  const stored = (await loadTeslaTokens()) ?? lastPayload;
   if (stored?.access_token) {
+    lastPayload = stored;
     const stillFresh =
       !stored.expires_at || stored.expires_at > Date.now() + 60_000;
     if (stillFresh) {
       memoryAccess = stored.access_token;
+      memoryRefresh = stored.refresh_token ?? memoryRefresh;
       return memoryAccess;
     }
     if (stored.refresh_token && cfg.teslaClientId) {
@@ -107,7 +98,7 @@ async function resolveAccessToken() {
     return memoryAccess;
   }
 
-  const refresh = cfg.teslaRefreshToken ?? stored?.refresh_token;
+  const refresh = cfg.teslaRefreshToken ?? stored?.refresh_token ?? memoryRefresh;
   if (refresh && cfg.teslaClientId) {
     return refreshAccessToken(refresh, cfg.teslaClientId);
   }
@@ -129,8 +120,8 @@ async function teslaFetch(path: string, init: RequestInit = {}) {
   if (res.status === 401) {
     memoryAccess = null;
     const cfg = lifeEnv();
-    const stored = loadStoredTokens();
-    const refresh = cfg.teslaRefreshToken ?? stored?.refresh_token;
+    const stored = await loadTeslaTokens();
+    const refresh = cfg.teslaRefreshToken ?? stored?.refresh_token ?? memoryRefresh;
     if (refresh && cfg.teslaClientId) {
       await refreshAccessToken(refresh, cfg.teslaClientId);
       return teslaFetch(path, init);
@@ -252,7 +243,6 @@ export async function getTesla(): Promise<TeslaSnapshot> {
     const state = summary?.state ?? "unknown";
 
     if (state !== "online") {
-      // Cheap read path: don't force wake on every board refresh
       return {
         ...MOCK_TESLA,
         name: summary?.display_name ?? MOCK_TESLA.name,
@@ -310,7 +300,6 @@ async function sendCommand(pathId: string, path: string) {
     if (res.ok) return;
     const text = await res.text();
     lastFail = `${base.includes("127.0.0.1") || base.includes("localhost") ? "proxy" : "fleet"} ${res.status}: ${text.slice(0, 160)}`;
-    // If unsigned command rejected, try next base (proxy)
   }
   throw new Error(lastFail);
 }
@@ -421,7 +410,7 @@ export async function exchangeTeslaAuthCode(code: string, origin: string) {
     refresh_token?: string;
     expires_in?: number;
   };
-  saveTeslaTokens(json);
+  const payload = await persistTeslaTokens(json);
   const vehicles = await listTeslaVehicles();
   return {
     vehicles: vehicles.map((v) => ({
@@ -431,12 +420,13 @@ export async function exchangeTeslaAuthCode(code: string, origin: string) {
       state: v.state,
     })),
     saved: true,
+    tokens: payload,
   };
 }
 
-export function getTeslaDiagnostics() {
+export async function getTeslaDiagnostics() {
   const cfg = lifeEnv();
-  const stored = loadStoredTokens();
+  const stored = await loadTeslaTokens();
   return {
     configured: Boolean(
       cfg.teslaAccessToken ||
