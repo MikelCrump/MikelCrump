@@ -45,6 +45,14 @@ export function LifeShell({
             <Link href="/" className="text-[var(--life-muted)] hover:text-[var(--life-ink)]">
               Studio
             </Link>
+            <form method="post" action="/api/auth/logout">
+              <button
+                type="submit"
+                className="text-[var(--life-muted)] hover:text-[var(--life-ink)]"
+              >
+                Sign out
+              </button>
+            </form>
           </nav>
         </div>
         <nav
