@@ -69,11 +69,14 @@ function Frame({
   hint: string;
   children?: ReactNode;
 }) {
+  // One settings-style row: label on the left, its control on the right.
   return (
-    <div className="flex flex-col rounded-xl border border-[var(--life-line)] bg-white/55 px-4 py-3">
-      <p className="text-sm font-semibold">{title}</p>
-      <p className="mt-0.5 text-xs text-[var(--life-muted)]">{hint}</p>
-      {children ? <div className="mt-3">{children}</div> : null}
+    <div className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-[var(--life-ink)]">{title}</p>
+        <p className="text-[13px] text-[var(--life-muted)]">{hint}</p>
+      </div>
+      {children ? <div className="shrink-0">{children}</div> : null}
     </div>
   );
 }
@@ -87,14 +90,17 @@ function Choices({
   pending: boolean;
   onPick: (value: Value) => void;
 }) {
+  // Segmented control: one bordered strip, no separate bubbles.
   return (
-    <div className="flex flex-wrap gap-2">
-      {options.map(([value, label]) => (
+    <div className="inline-flex overflow-hidden rounded-lg border border-[var(--life-line)] bg-[var(--life-surface)]">
+      {options.map(([value, label], i) => (
         <button
           key={String(value)}
           type="button"
           disabled={pending}
-          className="life-btn"
+          className={`h-8 px-3 text-[13px] font-medium text-[var(--life-ink)] transition-colors hover:bg-[var(--life-hover)] disabled:opacity-45 ${
+            i > 0 ? "border-l border-[var(--life-line)]" : ""
+          }`}
           onClick={() => onPick(value)}
         >
           {label}
@@ -135,16 +141,10 @@ function CommandCard({
 
   switch (cmd.kind) {
     case "button":
-      return (
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => send()}
-          className="rounded-xl border border-[var(--life-line)] bg-white/55 px-4 py-3 text-left transition hover:border-[var(--life-accent)] disabled:opacity-50"
-        >
-          <p className="text-sm font-semibold">{cmd.label}</p>
-          <p className="mt-0.5 text-xs text-[var(--life-muted)]">{cmd.hint}</p>
-        </button>
+      return frame(
+        <button type="button" disabled={pending} className="life-btn" onClick={() => send()}>
+          {cmd.confirm ? "Run…" : "Run"}
+        </button>,
       );
 
     case "bool":
@@ -192,7 +192,7 @@ function CommandCard({
             max={100}
             value={percent}
             onChange={(e) => setPercent(Number(e.target.value))}
-            className="flex-1 accent-[var(--life-accent)]"
+            className="w-40 accent-[var(--life-ink)]"
           />
           <span className="w-10 text-sm tabular-nums">{percent}%</span>
           <button
@@ -350,23 +350,17 @@ function CommandCard({
 
 function QuickActions({ pending, control }: { pending: boolean; control: ControlFn }) {
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
       {QUICK_ACTIONS.map((q) => (
         <button
           key={`${q.action}:${String(q.value ?? "")}`}
           type="button"
           disabled={pending}
+          title={q.hint}
           onClick={() => control({ target: "tesla", action: q.action, value: q.value })}
-          className={`rounded-xl border px-3 py-3 text-left transition disabled:opacity-50 ${
-            q.primary
-              ? "border-[var(--life-ink)] bg-[var(--life-ink)] text-white hover:opacity-90"
-              : "border-[var(--life-line)] bg-white/70 hover:border-[var(--life-accent)]"
-          }`}
+          className={`life-btn h-10 w-full ${q.primary ? "life-btn-on" : ""}`}
         >
-          <p className="text-sm font-semibold">{q.label}</p>
-          <p className={`text-xs ${q.primary ? "text-white/70" : "text-[var(--life-muted)]"}`}>
-            {q.hint}
-          </p>
+          {q.label}
         </button>
       ))}
     </div>
@@ -414,28 +408,30 @@ export function TeslaCommandsPanel({
         <p className="text-sm text-[var(--life-muted)]">No controls match “{query}”.</p>
       ) : null}
 
-      <div className="space-y-3">
+      <div className="border-t border-[var(--life-line)]">
         {sections.map(({ section, cmds }) => (
           <details
             key={`${section}:${q ? "q" : "all"}`}
             open={Boolean(q) || OPEN_BY_DEFAULT.has(section)}
-            className="group rounded-2xl border border-[var(--life-line)] bg-white/30 p-3"
+            className="group border-b border-[var(--life-line)]"
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between px-1 py-1">
-              <span
-                className="text-sm font-semibold tracking-wide text-[var(--life-muted)] uppercase"
-                style={{ fontFamily: "var(--font-life-display), sans-serif" }}
-              >
-                {section}
-              </span>
-              <span className="flex items-center gap-2 text-xs text-[var(--life-muted)]">
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3 [&::-webkit-details-marker]:hidden">
+              <span className="text-sm font-semibold text-[var(--life-ink)]">{section}</span>
+              <span className="flex items-center gap-2 text-[13px] text-[var(--life-muted)]">
                 {cmds.length}
-                <span aria-hidden className="transition group-open:rotate-180">
-                  ▾
-                </span>
+                <svg
+                  aria-hidden
+                  viewBox="0 0 16 16"
+                  className="h-4 w-4 transition-transform group-open:rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  <path d="M4 6l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </span>
             </summary>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="divide-y divide-[var(--life-line)] border-t border-[var(--life-line)] pb-1">
               {cmds.map((cmd) => (
                 <CommandCard key={cmd.action} cmd={cmd} pending={pending} control={control} />
               ))}

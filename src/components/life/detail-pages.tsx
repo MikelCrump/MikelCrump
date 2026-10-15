@@ -68,13 +68,13 @@ export function DayDetail({ data }: { data: LifeOverview }) {
             {data.commute.suggestions.map((s, i) => (
               <div
                 key={s.leaveBy}
-                className={`rounded-xl border px-4 py-4 ${
+                className={`rounded-lg border px-4 py-4 ${
                   i === 0
                     ? "border-[var(--life-accent)]/40 bg-[var(--life-accent-soft)]"
-                    : "border-[var(--life-line)] bg-white/40"
+                    : "border-[var(--life-line)] bg-[var(--life-surface)]"
                 }`}
               >
-                <p className="text-[10px] font-semibold tracking-wide text-[var(--life-muted)] uppercase">
+                <p className="text-xs font-semibold text-[var(--life-muted)]">
                   Leave by
                 </p>
                 <p
@@ -86,7 +86,7 @@ export function DayDetail({ data }: { data: LifeOverview }) {
                 <p className="mt-2 text-sm text-[var(--life-muted)]">
                   Arrive {s.arriveBy} · {s.durationMin} min
                 </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-[var(--life-accent)]">
+                <p className="mt-1 text-xs font-semibold text-[var(--life-accent)]">
                   {s.confidence} confidence
                 </p>
                 <p className="mt-3 text-sm leading-snug">{s.reason}</p>
@@ -202,7 +202,7 @@ export function TeslaDetail({
       <DetailHeader section={section} />
       <ControlToast message={toast} />
       {authMsg || t.lastError ? (
-        <p className="mb-4 rounded-xl border border-[var(--life-line)] bg-white/50 px-3 py-2 text-sm text-[var(--life-muted)]">
+        <p className="mb-4 rounded-lg border border-[var(--life-line)] bg-[var(--life-surface)] px-3 py-2 text-sm text-[var(--life-muted)]">
           {authMsg ?? t.lastError}
         </p>
       ) : null}
@@ -320,7 +320,7 @@ export function HomeDetail({ data }: { data: LifeOverview }) {
             {data.govee.devices.map((d) => (
               <li
                 key={d.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--life-line)] px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[var(--life-line)] px-4 py-3"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -600,7 +600,7 @@ export function HealthDetail({ data }: { data: LifeOverview }) {
           </svg>
           <div className="mt-2 overflow-x-auto">
             <table className="w-full min-w-[480px] text-left text-sm">
-              <thead className="text-xs tracking-wide text-[var(--life-muted)] uppercase">
+              <thead className="text-xs text-[var(--life-muted)]">
                 <tr>
                   <th className="py-2 font-semibold">Date</th>
                   <th className="py-2 font-semibold">Weight</th>
@@ -759,9 +759,9 @@ export function ServersDetail({ data }: { data: LifeOverview }) {
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">{h.name}</h2>
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
                   h.online
-                    ? "bg-sky-400/20 text-sky-800"
+                    ? "bg-black/5 text-[var(--life-ink)]"
                     : "bg-slate-200 text-slate-600"
                 }`}
               >

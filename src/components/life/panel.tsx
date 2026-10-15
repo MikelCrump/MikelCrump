@@ -11,7 +11,6 @@ export function Panel({
   action,
   href,
   className = "",
-  delay = 0,
 }: {
   title: string;
   subtitle?: string;
@@ -20,42 +19,37 @@ export function Panel({
   action?: ReactNode;
   href?: string;
   className?: string;
+  /** @deprecated entrance animations were removed; kept for call-site compatibility. */
   delay?: number;
 }) {
   return (
-    <section
-      className={`life-panel life-rise ${className}`}
-      style={{ animationDelay: `${delay}ms` }}
-    >
+    <section className={`life-panel ${className}`}>
       <header className="mb-4 flex items-start justify-between gap-3">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            {href ? (
-              <Link
-                href={href}
-                className="text-sm font-semibold tracking-wide text-[var(--life-ink)] uppercase hover:text-[var(--life-accent)]"
-              >
-                {title}
-              </Link>
-            ) : (
-              <h2 className="text-sm font-semibold tracking-wide text-[var(--life-ink)] uppercase">
-                {title}
-              </h2>
-            )}
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <h2 className="text-[15px] font-semibold text-[var(--life-ink)]">
+              {href ? (
+                <Link href={href} className="hover:underline">
+                  {title}
+                </Link>
+              ) : (
+                title
+              )}
+            </h2>
             {mode ? <ModeBadge mode={mode} /> : null}
           </div>
           {subtitle ? (
-            <p className="mt-1 text-xs text-[var(--life-muted)]">{subtitle}</p>
+            <p className="mt-0.5 text-[13px] text-[var(--life-muted)]">{subtitle}</p>
           ) : null}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-3">
           {action}
           {href ? (
             <Link
               href={href}
-              className="text-[11px] font-semibold text-[var(--life-accent)] hover:underline"
+              className="text-[13px] text-[var(--life-muted)] hover:text-[var(--life-ink)]"
             >
-              Open →
+              View
             </Link>
           ) : null}
         </div>
