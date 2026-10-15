@@ -282,7 +282,7 @@ export function TeslaDetail({
 
         <Panel
           title="Commands"
-          subtitle={`${TESLA_COMMANDS.length} Fleet controls · signed when possible`}
+          subtitle={`Model Y · ${TESLA_COMMANDS.length} controls · signed when possible`}
           className="lg:col-span-7"
         >
           <TeslaCommandsPanel pending={pending} control={control} />
