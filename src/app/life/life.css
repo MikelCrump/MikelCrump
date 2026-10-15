@@ -108,3 +108,10 @@ select.life-input {
   border-color: var(--life-accent);
   box-shadow: 0 0 0 3px var(--life-accent-soft);
 }
+
+/* iOS Safari zooms into fields under 16px; keep phones at 16px. */
+@media (max-width: 640px) {
+  .life-input {
+    font-size: 16px;
+  }
+}
