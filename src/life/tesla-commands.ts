@@ -6,9 +6,7 @@ export type TeslaCommandKind =
   | "keeper"
   | "trunk"
   | "window"
-  | "sunroof"
   | "seat_heat"
-  | "seat_cool"
   | "bool"
   | "cop_temp"
   | "volume"
@@ -27,7 +25,6 @@ export type TeslaCommandDef = {
     | "Charging"
     | "Security"
     | "Access"
-    | "Windows & roof"
     | "Media"
     | "Navigation"
     | "Speed & parental"
@@ -35,6 +32,8 @@ export type TeslaCommandDef = {
   kind: TeslaCommandKind;
   /** Whether wake-before-send should run (false only for wake itself). */
   wakeFirst?: boolean;
+  /** Ask the user to confirm (shows this message) before sending. */
+  confirm?: string;
 };
 
 /** Full Fleet vehicle-command catalog exposed in Life Ops. */
@@ -100,14 +99,6 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     kind: "bool",
   },
   {
-    action: "set_bioweapon_mode",
-    endpoint: "set_bioweapon_mode",
-    label: "Bioweapon mode",
-    hint: "Bioweapon Defense Mode on/off",
-    section: "Climate",
-    kind: "bool",
-  },
-  {
     action: "set_cabin_overheat_protection",
     endpoint: "set_cabin_overheat_protection",
     label: "Cabin overheat protection",
@@ -132,18 +123,10 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     kind: "seat_heat",
   },
   {
-    action: "remote_seat_cooler_request",
-    endpoint: "remote_seat_cooler_request",
-    label: "Seat cool",
-    hint: "Seat + level 0–3",
-    section: "Climate",
-    kind: "seat_cool",
-  },
-  {
     action: "remote_auto_seat_climate_request",
     endpoint: "remote_auto_seat_climate_request",
     label: "Auto seat climate",
-    hint: "Auto seat heat/cool",
+    hint: "Auto seat heat",
     section: "Climate",
     kind: "bool",
   },
@@ -151,7 +134,7 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     action: "remote_steering_wheel_heater_request",
     endpoint: "remote_steering_wheel_heater_request",
     label: "Steering heat",
-    hint: "Steering wheel heater on/off",
+    hint: "If equipped",
     section: "Climate",
     kind: "bool",
   },
@@ -212,22 +195,6 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     hint: "Set charge current",
     section: "Charging",
     kind: "amps",
-  },
-  {
-    action: "charge_standard",
-    endpoint: "charge_standard",
-    label: "Charge standard",
-    hint: "Standard charge mode",
-    section: "Charging",
-    kind: "button",
-  },
-  {
-    action: "charge_max_range",
-    endpoint: "charge_max_range",
-    label: "Charge max range",
-    hint: "Max range charge mode",
-    section: "Charging",
-    kind: "button",
   },
   {
     action: "charge_port_door_open",
@@ -356,6 +323,7 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     endpoint: "clear_pin_to_drive_admin",
     label: "Clear PIN to Drive (admin)",
     hint: "Owner/fleet admin clear",
+    confirm: "Clear the PIN to Drive using the admin override?",
     section: "Security",
     kind: "button",
   },
@@ -372,6 +340,7 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     endpoint: "erase_user_data",
     label: "Erase user data",
     hint: "Guest mode + parked",
+    confirm: "Erase all personal data from the car (profiles, nav, Bluetooth)? This cannot be undone.",
     section: "Security",
     kind: "button",
   },
@@ -394,22 +363,14 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     kind: "button",
   },
 
-  // Windows & roof
+  // Access (windows)
   {
     action: "window_control",
     endpoint: "window_control",
     label: "Windows",
     hint: "Vent or close",
-    section: "Windows & roof",
+    section: "Access",
     kind: "window",
-  },
-  {
-    action: "sun_roof_control",
-    endpoint: "sun_roof_control",
-    label: "Sunroof",
-    hint: "Vent / close / stop",
-    section: "Windows & roof",
-    kind: "sunroof",
   },
 
   // Media
@@ -550,6 +511,7 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     endpoint: "speed_limit_clear_pin_admin",
     label: "Clear speed limit PIN (admin)",
     hint: "Owner/fleet admin",
+    confirm: "Clear the speed limit PIN using the admin override?",
     section: "Speed & parental",
     kind: "button",
   },
@@ -590,6 +552,7 @@ export const TESLA_COMMANDS: TeslaCommandDef[] = [
     endpoint: "parental_controls_clear_pin_admin",
     label: "Clear parental PIN (admin)",
     hint: "Owner/fleet admin",
+    confirm: "Clear the parental controls PIN using the admin override?",
     section: "Speed & parental",
     kind: "button",
   },
@@ -643,7 +606,6 @@ export const TESLA_COMMAND_SECTIONS = [
   "Charging",
   "Security",
   "Access",
-  "Windows & roof",
   "Media",
   "Navigation",
   "Speed & parental",
@@ -711,7 +673,6 @@ export function buildTeslaCommandBody(
       return Number.isFinite(mode) ? { climate_keeper_mode: mode } : undefined;
     }
     case "set_sentry_mode":
-    case "set_bioweapon_mode":
     case "set_preconditioning_max":
     case "guest_mode":
     case "remote_auto_seat_climate_request":
@@ -745,22 +706,10 @@ export function buildTeslaCommandBody(
         lat: obj.lat,
         lon: obj.lon,
       };
-    case "sun_roof_control":
-      return {
-        state:
-          typeof value === "string" && !value.startsWith("{")
-            ? value
-            : String(obj.state ?? "vent"),
-      };
     case "remote_seat_heater_request":
       return {
         seat_position: Number(obj.seat_position ?? obj.seat ?? 0),
         level: Number(obj.level ?? obj.heater_level ?? value ?? 1),
-      };
-    case "remote_seat_cooler_request":
-      return {
-        seat_position: Number(obj.seat_position ?? obj.seat ?? 0),
-        seat_cooler_level: Number(obj.level ?? obj.seat_cooler_level ?? value ?? 1),
       };
     case "adjust_volume": {
       const volume = typeof value === "number" ? value : Number(obj.volume ?? value);

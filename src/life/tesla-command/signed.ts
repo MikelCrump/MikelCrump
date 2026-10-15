@@ -565,16 +565,10 @@ export function actionForControl(
     }
     case "set_preconditioning_max":
       return { hvacSetPreconditioningMaxAction: { on, manualOverride: true } };
-    case "set_bioweapon_mode":
-      return { hvacBioweaponModeAction: { on, manualOverride: true } };
     case "charge_start":
       return { chargingStartStopAction: { start: {} } };
     case "charge_stop":
       return { chargingStartStopAction: { stop: {} } };
-    case "charge_standard":
-      return { chargingStartStopAction: { startStandard: {} } };
-    case "charge_max_range":
-      return { chargingStartStopAction: { startMaxRange: {} } };
     case "set_charge_limit": {
       const percent =
         typeof value === "number" ? value : Number(obj.percent ?? value);
@@ -642,19 +636,6 @@ export function actionForControl(
         vehicleControlWindowAction:
           command === "close" ? { close: {} } : { vent: {} },
       };
-    }
-    case "sun_roof_control": {
-      const state =
-        typeof value === "string" && !value.startsWith("{")
-          ? value
-          : String(obj.state ?? "vent");
-      if (state === "close") {
-        return { vehicleControlSunroofOpenCloseAction: { close: {} } };
-      }
-      if (state === "open") {
-        return { vehicleControlSunroofOpenCloseAction: { open: {} } };
-      }
-      return { vehicleControlSunroofOpenCloseAction: { vent: {} } };
     }
     case "media_next_track":
       return { mediaNextTrack: {} };
@@ -731,22 +712,6 @@ export function actionForControl(
       return {
         hvacSeatHeaterActions: {
           hvacSeatHeaterAction: [{ [levelKey]: {}, [seatKey]: {} }],
-        },
-      };
-    }
-    case "remote_seat_cooler_request": {
-      const level = Math.min(3, Math.max(0, Number(obj.level ?? value ?? 1)));
-      const seat = Number(obj.seat_position ?? obj.seat ?? 0);
-      // Enum: Unknown=0 Off=1 Low=2 Med=3 High=4
-      const coolerLevel = level + 1;
-      return {
-        hvacSeatCoolerActions: {
-          hvacSeatCoolerAction: [
-            {
-              seatCoolerLevel: coolerLevel,
-              seatPosition: seat === 1 ? 2 : 1,
-            },
-          ],
         },
       };
     }

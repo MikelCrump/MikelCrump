@@ -20,6 +20,29 @@ describe("tesla command catalog", () => {
     }
   });
 
+  it("only lists controls that exist on a Model Y", () => {
+    const actions = TESLA_COMMANDS.map((c) => c.action);
+    // Model Y has a fixed glass roof (no sunroof) and ignores the legacy charge modes.
+    // Model Y Standard also has no ventilated seats and no HEPA (Bioweapon) mode.
+    for (const gone of [
+      "sun_roof_control",
+      "charge_standard",
+      "charge_max_range",
+      "remote_seat_cooler_request",
+      "set_bioweapon_mode",
+    ]) {
+      expect(actions).not.toContain(gone);
+      expect(getTeslaCommand(gone)).toBeUndefined();
+      expect(resolveSignedControl(gone)).toBeNull();
+    }
+    expect(actions).toContain("actuate_trunk");
+    expect(actions).toContain("window_control");
+  });
+
+  it("asks for confirmation before destructive commands", () => {
+    expect(getTeslaCommand("erase_user_data")?.confirm).toBeTruthy();
+  });
+
   it("builds bodies for parameterized commands", () => {
     expect(buildTeslaCommandBody("set_temps", 72)).toEqual({
       driver_temp: expect.any(Number),
