@@ -30,7 +30,7 @@ export default function ConnectionsPage() {
           use a JSON meter until vendors expose APIs.
         </p>
         {forceMock ? (
-          <p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          <p className="mt-3 rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-900">
             `LIFE_FORCE_MOCK=1` is on — adapters ignore real keys until you set it
             to `0` or remove it.
           </p>
@@ -46,12 +46,12 @@ export default function ConnectionsPage() {
                 <p className="mt-1 text-sm text-[var(--life-muted)]">{item.note}</p>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <span className="rounded-md bg-black/5 px-2 py-1 text-[10px] font-semibold tracking-wide uppercase">
+                <span className="rounded-md bg-black/5 px-2 py-1 text-xs font-semibold">
                   {READY_LABEL[item.ready]}
                 </span>
                 <span
-                  className={`text-[10px] font-semibold uppercase ${
-                    item.configured ? "text-sky-700" : "text-amber-700"
+                  className={`text-xs font-semibold ${
+                    item.configured ? "text-[var(--life-ok)]" : "text-[var(--life-warn)]"
                   }`}
                 >
                   {item.configured ? "Configured" : "Missing"}

@@ -100,13 +100,13 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             {data.commute.suggestions.map((s, i) => (
               <div
                 key={s.leaveBy}
-                className={`rounded-xl border px-3 py-3 ${
+                className={`rounded-lg border px-3 py-3 ${
                   i === 0
                     ? "border-[var(--life-accent)]/40 bg-[var(--life-accent-soft)]"
-                    : "border-[var(--life-line)] bg-white/40"
+                    : "border-[var(--life-line)] bg-[var(--life-surface)]"
                 }`}
               >
-                <p className="text-[10px] font-semibold tracking-wide text-[var(--life-muted)] uppercase">
+                <p className="text-xs font-semibold text-[var(--life-muted)]">
                   Leave by
                 </p>
                 <p
@@ -194,7 +194,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             {data.govee.devices.map((d) => (
               <li
                 key={d.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-[var(--life-line)]/80 bg-white/35 px-3 py-2"
+                className="flex items-center justify-between gap-3 rounded-lg border border-[var(--life-line)]/80 bg-[var(--life-surface)] px-3 py-2"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -400,7 +400,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             {aiPreview.map((a) => (
               <div
                 key={a.id}
-                className="rounded-xl border border-[var(--life-line)] bg-white/40 px-3 py-3"
+                className="rounded-lg border border-[var(--life-line)] bg-[var(--life-surface)] px-3 py-3"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -470,7 +470,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             {data.media.devices.map((d) => (
               <li
                 key={d.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-[var(--life-line)] px-3 py-3"
+                className="flex items-center justify-between gap-3 rounded-lg border border-[var(--life-line)] px-3 py-3"
               >
                 <div className="flex items-center gap-3">
                   <MonitorPlay className="h-4 w-4 text-[var(--life-accent)]" />
@@ -529,13 +529,13 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             {data.rustdesk.hosts.map((h) => (
               <div
                 key={h.id}
-                className="rounded-xl border border-[var(--life-line)] bg-white/40 px-3 py-3"
+                className="rounded-lg border border-[var(--life-line)] bg-[var(--life-surface)] px-3 py-3"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium">{h.name}</p>
                   <span
                     className={`h-2 w-2 rounded-full ${
-                      h.online ? "bg-sky-400" : "bg-slate-300"
+                      h.online ? "bg-[var(--life-ok)]" : "bg-slate-300"
                     }`}
                   />
                 </div>
@@ -561,7 +561,7 @@ export function LifeDashboard({ data }: { data: LifeOverview }) {
             {data.automations.map((a) => (
               <li
                 key={a.id}
-                className="rounded-xl border border-[var(--life-line)] bg-white/40 px-3 py-3"
+                className="rounded-lg border border-[var(--life-line)] bg-[var(--life-surface)] px-3 py-3"
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-medium">{a.name}</p>

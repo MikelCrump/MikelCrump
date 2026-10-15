@@ -70,7 +70,7 @@ export function AutomationsClient({
   return (
     <div className="mt-8 space-y-6">
       <section className="life-panel life-rise space-y-3">
-        <h2 className="text-sm font-semibold tracking-wide uppercase">
+        <h2 className="text-sm font-semibold">
           iPhone → open charge port
         </h2>
         <p className="text-sm leading-relaxed text-[var(--life-muted)]">
@@ -128,7 +128,7 @@ export function AutomationsClient({
           onSubmit={onCreate}
           className="life-panel life-rise lg:col-span-2 space-y-3"
         >
-          <h2 className="text-sm font-semibold tracking-wide uppercase">
+          <h2 className="text-sm font-semibold">
             New automation
           </h2>
           <label className="block space-y-1 text-sm">

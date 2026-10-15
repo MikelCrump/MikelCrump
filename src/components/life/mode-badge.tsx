@@ -1,18 +1,17 @@
 import type { ConnectionMode } from "@/life/types";
 
+/** Plain status text with a colored dot — no pill. */
 export function ModeBadge({ mode }: { mode: ConnectionMode }) {
-  const label =
-    mode === "live" ? "Live" : mode === "mock" ? "Preview" : "Connect";
-  const tone =
+  const label = mode === "live" ? "Live" : mode === "mock" ? "Preview" : "Not connected";
+  const dot =
     mode === "live"
-      ? "bg-sky-400/20 text-sky-800 ring-sky-500/25"
+      ? "bg-[var(--life-ok)]"
       : mode === "mock"
-        ? "bg-sky-500/12 text-sky-900 ring-sky-600/15"
-        : "bg-amber-500/15 text-amber-900 ring-amber-600/20";
+        ? "bg-[#a3a6ad]"
+        : "bg-[var(--life-warn)]";
   return (
-    <span
-      className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase ring-1 ring-inset ${tone}`}
-    >
+    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--life-muted)]">
+      <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${dot}`} />
       {label}
     </span>
   );

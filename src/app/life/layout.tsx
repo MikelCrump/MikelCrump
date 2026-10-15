@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
-import { DM_Sans, Syne } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./life.css";
 
-const dmSans = DM_Sans({
+const inter = Inter({
   variable: "--font-life-sans",
-  subsets: ["latin"],
-});
-
-const syne = Syne({
-  variable: "--font-life-display",
   subsets: ["latin"],
 });
 
@@ -20,7 +15,10 @@ export const metadata: Metadata = {
 
 export default function LifeLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`${dmSans.variable} ${syne.variable} min-h-full font-[family-name:var(--font-life-sans)]`}>
+    // One typeface everywhere: --font-life-display points at Inter too.
+    <div
+      className={`${inter.variable} min-h-full font-[family-name:var(--font-life-sans)] [--font-life-display:var(--font-life-sans)]`}
+    >
       {children}
     </div>
   );
